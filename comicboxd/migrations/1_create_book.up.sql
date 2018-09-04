@@ -1,0 +1,22 @@
+create table book (
+    id                text primary key,
+    created_at        text,
+    updated_at        text,
+    series            text,
+    summary           text,
+    story_arc         text,
+    authors           text,
+    web               text,
+    genres            text,
+    alternate_series  text,
+    reading_direction text,
+    type              text,
+    file              text,
+    title             text,
+    volume            integer,
+    community_rating  real,
+    chapter           real,
+    date_released     text,
+    pages             text,
+    number_in_series  integer
+)
