@@ -38,6 +38,7 @@ create table user_book (
     PRIMARY KEY (user_id, book_id)
 );
 
+/* keeps the updated at columns up to date */
 CREATE TRIGGER book_update
     AFTER UPDATE
     ON book
@@ -54,26 +55,33 @@ BEGIN
     UPDATE user SET updated_at = CURRENT_TIMESTAMP WHERE id = old.id;
 END;
 
+/* makes sure that the last page read is allways equal or grater than the current page */
 CREATE TRIGGER user_book_update
     AFTER UPDATE
     ON user_book
+    FOR EACH ROW
 BEGIN
     UPDATE 
         user_book
     SET 
         last_page_read = current_page 
     WHERE  
+        book_id = old.book_id
+        user_id = old.user_id
         last_page_read < current_page;
 END;
 
 CREATE TRIGGER user_book_insert
     AFTER INSERT
     ON user_book
+    FOR EACH ROW
 BEGIN
     UPDATE 
         user_book
     SET 
         last_page_read = current_page 
     WHERE  
+        book_id = old.book_id
+        user_id = old.user_id
         last_page_read < current_page;
 END;

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
@@ -21,4 +22,8 @@ func (c Context) Var(key string) string {
 		c.vars = mux.Vars(c.Request)
 	}
 	return c.vars[key]
+}
+
+func (c Context) DecodeBody(v interface{}) error {
+	return json.NewDecoder(c.Request.Body).Decode(v)
 }

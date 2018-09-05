@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"runtime/debug"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/controller"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
@@ -14,6 +15,7 @@ import (
 type ErrorResponse struct {
 	Error  string `json:"error"`
 	Status int    `json:"status"`
+	Stack  string `json:"stack"`
 }
 
 func route(s *server.Server, callback func(controller.Context) interface{}) func(http.ResponseWriter, *http.Request) {
@@ -55,5 +57,5 @@ func writeJSON(w http.ResponseWriter, v interface{}) {
 
 func writeError(w http.ResponseWriter, err error, code int) {
 	w.WriteHeader(code)
-	writeJSON(w, ErrorResponse{err.Error(), code})
+	writeJSON(w, ErrorResponse{err.Error(), code, string(debug.Stack())})
 }
