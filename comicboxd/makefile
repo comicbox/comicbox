@@ -1,7 +1,10 @@
+bindata = -o data/bindata.go -pkg data migrations/ web/dist/
+build = go build -o ../bin/comicboxd
+
 all:
-	go-bindata -o data/bindata.go -pkg data migrations/ web/dist/
-	go build -o ../bin/comicboxd
+	go-bindata $(bindata)
+	$(build)
 	
 dev:
-	go-bindata -debug -o data/bindata.go -pkg data migrations/ web/dist/
-	go build -o ../bin/comicboxd
+	go-bindata -debug $(bindata)
+	$(build)

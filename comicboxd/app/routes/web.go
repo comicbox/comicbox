@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/data"
@@ -18,7 +17,5 @@ func Web(s *server.Server) {
 		Prefix:    "web/dist",
 	})))
 
-	s.Router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello World!")
-	})
+	APIv1(s)
 }
