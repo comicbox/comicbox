@@ -17,6 +17,8 @@ func Auth(next http.Handler) http.Handler {
 			ctx.User = &model.User{}
 			err := ctx.DB.Get(ctx.User, `select * from user where id=? limit 1`, uid)
 			if err == sql.ErrNoRows {
+				ctx.SClear("user_id")
+
 				ctx.User = &model.User{
 					Name:     "Guest",
 					Username: "guest",

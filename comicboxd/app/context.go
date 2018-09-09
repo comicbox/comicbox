@@ -49,6 +49,10 @@ func (c Context) SSet(key, value interface{}) {
 	c.Session.Values[key] = value
 }
 
+func (c Context) SClear(key interface{}) {
+	delete(c.Session.Values, key)
+}
+
 func (c Context) SGet(key interface{}) (interface{}, bool) {
 	value, ok := c.Session.Values[key]
 	return value, ok
