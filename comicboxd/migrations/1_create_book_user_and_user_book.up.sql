@@ -25,7 +25,7 @@ create table user (
     created_at timestamp default current_timestamp NOT NULL,
     updated_at timestamp default current_timestamp NOT NULL,
     name       text NOT NULL,
-    username   text NOT NULL,
+    username   text NOT NULL UNIQUE,
     password   text NOT NULL
 );
 
@@ -66,8 +66,8 @@ BEGIN
     SET 
         last_page_read = current_page 
     WHERE  
-        book_id = old.book_id
-        user_id = old.user_id
+        book_id = old.book_id AND
+        user_id = old.user_id AND
         last_page_read < current_page;
 END;
 
@@ -81,7 +81,7 @@ BEGIN
     SET 
         last_page_read = current_page 
     WHERE  
-        book_id = old.book_id
-        user_id = old.user_id
+        book_id = new.book_id AND
+        user_id = new.user_id AND
         last_page_read < current_page;
 END;

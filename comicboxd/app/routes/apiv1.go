@@ -7,11 +7,12 @@ import (
 )
 
 func APIv1(s *server.Server) {
-	s.Router.HandleFunc("/api/v1/login", route(s, controller.Auth.Login)).Methods("POST")
+	s.Router.HandleFunc("/api/v1/login", controller.User.Login).Methods("POST")
+	s.Router.HandleFunc("/api/v1/user", controller.User.Create).Methods("POST")
 
 	r := s.Router.PathPrefix("/api/v1").Subrouter()
 	r.Use(middleware.Auth)
 
-	r.HandleFunc("/book", route(s, controller.Book.Index)).Methods("GET")
-	r.HandleFunc("/book/{id}", route(s, controller.Book.Show)).Methods("GET")
+	r.HandleFunc("/book", controller.Book.Index).Methods("GET")
+	r.HandleFunc("/book/{id}", controller.Book.Show).Methods("GET")
 }
