@@ -15,4 +15,5 @@ func APIv1(s *server.Server) {
 
 	r.HandleFunc("/book", controller.Book.Index).Methods("GET")
 	r.HandleFunc("/book/{id}", controller.Book.Show).Methods("GET")
+	r.HandleFunc("/book/{id}", controller.Book.Update).Methods("PUT")
 }

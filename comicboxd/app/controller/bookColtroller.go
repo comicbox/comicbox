@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"database/sql"
 	"net/http"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app"
@@ -35,22 +34,33 @@ func (b *book) Index(w http.ResponseWriter, r *http.Request) {
 func (b *book) Show(w http.ResponseWriter, r *http.Request) {
 	c := app.Ctx(w, r)
 
-	book := model.BookUserBook{}
-	err := c.DB.Get(&book, `SELECT * FROM "book" left join user_book on book_id=id and user_id=? where id=? limit 1;`, c.User.ID, c.Var("id"))
-
-	if err == sql.ErrNoRows {
-		c.Response = errors.HTTP(404)
-		return
-	} else if err != nil {
-		c.Response = err
-		return
-	}
-
-	err = book.Init()
-	if err != nil {
-		c.Response = err
-		return
+	book := model.FindBook(c.VarInt64("id"), c.User.ID)
+	if book == nil {
+		panic(errors.HTTP(404))
 	}
 
 	c.Response = book
+}
+
+func (b *book) Update(w http.ResponseWriter, r *http.Request) {
+	c := app.Ctx(w, r)
+
+	book := model.FindBook(c.VarInt64("id"), c.User.ID)
+	if book == nil {
+		panic(errors.HTTP(404))
+	}
+
+	err := c.DecodeBody(&book)
+	if err != nil {
+		panic(err)
+	}
+
+	book.UserID = &c.User.ID
+
+	err = book.Save()
+	if err != nil {
+		panic(err)
+	}
+
+	c.Response = model.FindBook(c.VarInt64("id"), c.User.ID)
 }

@@ -18,4 +18,5 @@ func Web(s *server.Server) {
 	})))
 
 	APIv1(s)
+	GraphQL(s)
 }

@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
 	"github.com/gorilla/context"
@@ -39,6 +40,14 @@ func (c Context) Var(key string) string {
 		c.vars = mux.Vars(c.request)
 	}
 	return c.vars[key]
+}
+
+func (c Context) VarInt64(key string) int64 {
+	if c.vars == nil {
+		c.vars = mux.Vars(c.request)
+	}
+	i, _ := strconv.ParseInt(c.vars[key], 10, 64)
+	return i
 }
 
 func (c Context) DecodeBody(v interface{}) error {

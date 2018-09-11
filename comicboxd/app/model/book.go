@@ -1,8 +1,12 @@
 package model
 
 import (
+	"database/sql"
 	"encoding/json"
+	"strings"
 	"time"
+
+	"bitbucket.org/zwzn/comicbox/comicboxd/app/database"
 )
 
 // Book is a comic chapter or volume in the database
@@ -41,6 +45,24 @@ type BookUserBook struct {
 	UserBook
 }
 
+func FindBook(bookID, userID int64) *BookUserBook {
+	book := &BookUserBook{}
+	err := database.DB.Get(book, `SELECT * FROM "book" left join user_book on book_id=id and user_id=? where id=? limit 1;`, userID, bookID)
+
+	if err == sql.ErrNoRows {
+		return nil
+	} else if err != nil {
+		panic(err)
+	}
+
+	err = book.Init()
+	if err != nil {
+		panic(err)
+	}
+
+	return book
+}
+
 func (b *Book) Init() error {
 	if len(b.AuthorsJSON) > 0 {
 		err := json.Unmarshal(b.AuthorsJSON, &b.Authors)
@@ -57,6 +79,35 @@ func (b *Book) Init() error {
 	}
 
 	return nil
+}
+
+func (b *BookUserBook) Save() error {
+	var err error
+
+	b.AuthorsJSON, err = json.Marshal(b.Authors)
+	if err != nil {
+		return err
+	}
+	b.GenresJSON, err = json.Marshal(b.Genres)
+	if err != nil {
+		return err
+	}
+
+	if b.ID == 0 {
+		_, err = database.DB.NamedExec(InsertSQL("book", Book{}), b.Book)
+	} else {
+		_, err = database.DB.NamedExec(UpdateSQL("book", Book{}), b.Book)
+	}
+	if err != nil {
+		return err
+	}
+
+	b.BookID = &b.ID
+	query := InsertSQL("user_book", UserBook{})
+	query = strings.Replace(query, "insert", "replace", 1)
+
+	_, err = database.DB.NamedExec(query, b.UserBook)
+	return err
 }
 
 type Books []*Book
