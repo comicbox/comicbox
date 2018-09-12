@@ -10,7 +10,7 @@ import (
 
 func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := app.Ctx(w, r)
+		ctx := app.Ctx(r)
 
 		if uid, ok := ctx.SGetInt64("user_id"); ok {
 

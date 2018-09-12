@@ -13,7 +13,7 @@ import (
 
 func Response(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := app.Ctx(w, r)
+		ctx := app.Ctx(r)
 
 		next.ServeHTTP(w, r)
 

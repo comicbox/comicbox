@@ -11,7 +11,7 @@ var store = sessions.NewCookieStore([]byte("something-very-secret"))
 
 func Session(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := app.Ctx(w, r)
+		ctx := app.Ctx(r)
 
 		session, err := store.Get(r, "session-name")
 		if err != nil {

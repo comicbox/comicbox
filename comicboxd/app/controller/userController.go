@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app"
+	"bitbucket.org/zwzn/comicbox/comicboxd/app/gql"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
 	"bitbucket.org/zwzn/comicbox/comicboxd/errors"
+	"github.com/graphql-go/graphql"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,7 +16,7 @@ type user struct{}
 var User = user{}
 
 func (a *user) Login(w http.ResponseWriter, r *http.Request) {
-	c := app.Ctx(w, r)
+	c := app.Ctx(r)
 
 	body := struct {
 		Username string `json:"username"`
@@ -44,7 +46,7 @@ func (a *user) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *user) Create(w http.ResponseWriter, r *http.Request) {
-	c := app.Ctx(w, r)
+	c := app.Ctx(r)
 
 	// since password doesn't have a json tag i need to make a new struct
 	body := struct {
@@ -91,4 +93,40 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+var UserType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "user",
+	Fields: graphql.Fields{
+		"id": &graphql.Field{
+			Type:        graphql.Int,
+			Description: "a unique id for the books",
+			Resolve:     gql.ResolveVal("ID"),
+		},
+		"created_at": &graphql.Field{
+			Type:        graphql.DateTime,
+			Description: "the date a book was created",
+			Resolve:     gql.ResolveVal("CreatedAt"),
+		},
+		"updated_at": &graphql.Field{
+			Type:    graphql.DateTime,
+			Resolve: gql.ResolveVal("UpdatedAt"),
+		},
+		"name": &graphql.Field{
+			Type: graphql.String,
+		},
+		"username": &graphql.Field{
+			Type: graphql.String,
+		},
+	},
+})
+
+var UserQueries = graphql.Fields{
+	"me": &graphql.Field{
+		Type: UserType,
+		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			c := gql.Ctx(p)
+			return c.User, nil
+		},
+	},
 }

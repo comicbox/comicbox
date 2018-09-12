@@ -13,24 +13,27 @@ import (
 )
 
 type Context struct {
-	vars           map[string]string
-	responseWriter http.ResponseWriter
-	request        *http.Request
-	DB             *sqlx.DB
-	User           *model.User
-	Session        *sessions.Session
-	Response       interface{}
+	vars     map[string]string
+	request  *http.Request
+	DB       *sqlx.DB
+	User     *model.User
+	Session  *sessions.Session
+	Response interface{}
 }
 
-func Ctx(w http.ResponseWriter, r *http.Request) *Context {
+func Ctx(r *http.Request) *Context {
 	ctx, ok := context.GetOk(r, "context")
 	if ok {
 		return ctx.(*Context)
 	}
 
-	c := &Context{}
+	c := &Context{
+		User: &model.User{
+			Name:     "Guest",
+			Username: "guest",
+		},
+	}
 	c.request = r
-	c.responseWriter = w
 	context.Set(r, "context", c)
 	return c
 }

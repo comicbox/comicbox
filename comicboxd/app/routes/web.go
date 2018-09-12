@@ -17,6 +17,5 @@ func Web(s *server.Server) {
 		Prefix:    "web/dist",
 	})))
 
-	APIv1(s)
 	GraphQL(s)
 }
