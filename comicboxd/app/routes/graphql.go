@@ -3,6 +3,7 @@ package routes
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/controller"
@@ -17,6 +18,7 @@ func GraphQL(s *server.Server) {
 	queries := mergeFields(
 		controller.UserQueries,
 		controller.BookQueries,
+		controller.SeriesQueries,
 	)
 
 	schema, err := graphql.NewSchema(graphql.SchemaConfig{
@@ -30,6 +32,11 @@ func GraphQL(s *server.Server) {
 		Playground: true,
 		RootObjectFn: func(ctx context.Context, r *http.Request) map[string]interface{} {
 			c := app.Ctx(r)
+			strUserID := r.Header.Get("x-user")
+			userID, err := strconv.ParseInt(strUserID, 10, 64)
+			if err == nil {
+				c.User.ID = userID
+			}
 			return map[string]interface{}{
 				"context": c,
 			}

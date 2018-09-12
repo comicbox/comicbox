@@ -11,6 +11,11 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
+type BookQuery struct {
+	PageInfo gql.Page              `json:"page_info"`
+	Results  []*model.BookUserBook `json:"results"`
+}
+
 var BookType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "book",
 	Fields: graphql.Fields{
@@ -110,6 +115,21 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Type:    graphql.Float,
 			Resolve: gql.ResolveVal("Rating"),
 		},
+		"read": &graphql.Field{
+			Type:    graphql.Boolean,
+			Resolve: gql.ResolveVal("Read"),
+		},
+	},
+})
+var BookQueryType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "book_query",
+	Fields: graphql.Fields{
+		"page_info": &graphql.Field{
+			Type: gql.PageInfoType,
+		},
+		"results": &graphql.Field{
+			Type: graphql.NewList(BookType),
+		},
 	},
 })
 var BookQueries = graphql.Fields{
@@ -123,8 +143,7 @@ var BookQueries = graphql.Fields{
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			c := gql.Ctx(p)
 			book := &model.BookUserBook{}
-			user := c.User
-			err := database.DB.Get(book, `SELECT * FROM "book" left join "user_book" on book_id=id and user_id=? where id=? limit 1;`, user.ID, p.Args["id"].(int))
+			err := database.DB.Get(book, `SELECT * FROM "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, p.Args["id"])
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {
@@ -142,59 +161,42 @@ var BookQueries = graphql.Fields{
 				Type: graphql.Int,
 			},
 		},
-		Type: graphql.NewObject(graphql.ObjectConfig{
-			Name: "book_query",
-			Fields: graphql.Fields{
-				"page_info": &graphql.Field{
-					Type: gql.PageInfoType,
-					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-						c := gql.Ctx(p)
-						user := c.User
-						page := p.Source.(*gql.Page)
-						var count int
-						err := database.DB.Get(&count, `SELECT count(*) FROM "book" left join "user_book" on book_id=id and user_id=?;`, user.ID)
-						if err == sql.ErrNoRows {
-							count = 0
-						} else if err != nil {
-							return nil, err
-						}
-
-						page.Total = count
-
-						return page, nil
-					},
-				},
-				"results": &graphql.Field{
-					Type: graphql.NewList(BookType),
-
-					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-						c := gql.Ctx(p)
-						books := []*model.BookUserBook{}
-						user := c.User
-						page := p.Source.(*gql.Page)
-						err := database.DB.Select(&books, `SELECT * FROM "book" left join "user_book" on book_id=id and user_id=? limit ? offset ?;`, user.ID, page.Take, page.Skip)
-						if err == sql.ErrNoRows {
-							return nil, nil
-						} else if err != nil {
-							return nil, err
-						}
-						return books, nil
-					},
-				},
-			},
-		}),
+		Type: BookQueryType,
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			c := gql.Ctx(p)
+
 			skip, _ := p.Args["skip"].(int)
 			take, _ := p.Args["take"].(int)
 			if 0 > take || take > 100 {
 				return nil, fmt.Errorf("you must take between 0 and 100 items")
 			}
-			page := &gql.Page{
-				Skip:  skip,
-				Take:  take,
-				Total: -1,
+
+			var count int
+			err := database.DB.Get(&count, `SELECT count(*) FROM "book_user_book" where user_id=?;`, c.User.ID)
+			if err == sql.ErrNoRows {
+				count = 0
+			} else if err != nil {
+				return nil, err
 			}
-			return page, nil
+
+			books := []*model.BookUserBook{}
+
+			err = database.DB.Select(&books, `SELECT * FROM "book_user_book" where user_id=? limit ? offset ?;`, c.User.ID, take, skip)
+			if err == sql.ErrNoRows {
+				return nil, nil
+			} else if err != nil {
+				return nil, err
+			}
+
+			bq := BookQuery{
+				PageInfo: gql.Page{
+					Skip:  skip,
+					Take:  take,
+					Total: count,
+				},
+				Results: books,
+			}
+			return bq, nil
 		},
 	},
 }

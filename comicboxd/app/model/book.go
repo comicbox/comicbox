@@ -1,12 +1,7 @@
 package model
 
 import (
-	"database/sql"
-	"encoding/json"
-	"strings"
 	"time"
-
-	"bitbucket.org/zwzn/comicbox/comicboxd/app/database"
 )
 
 // Book is a comic chapter or volume in the database
@@ -30,6 +25,7 @@ type Book struct {
 	Chapter          *float64   `json:"chapter"           db:"chapter"`
 	DateReleased     *time.Time `json:"date_released"     db:"date_released"`
 	PagesJSON        []byte     `json:"-"                 db:"pages"`
+	PageCount        int        `json:"page_count"        db:"page_count"`
 }
 
 type UserBook struct {
@@ -43,93 +39,5 @@ type UserBook struct {
 type BookUserBook struct {
 	Book
 	UserBook
-}
-
-func FindBook(bookID, userID int64) *BookUserBook {
-	book := &BookUserBook{}
-	err := database.DB.Get(book, `SELECT * FROM "book" left join user_book on book_id=id and user_id=? where id=? limit 1;`, userID, bookID)
-
-	if err == sql.ErrNoRows {
-		return nil
-	} else if err != nil {
-		panic(err)
-	}
-
-	err = book.Init()
-	if err != nil {
-		panic(err)
-	}
-
-	return book
-}
-
-func (b *Book) Init() error {
-	if len(b.AuthorsJSON) > 0 {
-		err := json.Unmarshal(b.AuthorsJSON, &b.Authors)
-		if err != nil {
-			return err
-		}
-	}
-
-	if len(b.GenresJSON) > 0 {
-		err := json.Unmarshal(b.GenresJSON, &b.Genres)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (b *BookUserBook) Save() error {
-	var err error
-
-	b.AuthorsJSON, err = json.Marshal(b.Authors)
-	if err != nil {
-		return err
-	}
-	b.GenresJSON, err = json.Marshal(b.Genres)
-	if err != nil {
-		return err
-	}
-
-	if b.ID == 0 {
-		_, err = database.DB.NamedExec(InsertSQL("book", Book{}), b.Book)
-	} else {
-		_, err = database.DB.NamedExec(UpdateSQL("book", Book{}), b.Book)
-	}
-	if err != nil {
-		return err
-	}
-
-	b.BookID = &b.ID
-	query := InsertSQL("user_book", UserBook{})
-	query = strings.Replace(query, "insert", "replace", 1)
-
-	_, err = database.DB.NamedExec(query, b.UserBook)
-	return err
-}
-
-type Books []*Book
-
-func (books Books) Init() error {
-	for _, b := range books {
-		err := b.Init()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-type BookUserBooks []*BookUserBook
-
-func (bubs BookUserBooks) Init() error {
-	for _, b := range bubs {
-		err := b.Init()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	Read bool `json:"read" db:"read"`
 }

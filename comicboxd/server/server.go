@@ -38,18 +38,6 @@ func New() *Server {
 }
 
 func (s *Server) Start() error {
-	// var err error
-
-	// s.DB, err = sqlx.Connect("sqlite3", "test.sqlite")
-	// if err != nil {
-	// 	return err
-	// }
-
-	// err = m.Up()
-	// if err != nil && err.Error() != "no change" {
-	// 	return err
-	// }
-
 	return s.srv.ListenAndServe()
 }
 

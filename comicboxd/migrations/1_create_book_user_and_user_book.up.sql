@@ -1,32 +1,33 @@
 create table book (
     id                integer primary key autoincrement,
-    created_at        timestamp default current_timestamp NOT NULL,
-    updated_at        timestamp default current_timestamp NOT NULL,
-    series            text default "" NOT NULL,
-    summary           text default "" NOT NULL,
-    story_arc         text default "" NOT NULL,
-    authors           text default "" NOT NULL,
-    web               text default "" NOT NULL,
-    genres            text default "" NOT NULL,
-    alternate_series  text default "" NOT NULL,
-    reading_direction text default "" NOT NULL,
-    type              text default "" NOT NULL,
-    file              text NOT NULL,
-    title             text default "" NOT NULL,
+    created_at        timestamp default current_timestamp not null,
+    updated_at        timestamp default current_timestamp not null,
+    series            text default "" not null,
+    summary           text default "" not null,
+    story_arc         text default "" not null,
+    authors           text default "" not null,
+    web               text default "" not null,
+    genres            text default "" not null,
+    alternate_series  text default "" not null,
+    reading_direction text default "" not null,
+    type              text default "" not null,
+    file              text not null,
+    title             text default "" not null,
     volume            integer,
     community_rating  real,
     chapter           real,
     date_released     timestamp,
-    pages             text NOT NULL
+    pages             text not null,
+    page_count        integer not null
 );
 
 create table user (
     id         integer primary key autoincrement,
-    created_at timestamp default current_timestamp NOT NULL,
-    updated_at timestamp default current_timestamp NOT NULL,
-    name       text NOT NULL,
-    username   text NOT NULL UNIQUE,
-    password   text NOT NULL
+    created_at timestamp default current_timestamp not null,
+    updated_at timestamp default current_timestamp not null,
+    name       text not null,
+    username   text not null unique,
+    password   text not null
 );
 
 create table user_book (
@@ -35,53 +36,74 @@ create table user_book (
     current_page   integer not null default 0,
     last_page_read integer not null default 0,
     rating         real,
-    PRIMARY KEY (user_id, book_id)
+    primary key (user_id, book_id)
 );
 
 /* keeps the updated at columns up to date */
-CREATE TRIGGER book_update
-    AFTER UPDATE
-    ON book
-    FOR EACH ROW
-BEGIN
-    UPDATE book SET updated_at = CURRENT_TIMESTAMP WHERE id = old.id;
-END;
+create trigger book_update
+    after update
+    on book
+    for each row
+begin
+    update book set updated_at = current_timestamp where id = old.id;
+end;
 
-CREATE TRIGGER user_update
-    AFTER UPDATE
-    ON user
-    FOR EACH ROW
-BEGIN
-    UPDATE user SET updated_at = CURRENT_TIMESTAMP WHERE id = old.id;
-END;
+create trigger user_update
+    after update
+    on user
+    for each row
+begin
+    update user set updated_at = current_timestamp where id = old.id;
+end;
 
 /* makes sure that the last page read is allways equal or grater than the current page */
-CREATE TRIGGER user_book_update
-    AFTER UPDATE
-    ON user_book
-    FOR EACH ROW
-BEGIN
-    UPDATE 
+create trigger user_book_update
+    after update
+    on user_book
+    for each row
+begin
+    update 
         user_book
-    SET 
+    set 
         last_page_read = current_page 
-    WHERE  
-        book_id = old.book_id AND
-        user_id = old.user_id AND
+    where  
+        book_id = old.book_id and
+        user_id = old.user_id and
         last_page_read < current_page;
-END;
+end;
 
-CREATE TRIGGER user_book_insert
-    AFTER INSERT
-    ON user_book
-    FOR EACH ROW
-BEGIN
-    UPDATE 
+create trigger user_book_insert
+    after insert
+    on user_book
+    for each row
+begin
+    update 
         user_book
-    SET 
+    set 
         last_page_read = current_page 
-    WHERE  
-        book_id = new.book_id AND
-        user_id = new.user_id AND
+    where  
+        book_id = new.book_id and
+        user_id = new.user_id and
         last_page_read < current_page;
-END;
+end;
+
+
+create view book_user_book as 
+select 
+    book.*, 
+    user.id as user_id, 
+    book.id as book_id, 
+    current_page, 
+    last_page_read, 
+    rating,
+    case when page_count >= current_page then 1 else 0 end read 
+from
+     "book" join "user" left join "user_book" on user_id=user.id and book_id=book.id;
+
+-- you need this so it can query when no user is logged in
+INSERT INTO "user" ("id", "name", "username", "password")
+    VALUES (0, "Guest", "guest", "");
+
+
+create view series as
+SELECT series as name, count(series) as total, sum(read) as read, user_id FROM "book_user_book" group by series, user_id;

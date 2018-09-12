@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/data"
@@ -24,14 +25,12 @@ func init() {
 
 	m, err := getMigrate()
 	if err != nil {
-		j.Error(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
-	m.Up()
-	if err != nil && err.Error() != "no change" {
-		j.Error(err)
-		os.Exit(1)
+	err = m.Up()
+	if err != nil && err != migrate.ErrNoChange {
+		log.Fatal(err)
 	}
 }
 
