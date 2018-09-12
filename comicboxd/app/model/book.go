@@ -41,3 +41,9 @@ type BookUserBook struct {
 	UserBook
 	Read bool `json:"read" db:"read"`
 }
+
+type Page struct {
+	FileNumber int    `json:"file_number"`
+	Type       string `json:"type"`
+	URL        string `json:"url"`
+}

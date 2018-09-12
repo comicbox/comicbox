@@ -50,7 +50,10 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				book := p.Source.(*model.BookUserBook)
 				authors := []string{}
-				json.Unmarshal(book.AuthorsJSON, authors)
+				err := json.Unmarshal(book.AuthorsJSON, authors)
+				if err != nil {
+					return nil, err
+				}
 				return authors, nil
 			},
 		},
@@ -63,7 +66,10 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				book := p.Source.(*model.BookUserBook)
 				authors := []string{}
-				json.Unmarshal(book.GenresJSON, authors)
+				err := json.Unmarshal(book.GenresJSON, authors)
+				if err != nil {
+					return nil, err
+				}
 				return authors, nil
 			},
 		},
@@ -119,8 +125,37 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Type:    graphql.Boolean,
 			Resolve: gql.ResolveVal("Read"),
 		},
+		"pages": &graphql.Field{
+			Type: graphql.NewList(PageType),
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				book := p.Source.(*model.BookUserBook)
+				pages := []*model.Page{}
+				err := json.Unmarshal(book.PagesJSON, &pages)
+				if err != nil {
+					return nil, err
+				}
+
+				return pages, nil
+			},
+		},
 	},
 })
+
+var PageType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "page",
+	Fields: graphql.Fields{
+		"file_number": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"type": &graphql.Field{
+			Type: graphql.String,
+		},
+		"url": &graphql.Field{
+			Type: graphql.String,
+		},
+	},
+})
+
 var BookQueryType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "book_query",
 	Fields: graphql.Fields{
