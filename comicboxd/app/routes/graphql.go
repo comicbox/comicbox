@@ -21,8 +21,12 @@ func GraphQL(s *server.Server) {
 		controller.SeriesQueries,
 	)
 
+	mutations := mergeFields(
+		controller.BookMutations,
+	)
 	schema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query: graphql.NewObject(graphql.ObjectConfig{Name: "RootQuery", Fields: queries}),
+		Query:    graphql.NewObject(graphql.ObjectConfig{Name: "RootQuery", Fields: queries}),
+		Mutation: graphql.NewObject(graphql.ObjectConfig{Name: "RootMutation", Fields: mutations}),
 	})
 	errors.Check(err)
 

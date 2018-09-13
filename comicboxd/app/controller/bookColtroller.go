@@ -16,21 +16,6 @@ type BookQuery struct {
 	Results  []*model.BookUserBook `json:"results"`
 }
 
-var PageTypeEnum = graphql.NewEnum(graphql.EnumConfig{
-	Name: "page_type",
-	Values: graphql.EnumValueConfigMap{
-		"COVER": &graphql.EnumValueConfig{
-			Value: "FrontCover",
-		},
-		"STORY": &graphql.EnumValueConfig{
-			Value: "Story",
-		},
-		"DELETED": &graphql.EnumValueConfig{
-			Value: "Deleted",
-		},
-	},
-})
-
 var BookType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "book",
 	Fields: graphql.Fields{
@@ -169,6 +154,21 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
+var PageTypeEnum = graphql.NewEnum(graphql.EnumConfig{
+	Name: "page_type",
+	Values: graphql.EnumValueConfigMap{
+		"COVER": &graphql.EnumValueConfig{
+			Value: "FrontCover",
+		},
+		"STORY": &graphql.EnumValueConfig{
+			Value: "Story",
+		},
+		"DELETED": &graphql.EnumValueConfig{
+			Value: "Deleted",
+		},
+	},
+})
+
 var PageType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "page",
 	Fields: graphql.Fields{
@@ -223,6 +223,9 @@ var BookQueries = graphql.Fields{
 			"skip": &graphql.ArgumentConfig{
 				Type: graphql.Int,
 			},
+			"series": &graphql.ArgumentConfig{
+				Type: graphql.String,
+			},
 		},
 		Type: BookQueryType,
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
@@ -233,9 +236,12 @@ var BookQueries = graphql.Fields{
 			if 0 > take || take > 100 {
 				return nil, fmt.Errorf("you must take between 0 and 100 items")
 			}
+			data := []interface{}{c.User.ID}
+			wheres, whereData := gql.ToSQL(model.BookUserBook{}, p.Args)
+			data = append(data, whereData...)
 
 			var count int
-			err := database.DB.Get(&count, `SELECT count(*) FROM "book_user_book" where user_id=?;`, c.User.ID)
+			err := database.DB.Get(&count, fmt.Sprintf(`SELECT count(*) FROM "book_user_book" where user_id=? %s;`, wheres), data...)
 			if err == sql.ErrNoRows {
 				count = 0
 			} else if err != nil {
@@ -244,7 +250,7 @@ var BookQueries = graphql.Fields{
 
 			books := []*model.BookUserBook{}
 
-			err = database.DB.Select(&books, `SELECT * FROM "book_user_book" where user_id=? limit ? offset ?;`, c.User.ID, take, skip)
+			err = database.DB.Select(&books, fmt.Sprintf(`SELECT * FROM "book_user_book" where user_id=? %s limit ? offset ?;`, wheres), append(data, take, skip)...)
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {
@@ -260,6 +266,34 @@ var BookQueries = graphql.Fields{
 				Results: books,
 			}
 			return bq, nil
+		},
+	},
+}
+
+var BookMutations = graphql.Fields{
+	"book": &graphql.Field{
+		Type: BookType,
+		Args: gql.MutationArgs(
+			model.BookUserBook{},
+			graphql.FieldConfigArgument{
+				// "pages": &graphql.ArgumentConfig{
+				// 	Type: graphql.Int,
+				// },
+			}),
+		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			c := gql.Ctx(p)
+			book := &model.BookUserBook{}
+
+			id, old := p.Args["id"]
+			if old {
+				err := database.DB.Get(book, `SELECT * FROM "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, id)
+				if err == sql.ErrNoRows {
+					return nil, nil
+				} else if err != nil {
+					return nil, err
+				}
+			}
+			return book, nil
 		},
 	},
 }
