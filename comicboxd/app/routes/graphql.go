@@ -31,9 +31,10 @@ func GraphQL(s *server.Server) {
 	errors.Check(err)
 
 	h := handler.New(&handler.Config{
-		Schema:     &schema,
-		Pretty:     true,
-		Playground: true,
+		Schema: &schema,
+		Pretty: true,
+		// Playground: true,
+		GraphiQL: true,
 		RootObjectFn: func(ctx context.Context, r *http.Request) map[string]interface{} {
 			c := app.Ctx(r)
 			strUserID := r.Header.Get("x-user")

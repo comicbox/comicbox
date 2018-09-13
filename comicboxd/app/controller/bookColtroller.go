@@ -50,6 +50,11 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				book := p.Source.(*model.BookUserBook)
 				authors := []string{}
+
+				if len(book.AuthorsJSON) == 0 {
+					return authors, nil
+				}
+
 				err := json.Unmarshal(book.AuthorsJSON, authors)
 				if err != nil {
 					return nil, err
@@ -65,12 +70,17 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.NewList(graphql.String),
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				book := p.Source.(*model.BookUserBook)
-				authors := []string{}
-				err := json.Unmarshal(book.GenresJSON, authors)
+				genres := []string{}
+
+				if len(book.GenresJSON) == 0 {
+					return genres, nil
+				}
+
+				err := json.Unmarshal(book.GenresJSON, genres)
 				if err != nil {
 					return nil, err
 				}
-				return authors, nil
+				return genres, nil
 			},
 		},
 		"alternate_series": &graphql.Field{
@@ -137,6 +147,11 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 				book := p.Source.(*model.BookUserBook)
 				allPages := []*model.Page{}
 				pages := []*model.Page{}
+
+				if len(book.PagesJSON) == 0 {
+					return pages, nil
+				}
+
 				err := json.Unmarshal(book.PagesJSON, &allPages)
 				if err != nil {
 					return nil, err
@@ -270,20 +285,32 @@ var BookQueries = graphql.Fields{
 	},
 }
 
+var PageInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "page_input",
+	Fields: graphql.InputObjectConfigFieldMap{
+		"url": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"number": &graphql.InputObjectFieldConfig{
+			Type: graphql.Int,
+		},
+	},
+})
+
 var BookMutations = graphql.Fields{
 	"book": &graphql.Field{
 		Type: BookType,
 		Args: gql.MutationArgs(
 			model.BookUserBook{},
 			graphql.FieldConfigArgument{
-				// "pages": &graphql.ArgumentConfig{
-				// 	Type: graphql.Int,
-				// },
+				"pages": &graphql.ArgumentConfig{
+					Type: graphql.NewList(PageInput),
+				},
 			}),
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			c := gql.Ctx(p)
 			book := &model.BookUserBook{}
-
+			fmt.Printf("%#v\n", p.Args["pages"])
 			id, old := p.Args["id"]
 			if old {
 				err := database.DB.Get(book, `SELECT * FROM "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, id)
