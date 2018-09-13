@@ -29,12 +29,22 @@ var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 		},
 		"books": &graphql.Field{
 			Type: graphql.NewList(BookType),
+			Args: graphql.FieldConfigArgument{
+				"take": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.Int),
+				},
+				"skip": &graphql.ArgumentConfig{
+					Type: graphql.Int,
+				},
+			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				c := gql.Ctx(p)
 				books := []*model.BookUserBook{}
 				series := p.Source.(*model.Series)
+				skip, _ := p.Args["skip"].(int)
+				take, _ := p.Args["take"].(int)
 
-				err := database.DB.Select(&books, `SELECT * FROM "book_user_book" where user_id=? and series=?;`, c.User.ID, series.Name)
+				err := database.DB.Select(&books, `SELECT * FROM "book_user_book" where user_id=? and series=? limit ? offset ?;`, c.User.ID, series.Name, take, skip)
 				if err == sql.ErrNoRows {
 					return nil, nil
 				} else if err != nil {

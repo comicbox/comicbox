@@ -16,6 +16,21 @@ type BookQuery struct {
 	Results  []*model.BookUserBook `json:"results"`
 }
 
+var PageTypeEnum = graphql.NewEnum(graphql.EnumConfig{
+	Name: "page_type",
+	Values: graphql.EnumValueConfigMap{
+		"COVER": &graphql.EnumValueConfig{
+			Value: "FrontCover",
+		},
+		"STORY": &graphql.EnumValueConfig{
+			Value: "Story",
+		},
+		"DELETED": &graphql.EnumValueConfig{
+			Value: "Deleted",
+		},
+	},
+})
+
 var BookType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "book",
 	Fields: graphql.Fields{
@@ -125,14 +140,48 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Type:    graphql.Boolean,
 			Resolve: gql.ResolveVal("Read"),
 		},
-		"pages": &graphql.Field{
-			Type: graphql.NewList(PageType),
+		"cover": &graphql.Field{
+			Type: PageType,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				book := p.Source.(*model.BookUserBook)
 				pages := []*model.Page{}
 				err := json.Unmarshal(book.PagesJSON, &pages)
 				if err != nil {
 					return nil, err
+				}
+				if len(pages) == 0 {
+					return nil, nil
+				}
+				for _, page := range pages {
+					if page.Type == "FrontCover" {
+						return page, nil
+					}
+				}
+
+				return pages[0], nil
+			},
+		},
+		"pages": &graphql.Field{
+			Type: graphql.NewList(PageType),
+			Args: graphql.FieldConfigArgument{
+				"type": &graphql.ArgumentConfig{
+					Type: PageTypeEnum,
+				},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				t, typeOk := p.Args["type"].(string)
+				book := p.Source.(*model.BookUserBook)
+				allPages := []*model.Page{}
+				pages := []*model.Page{}
+				err := json.Unmarshal(book.PagesJSON, &allPages)
+				if err != nil {
+					return nil, err
+				}
+
+				for _, page := range allPages {
+					if page.Type == t || !typeOk {
+						pages = append(pages, page)
+					}
 				}
 
 				return pages, nil
@@ -148,7 +197,7 @@ var PageType = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.Int,
 		},
 		"type": &graphql.Field{
-			Type: graphql.String,
+			Type: PageTypeEnum,
 		},
 		"url": &graphql.Field{
 			Type: graphql.String,
