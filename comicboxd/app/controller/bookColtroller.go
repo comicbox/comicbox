@@ -140,27 +140,6 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Type:    graphql.Boolean,
 			Resolve: gql.ResolveVal("Read"),
 		},
-		"cover": &graphql.Field{
-			Type: PageType,
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				book := p.Source.(*model.BookUserBook)
-				pages := []*model.Page{}
-				err := json.Unmarshal(book.PagesJSON, &pages)
-				if err != nil {
-					return nil, err
-				}
-				if len(pages) == 0 {
-					return nil, nil
-				}
-				for _, page := range pages {
-					if page.Type == "FrontCover" {
-						return page, nil
-					}
-				}
-
-				return pages[0], nil
-			},
-		},
 		"pages": &graphql.Field{
 			Type: graphql.NewList(PageType),
 			Args: graphql.FieldConfigArgument{
