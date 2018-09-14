@@ -1,14 +1,15 @@
-INSERT INTO "book" ("series", "file", "title", "volume", "pages", "page_count")
-    VALUES ("Berserk", "/path/to/file", "The Black Swordman", 1, "[]", 10);
+INSERT INTO "book" ("id", "series", "file", "title", "volume", "pages", "page_count")
+    VALUES ("7fd9ee43-ad22-499e-81f8-feaa26844ae3", "Berserk", "/path/to/file", "The Black Swordman", 1, "[]", 10);
 
-INSERT INTO "book" ("series", "file", "title", "volume", "pages", "page_count")
-    VALUES ("Berserk", "/path/to/file2", "Lost Children", 2, "[]", 2);
+INSERT INTO "book" ("id", "series", "file", "title", "volume", "pages", "page_count")
+    VALUES ("cb58f0e6-353d-43c1-9862-59fe43a572ce", "Berserk", "/path/to/file2", "Lost Children", 2, "[]", 2);
 
-INSERT INTO "book" ("series", "file", "title", "volume", "pages", "page_count")
-    VALUES ("Hunter x Hunter", "/path/to/file3", "Greed Island", 35, "[]", 100);
+INSERT INTO "book" ("id", "series", "file", "title", "volume", "pages", "page_count")
+    VALUES ("a64b8fe6-a849-49ba-8806-7f223c8953c8", "Hunter x Hunter", "/path/to/file3", "Greed Island", 35, "[]", 100);
 
-INSERT INTO "book" ("series", "file", "title", "chapter", "authors", "community_rating", "page_count", "pages")
+INSERT INTO "book" ("id", "series", "file", "title", "chapter", "authors", "community_rating", "page_count", "pages")
     VALUES (
+        "9080f5af-3358-4000-9747-ef1257e00f8c", 
         'Hunter x Hunter', 
         '/mnt/comics/Hunter x Hunter/Hunter x Hunter #376.cbz',
         'Determination', 
@@ -20,14 +21,14 @@ INSERT INTO "book" ("series", "file", "title", "chapter", "authors", "community_
     );
 
 
-INSERT INTO "user" ("name", "username", "password")
-    VALUES ("Adam Bibby", "adam", "$2a$14$BQWy8npu3hZsl5uF56hI3OJsLbK6VlbEPWPBuENeZhLIbxni1kicG");
+INSERT INTO "user" ("id", "name", "username", "password")
+    VALUES ("cdda04ea-08c3-45f6-b7cf-25fd564e509d", "Adam Bibby", "adam", "$2a$14$BQWy8npu3hZsl5uF56hI3OJsLbK6VlbEPWPBuENeZhLIbxni1kicG");
 
-INSERT INTO "user" ("name", "username", "password")
-    VALUES ("Emerson", "emer", "$2a$14$BQWy8npu3hZsl5uF56hI3OJsLbK6VlbEPWPBuENeZhLIbxni1kicG");
-
-INSERT INTO "user_book" ("user_id", "book_id", "current_page", "rating")
-    VALUES (1, 1, 10, 9.5);
+INSERT INTO "user" ("id", "name", "username", "password")
+    VALUES ("cdaf42ba-4ad1-4909-93ee-37e369295f68", "Emerson", "emer", "$2a$14$BQWy8npu3hZsl5uF56hI3OJsLbK6VlbEPWPBuENeZhLIbxni1kicG");
 
 INSERT INTO "user_book" ("user_id", "book_id", "current_page", "rating")
-    VALUES (2, 1, 10, 9.5);
+    VALUES ("cdda04ea-08c3-45f6-b7cf-25fd564e509d", "7fd9ee43-ad22-499e-81f8-feaa26844ae3", 10, 9.5);
+
+INSERT INTO "user_book" ("user_id", "book_id", "current_page", "rating")
+    VALUES ("cdaf42ba-4ad1-4909-93ee-37e369295f68", "cb58f0e6-353d-43c1-9862-59fe43a572ce", 10, 9.5);

@@ -2,6 +2,8 @@ package model
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Book is a comic chapter or volume in the database
@@ -29,11 +31,11 @@ type Book struct {
 }
 
 type UserBook struct {
-	UserID       *int64   `json:"-"              db:"user_id"`
-	BookID       *int64   `json:"-"              db:"book_id"`
-	CurrentPage  *int64   `json:"current_page"   db:"current_page"`
-	LastPageRead *int64   `json:"last_page_read" db:"last_page_read"`
-	Rating       *float64 `json:"rating"         db:"rating"`
+	UserID       *uuid.UUID `json:"-"              db:"user_id"`
+	BookID       *uuid.UUID `json:"-"              db:"book_id"`
+	CurrentPage  *int64     `json:"current_page"   db:"current_page"`
+	LastPageRead *int64     `json:"last_page_read" db:"last_page_read"`
+	Rating       *float64   `json:"rating"         db:"rating"`
 }
 
 type BookUserBook struct {

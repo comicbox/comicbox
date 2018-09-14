@@ -99,7 +99,7 @@ var UserType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "user",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
-			Type:        graphql.Int,
+			Type:        graphql.ID,
 			Description: "a unique id for the books",
 			Resolve:     gql.ResolveVal("ID"),
 		},

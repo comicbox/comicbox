@@ -1,5 +1,5 @@
 create table book (
-    id                integer primary key autoincrement,
+    id                text primary key,
     created_at        timestamp default current_timestamp not null,
     updated_at        timestamp default current_timestamp not null,
     series            text default "" not null,
@@ -22,7 +22,7 @@ create table book (
 );
 
 create table user (
-    id         integer primary key autoincrement,
+    id         text primary key,
     created_at timestamp default current_timestamp not null,
     updated_at timestamp default current_timestamp not null,
     name       text not null,
@@ -31,8 +31,8 @@ create table user (
 );
 
 create table user_book (
-    user_id        integer not null,
-    book_id        integer not null,
+    user_id        text not null,
+    book_id        text not null,
     current_page   integer not null default 0,
     last_page_read integer not null default 0,
     rating         real,
@@ -102,7 +102,7 @@ from
 
 -- you need this so it can query when no user is logged in
 INSERT INTO "user" ("id", "name", "username", "password")
-    VALUES (0, "Guest", "guest", "");
+    VALUES ("00000000-0000-0000-0000-000000000000", "Guest", "guest", "");
 
 
 create view series as

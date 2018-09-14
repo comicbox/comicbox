@@ -8,6 +8,7 @@ import (
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/database"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/gql"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
+	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 )
 
@@ -20,7 +21,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "book",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
-			Type:        graphql.Int,
+			Type:        graphql.ID,
 			Description: "a unique id for the books",
 			Resolve:     gql.ResolveVal("ID"),
 		},
@@ -215,7 +216,7 @@ var BookQueries = graphql.Fields{
 		Type: BookType,
 		Args: graphql.FieldConfigArgument{
 			"id": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.Int),
+				Type: graphql.NewNonNull(graphql.ID),
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
@@ -285,6 +286,72 @@ var BookQueries = graphql.Fields{
 	},
 }
 
+var BookInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "book_input",
+	Fields: graphql.InputObjectConfigFieldMap{
+		"series": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"summary": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"story_arc": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"authors": &graphql.InputObjectFieldConfig{
+			Type: graphql.NewList(graphql.String),
+		},
+		"web": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"genres": &graphql.InputObjectFieldConfig{
+			Type: graphql.NewList(graphql.String),
+		},
+		"alternate_series": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"reading_direction": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"type": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"file": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"title": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"volume": &graphql.InputObjectFieldConfig{
+			Type: graphql.Int,
+		},
+		"community_rating": &graphql.InputObjectFieldConfig{
+			Type: graphql.Float,
+		},
+		"chapter": &graphql.InputObjectFieldConfig{
+			Type: graphql.Float,
+		},
+		"date_released": &graphql.InputObjectFieldConfig{
+			Type: graphql.DateTime,
+		},
+		"current_page": &graphql.InputObjectFieldConfig{
+			Type: graphql.Int,
+		},
+		"last_page_read": &graphql.InputObjectFieldConfig{
+			Type: graphql.Int,
+		},
+		"rating": &graphql.InputObjectFieldConfig{
+			Type: graphql.Float,
+		},
+		"read": &graphql.InputObjectFieldConfig{
+			Type: graphql.Boolean,
+		},
+		"pages": &graphql.InputObjectFieldConfig{
+			Type: graphql.NewList(PageInput),
+		},
+	},
+})
+
 var PageInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	Name: "page_input",
 	Fields: graphql.InputObjectConfigFieldMap{
@@ -300,26 +367,40 @@ var PageInput = graphql.NewInputObject(graphql.InputObjectConfig{
 var BookMutations = graphql.Fields{
 	"book": &graphql.Field{
 		Type: BookType,
-		Args: gql.MutationArgs(
-			model.BookUserBook{},
-			graphql.FieldConfigArgument{
-				"pages": &graphql.ArgumentConfig{
-					Type: graphql.NewList(PageInput),
-				},
-			}),
+		Args: graphql.FieldConfigArgument{
+			"id": &graphql.ArgumentConfig{
+				Type: graphql.ID,
+			},
+			"book": &graphql.ArgumentConfig{
+				Type: graphql.NewNonNull(BookInput),
+			},
+		},
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			var err error
 			c := gql.Ctx(p)
 			book := &model.BookUserBook{}
-			fmt.Printf("%#v\n", p.Args["pages"])
+			fmt.Printf("%#v\n", p.Args["book"])
 			id, old := p.Args["id"]
 			if old {
-				err := database.DB.Get(book, `SELECT * FROM "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, id)
-				if err == sql.ErrNoRows {
-					return nil, nil
-				} else if err != nil {
+				// run an sql update
+				return nil, fmt.Errorf("make the update adam")
+			} else {
+				book.ID, err = uuid.NewRandom()
+				if err != nil {
 					return nil, err
 				}
+				id = book.ID
+				//run sql insert with new id
+				return nil, fmt.Errorf("make the insert adam")
 			}
+
+			err = database.DB.Get(book, `SELECT * FROM "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, id)
+			if err == sql.ErrNoRows {
+				return nil, nil
+			} else if err != nil {
+				return nil, err
+			}
+
 			return book, nil
 		},
 	},
