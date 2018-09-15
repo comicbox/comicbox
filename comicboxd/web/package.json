@@ -3,14 +3,24 @@
   "version": "0.1.0",
   "description": "A web interface for the ComicBox server",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack --progress --mode=development",
+    "build-prod": "webpack --progress --mode=production",
+    "watch": "webpack --watch --progress --display=minimal --mode=development",
+    "watch-prod": "webpack --watch --progress --mode=production"
   },
   "author": "Adam Bibby",
   "license": "ISC",
   "dependencies": {
-    "@polymer/polymer": "^3.0.5"
+    "preact": "^8.3.1"
   },
   "devDependencies": {
+    "babel-polyfill": "^6.26.0",
+    "css-loader": "^1.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.2",
+    "ts-loader": "^5.1.0",
+    "typescript": "^3.0.3",
+    "typings-for-css-modules-loader": "^1.7.0",
     "webpack": "^4.19.0",
     "webpack-cli": "^3.1.0"
   }
