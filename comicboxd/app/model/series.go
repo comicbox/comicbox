@@ -8,4 +8,5 @@ type Series struct {
 	Total  int64     `json:"total" db:"total"`
 	Read   int64     `json:"read"  db:"read"`
 	UserID uuid.UUID `json:"-"     db:"user_id"`
+	List   *string   `json:"list"  db:"list"`
 }

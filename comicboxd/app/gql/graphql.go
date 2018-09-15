@@ -1,13 +1,17 @@
 package gql
 
 import (
+	"database/sql"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app"
+	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
 	"github.com/fatih/structs"
 	"github.com/graphql-go/graphql"
+	"github.com/jmoiron/sqlx"
 )
 
 type Page struct {
@@ -87,7 +91,7 @@ func ToSQL(model interface{}, args map[string]interface{}) (string, []interface{
 	return query, data
 }
 
-func MutationArgs(model interface{}, args graphql.FieldConfigArgument) graphql.FieldConfigArgument {
+func QueryArgs(model interface{}, args graphql.FieldConfigArgument) graphql.FieldConfigArgument {
 	var fieldType graphql.Type
 	var val interface{}
 
@@ -100,7 +104,7 @@ func MutationArgs(model interface{}, args graphql.FieldConfigArgument) graphql.F
 		val = v.Field(i).Interface()
 		field := t.Field(i)
 		if field.Type.Kind() == reflect.Struct && field.Anonymous {
-			subFields := MutationArgs(val, graphql.FieldConfigArgument{})
+			subFields := QueryArgs(val, graphql.FieldConfigArgument{})
 			for name, field := range subFields {
 				fields[name] = field
 			}
@@ -134,4 +138,90 @@ func MutationArgs(model interface{}, args graphql.FieldConfigArgument) graphql.F
 	}
 
 	return fields
+}
+
+func Update(db *sqlx.DB, table string, m, arg interface{}, primaryCols map[string]interface{}) (sql.Result, error) {
+	modelMap, ok := arg.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("The arg parameter must be a map[string]interface{}")
+	}
+	cols := model.GetTags(m, "db")
+
+	updates := []string{}
+	data := []interface{}{}
+
+	for _, col := range cols {
+		value, ok := modelMap[col]
+		if !ok {
+			continue
+		}
+
+		updates = append(updates, fmt.Sprintf("%s=?", col))
+		data = append(data, value)
+	}
+
+	wheres := []string{}
+	for col, value := range primaryCols {
+		wheres = append(wheres, fmt.Sprintf("%s=?", col))
+		data = append(data, value)
+	}
+
+	query := fmt.Sprintf("update %s set %s where %s", table, strings.Join(updates, ", "), strings.Join(wheres, " and "))
+
+	return db.Exec(query, data...)
+}
+
+func Insert(db *sqlx.DB, table string, m, arg interface{}, primaryCols map[string]interface{}) (sql.Result, error) {
+	modelMap, ok := arg.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("The arg parameter must be a map[string]interface{}")
+	}
+	cols := model.GetTags(m, "db")
+
+	changedCols := []string{}
+	questions := []string{}
+	data := []interface{}{}
+
+	for _, col := range cols {
+		value, ok := modelMap[col]
+		if !ok {
+			continue
+		}
+
+		changedCols = append(changedCols, col)
+		questions = append(questions, "?")
+		data = append(data, value)
+	}
+
+	for col, value := range primaryCols {
+		changedCols = append(changedCols, col)
+		questions = append(questions, "?")
+		data = append(data, value)
+	}
+
+	query := fmt.Sprintf("insert into %s (%s) values (%s)", table, strings.Join(changedCols, ", "), strings.Join(questions, ", "))
+
+	return db.Exec(query, data...)
+}
+
+func InsertOrUpdate(db *sqlx.DB, table string, m, arg interface{}, primaryCols map[string]interface{}) error {
+
+	r, err := Update(db, table, m, arg, primaryCols)
+	if err != nil {
+		return err
+	}
+
+	rows, err := r.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		_, err := Insert(db, table, m, arg, primaryCols)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

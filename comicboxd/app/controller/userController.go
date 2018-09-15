@@ -96,7 +96,7 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 var UserType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "user",
+	Name: "User",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
 			Type:        graphql.ID,

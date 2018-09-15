@@ -19,7 +19,7 @@ type BookQuery struct {
 }
 
 var BookType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "book",
+	Name: "Book",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
 			Type:        graphql.ID,
@@ -172,7 +172,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 })
 
 var PageTypeEnum = graphql.NewEnum(graphql.EnumConfig{
-	Name: "page_type",
+	Name: "PageType",
 	Values: graphql.EnumValueConfigMap{
 		"COVER": &graphql.EnumValueConfig{
 			Value: "FrontCover",
@@ -187,7 +187,7 @@ var PageTypeEnum = graphql.NewEnum(graphql.EnumConfig{
 })
 
 var PageType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "page",
+	Name: "Page",
 	Fields: graphql.Fields{
 		"file_number": &graphql.Field{
 			Type: graphql.Int,
@@ -202,7 +202,7 @@ var PageType = graphql.NewObject(graphql.ObjectConfig{
 })
 
 var BookQueryType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "book_query",
+	Name: "BookQuery",
 	Fields: graphql.Fields{
 		"page_info": &graphql.Field{
 			Type: gql.PageInfoType,
@@ -351,7 +351,7 @@ var BookInput = graphql.NewInputObject(graphql.InputObjectConfig{
 })
 
 var PageInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "page_input",
+	Name: "PageInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"url": &graphql.InputObjectFieldConfig{
 			Type: graphql.String,
@@ -377,6 +377,7 @@ var BookMutations = graphql.Fields{
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			// TODO replace this with gql.Insert and
 			var err error
 			var query string
 			c := gql.Ctx(p)

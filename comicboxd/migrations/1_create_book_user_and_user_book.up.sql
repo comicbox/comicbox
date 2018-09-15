@@ -106,4 +106,12 @@ INSERT INTO "user" ("id", "name", "username", "password")
 
 
 create view series as
-SELECT series as name, count(series) as total, sum(read) as read, user_id FROM "book_user_book" group by series, user_id;
+select s.*, user_series.list from (SELECT series as name, count(series) as total, sum(read) as read, user_id FROM "book_user_book" group by series, user_id) as s left join user_series on name=series;
+
+
+create table user_series (
+    user_id text not null,
+    series  text not null,
+    list    text,
+    primary key (user_id, series)
+);

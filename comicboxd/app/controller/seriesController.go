@@ -7,6 +7,7 @@ import (
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/database"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/gql"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
+	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 )
 
@@ -16,7 +17,7 @@ type SeriesQuery struct {
 }
 
 var SeriesType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "series",
+	Name: "Series",
 	Fields: graphql.Fields{
 		"name": &graphql.Field{
 			Type: graphql.String,
@@ -26,6 +27,9 @@ var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 		},
 		"read": &graphql.Field{
 			Type: graphql.Int,
+		},
+		"list": &graphql.Field{
+			Type: ListEnum,
 		},
 		"books": &graphql.Field{
 			Type: graphql.NewList(BookType),
@@ -56,8 +60,30 @@ var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 		},
 	},
 })
+
+var ListEnum = graphql.NewEnum(graphql.EnumConfig{
+	Name: "List",
+	Values: graphql.EnumValueConfigMap{
+		"READING": &graphql.EnumValueConfig{
+			Value: "reading",
+		},
+		"COMPLETED": &graphql.EnumValueConfig{
+			Value: "completed",
+		},
+		"PAUSED": &graphql.EnumValueConfig{
+			Value: "paused",
+		},
+		"DROPPED": &graphql.EnumValueConfig{
+			Value: "dropped",
+		},
+		"PLANNING": &graphql.EnumValueConfig{
+			Value: "planning",
+		},
+	},
+})
+
 var SeriesQueryType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "series_query",
+	Name: "SeriesQuery",
 	Fields: graphql.Fields{
 		"page_info": &graphql.Field{
 			Type: gql.PageInfoType,
@@ -67,6 +93,7 @@ var SeriesQueryType = graphql.NewObject(graphql.ObjectConfig{
 		},
 	},
 })
+
 var SeriesQueries = graphql.Fields{
 	"serie": &graphql.Field{
 		Type: SeriesType,
@@ -95,6 +122,9 @@ var SeriesQueries = graphql.Fields{
 			},
 			"skip": &graphql.ArgumentConfig{
 				Type: graphql.Int,
+			},
+			"list": &graphql.ArgumentConfig{
+				Type: ListEnum,
 			},
 		},
 		Type: SeriesQueryType,
@@ -133,6 +163,63 @@ var SeriesQueries = graphql.Fields{
 				Results: series,
 			}
 			return bq, nil
+		},
+	},
+}
+
+var SeriesInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "SeriesInput",
+	Fields: graphql.InputObjectConfigFieldMap{
+		"list": &graphql.InputObjectFieldConfig{
+			Type: ListEnum,
+		},
+	},
+})
+
+var SeriesMutations = graphql.Fields{
+	"series": &graphql.Field{
+		Type: SeriesType,
+		Args: graphql.FieldConfigArgument{
+			"name": &graphql.ArgumentConfig{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+			"series": &graphql.ArgumentConfig{
+				Type: graphql.NewNonNull(SeriesInput),
+			},
+		},
+		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			c := gql.Ctx(p)
+
+			if (c.User.ID == uuid.UUID{}) {
+				return nil, fmt.Errorf("you must be logged in to mutate series")
+			}
+
+			name := p.Args["name"]
+
+			numRows := 0
+			err := c.DB.Get(&numRows, "select count(*) from series where name=?", name)
+			if err != nil {
+				return nil, err
+			}
+			if numRows == 0 {
+				return nil, fmt.Errorf("no series %s", name)
+			}
+
+			err = gql.InsertOrUpdate(c.DB, "user_series", model.Series{}, p.Args["series"], map[string]interface{}{
+				"user_id": c.User.ID,
+				"series":  name,
+			})
+			if err != nil {
+				return nil, err
+			}
+
+			series := &model.Series{}
+			err = c.DB.Get(series, "select * from series where name=?", name)
+			if err != nil {
+				return nil, err
+			}
+
+			return series, nil
 		},
 	},
 }
