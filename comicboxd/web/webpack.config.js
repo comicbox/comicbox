@@ -34,7 +34,7 @@ module.exports = (env, argv) => {
                     test: /\.scss$/,
                     use:[
                         MiniCssExtractPlugin.loader,
-                        'typings-for-css-modules-loader?modules&namedExport&sass'
+                        'typings-for-css-modules-loader?modules&namedExport&camelCase&sass'
                     ] 
                     // use: [
                     //     MiniCssExtractPlugin.loader,
