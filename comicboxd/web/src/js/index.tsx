@@ -1,9 +1,13 @@
 import * as React from 'preact';
-import { Find } from 'js/models/book'
-import * as s from 'css/home.scss'
+import Router from 'preact-router';
+import Home from 'js/views/home'
+import Error from 'js/views/error';
 
-Find("cb58f0e6-353d-43c1-9862-59fe43a572ce").then(book => console.log(book))
+import "css/app.scss"
 
 React.render((
-    <div>test</div>
+    <Router>
+        <Home path="/" />
+        <Error default />
+    </Router>
 ), document.getElementById("app"));

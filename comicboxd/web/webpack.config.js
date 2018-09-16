@@ -22,7 +22,6 @@ module.exports = (env, argv) => {
             // polyfill: "babel-polyfill",
             main: path.join(paths.JS, 'index.tsx'),
         },
-        devtool: 'inline-source-map',
         module: {
             rules: [
                 {
@@ -32,22 +31,19 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.scss$/,
-                    use:[
+                    use: [
                         MiniCssExtractPlugin.loader,
-                        'typings-for-css-modules-loader?modules&namedExport&camelCase&sass'
-                    ] 
-                    // use: [
-                    //     MiniCssExtractPlugin.loader,
-                    //     // "css-loader",   // translates CSS into CommonJS
-                    //     // 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader',
-                    //     'typings-for-css-modules-loader?modules&namedExport',
-                    //     // "sass-loader",  // compiles Sass to CSS
-                    // ]
+                        'typings-for-css-modules-loader?modules&namedExport&camelCase&sass&localIdentName=[name]__[local]___[hash:base64:5]',
+                        "sass-loader",
+                    ]
                 },
-                // {
-                //     test: /\.css$/,
-                //     loader: ExtractTextPlugin.extract('style-loader', 'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss-loader')
-                // },
+                {
+                    test: /\.css$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        'typings-for-css-modules-loader?modules&namedExport&camelCase&localIdentName=[name]__[local]___[hash:base64:5]',
+                    ]
+                },
 
             ],
 
@@ -59,11 +55,12 @@ module.exports = (env, argv) => {
                 paths.SRC
             ]
         },
-        // output: {
-        //     path: paths.DIST,
-        //     filename: devMode ? '[name].js' : '[name].[hash].js',
-        //     chunkFilename: devMode ? '[id].js' : '[id].[hash].js',
-        // },
+        output: {
+            path: paths.DIST,
+            publicPath: '/assets/',
+            filename: devMode ? '[name].js' : '[name].[hash].js',
+            chunkFilename: devMode ? '[id].js' : '[id].[hash].js',
+        },
         plugins: [
             new HtmlWebpackPlugin({
                 chunks: ['main'],
@@ -73,8 +70,8 @@ module.exports = (env, argv) => {
             new MiniCssExtractPlugin({
                 // Options similar to the same options in webpackOptions.output
                 // both options are optional
-                // filename: devMode ? '[name].css' : '[name].[hash].css',
-                // chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+                filename: devMode ? '[name].css' : '[name].[hash].css',
+                chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
             }),
             new webpack.WatchIgnorePlugin([
                 /css\.d\.ts$/
