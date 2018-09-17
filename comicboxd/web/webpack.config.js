@@ -26,9 +26,26 @@ module.exports = (env, argv) => {
             rules: [
                 {
                     test: /\.tsx?$/,
-                    use: 'ts-loader',
-                    exclude: /node_modules/
+                    loader: 'babel-loader',
+                    options: {
+                        plugins: [
+                            ['@babel/plugin-transform-typescript', { isTSX: true, jsxPragma: "h" }],
+                            ['@babel/plugin-proposal-decorators', { "legacy": true }],
+                            ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
+                            'transform-class-properties'
+                        ]
+                    },
                 },
+                // {
+                //     test: /\.jsx?$/,
+                //     loader: 'babel-loader',
+                //     options: {
+                //         plugins: [
+                //             ['@babel/plugin-transform-react-jsx', { pragma: 'preact.h' }]
+                //         ]
+                //     },
+                //     exclude: /node_modules/
+                // },
                 {
                     test: /\.scss$/,
                     use: [
@@ -41,7 +58,7 @@ module.exports = (env, argv) => {
                     test: /\.css$/,
                     use: [
                         MiniCssExtractPlugin.loader,
-                        'typings-for-css-modules-loader?modules&namedExport&camelCase&localIdentName=[name]__[local]___[hash:base64:5]',
+                        'css-loader',
                     ]
                 },
 
@@ -53,7 +70,12 @@ module.exports = (env, argv) => {
             modules: [
                 "node_modules",
                 paths.SRC
-            ]
+            ],
+
+            alias: {
+                'react': 'preact',
+                'react-dom': 'preact'
+            }
         },
         output: {
             path: paths.DIST,

@@ -2,3 +2,4 @@ test.sqlite
 bin/*
 comicboxd/data/bindata.go
 comicboxd/web/node_modules/*
+comicboxd/web-old/node_modules/*

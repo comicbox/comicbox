@@ -1,4 +1,4 @@
-import * as React from 'preact'
+import { Component, h } from 'preact'
 
 import * as s from 'css/book.scss'
 import { Link } from 'preact-router';
@@ -6,18 +6,18 @@ import { Link } from 'preact-router';
 interface Props {
     data: any
 }
-    
+
 interface State {
 }
 
-export default class Book extends React.Component<Props, State> {
+export default class Book extends Component<Props, State> {
 
     componentDidMount() {
     }
 
-    render(): React.ComponentChild {
+    render() {
         let book = this.props.data
-        let image =  ""
+        let image = ""
 
         if (book.pages[0]) {
             image = "https://comicbox.ca/" + book.pages[0].url

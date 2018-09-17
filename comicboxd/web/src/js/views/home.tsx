@@ -1,31 +1,28 @@
-import * as React from 'preact'
+import { Component, h } from 'preact'
 import Layout from 'js/views/layout'
-import * as graphql from 'js/graphql'
-
-
-import * as s from 'css/home.scss'
 import BookList from 'js/components/book-list';
+import * as s from 'css/home.scss'
 
 interface Props {
 
 }
 
 interface State {
-    
+
 }
 
-export default class Home extends React.Component<Props, State> {
+export default class Home extends Component<Props, State> {
 
-    componentDidMount(){
-        
+    componentDidMount() {
+
     }
 
-    render(): React.ComponentChild {
+    render() {
         console.log(this.props);
 
         return <Layout>
             <BookList />
-        </Layout>
+        </Layout >
     }
 
 }
