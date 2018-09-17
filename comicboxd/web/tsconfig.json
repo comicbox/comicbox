@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "target": "es6",
+        "baseUrl": "./",
+        "jsx": "react",
+        "paths": {
+            "js/*": [
+                "src/js/*"
+            ],
+            "css/*": [
+                "src/css/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+    ]
+}

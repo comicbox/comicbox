@@ -86,6 +86,259 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/@babel/runtime/helpers/assertThisInitialized.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/assertThisInitialized.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+module.exports = _assertThisInitialized;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/classCallCheck.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/classCallCheck.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+module.exports = _classCallCheck;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/createClass.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/createClass.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+module.exports = _createClass;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/get.js":
+/*!****************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/get.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getPrototypeOf = __webpack_require__(/*! ./getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+
+var superPropBase = __webpack_require__(/*! ./superPropBase */ "./node_modules/@babel/runtime/helpers/superPropBase.js");
+
+function _get(target, property, receiver) {
+  if (typeof Reflect !== "undefined" && Reflect.get) {
+    module.exports = _get = Reflect.get;
+  } else {
+    module.exports = _get = function _get(target, property, receiver) {
+      var base = superPropBase(target, property);
+      if (!base) return;
+      var desc = Object.getOwnPropertyDescriptor(base, property);
+
+      if (desc.get) {
+        return desc.get.call(receiver);
+      }
+
+      return desc.value;
+    };
+  }
+
+  return _get(target, property, receiver || target);
+}
+
+module.exports = _get;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/getPrototypeOf.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _getPrototypeOf(o) {
+  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
+module.exports = _getPrototypeOf;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/inherits.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/inherits.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var setPrototypeOf = __webpack_require__(/*! ./setPrototypeOf */ "./node_modules/@babel/runtime/helpers/setPrototypeOf.js");
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) setPrototypeOf(subClass, superClass);
+}
+
+module.exports = _inherits;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/interopRequireDefault.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    default: obj
+  };
+}
+
+module.exports = _interopRequireDefault;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js":
+/*!**************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _typeof = __webpack_require__(/*! ../helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
+
+var assertThisInitialized = __webpack_require__(/*! ./assertThisInitialized */ "./node_modules/@babel/runtime/helpers/assertThisInitialized.js");
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return assertThisInitialized(self);
+}
+
+module.exports = _possibleConstructorReturn;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/setPrototypeOf.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/setPrototypeOf.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _setPrototypeOf(o, p) {
+  module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+
+module.exports = _setPrototypeOf;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/superPropBase.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/superPropBase.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getPrototypeOf = __webpack_require__(/*! ./getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+
+function _superPropBase(object, property) {
+  while (!Object.prototype.hasOwnProperty.call(object, property)) {
+    object = getPrototypeOf(object);
+    if (object === null) break;
+  }
+
+  return object;
+}
+
+module.exports = _superPropBase;
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/typeof.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/typeof.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+    module.exports = _typeof = function _typeof(obj) {
+      return _typeof2(obj);
+    };
+  } else {
+    module.exports = _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+    };
+  }
+
+  return _typeof(obj);
+}
+
+module.exports = _typeof;
+
+/***/ }),
+
 /***/ "./node_modules/@material/base/component.js":
 /*!**************************************************!*\
   !*** ./node_modules/@material/base/component.js ***!
@@ -2425,6 +2678,839 @@ function getNormalizedEventCoords(ev, pageOffset, clientRect) {
 
 /***/ }),
 
+/***/ "./node_modules/@material/top-app-bar/adapter.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/@material/top-app-bar/adapter.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/**
+ * @license
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* eslint no-unused-vars: [2, {"args": "none"}] */
+
+/**
+ * Adapter for MDC Top App Bar
+ *
+ * Defines the shape of the adapter expected by the foundation. Implement this
+ * adapter to integrate the Top App Bar into your framework. See
+ * https://github.com/material-components/material-components-web/blob/master/docs/authoring-components.md
+ * for more information.
+ *
+ * @record
+ */
+class MDCTopAppBarAdapter {
+  /**
+   * Adds a class to the root Element.
+   * @param {string} className
+   */
+  addClass(className) {}
+
+  /**
+   * Removes a class from the root Element.
+   * @param {string} className
+   */
+  removeClass(className) {}
+
+  /**
+   * Returns true if the root Element contains the given class.
+   * @param {string} className
+   * @return {boolean}
+   */
+  hasClass(className) {}
+
+  /**
+   * Sets the specified inline style property on the root Element to the given value.
+   * @param {string} property
+   * @param {string} value
+   */
+  setStyle(property, value) {}
+
+  /**
+   * Gets the height of the top app bar.
+   * @return {number}
+   */
+  getTopAppBarHeight() {}
+
+  /**
+   * Registers an event handler on the navigation icon element for a given event.
+   * @param {string} type
+   * @param {function(!Event): undefined} handler
+   */
+  registerNavigationIconInteractionHandler(type, handler) {}
+
+  /**
+   * Deregisters an event handler on the navigation icon element for a given event.
+   * @param {string} type
+   * @param {function(!Event): undefined} handler
+   */
+  deregisterNavigationIconInteractionHandler(type, handler) {}
+
+  /**
+   * Emits an event when the navigation icon is clicked.
+   */
+  notifyNavigationIconClicked() {}
+
+  /** @param {function(!Event)} handler */
+  registerScrollHandler(handler) {}
+
+  /** @param {function(!Event)} handler */
+  deregisterScrollHandler(handler) {}
+
+  /** @param {function(!Event)} handler */
+  registerResizeHandler(handler) {}
+
+  /** @param {function(!Event)} handler */
+  deregisterResizeHandler(handler) {}
+
+  /** @return {number} */
+  getViewportScrollY() {}
+
+  /** @return {number} */
+  getTotalActionItems() {}
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (MDCTopAppBarAdapter);
+
+
+/***/ }),
+
+/***/ "./node_modules/@material/top-app-bar/constants.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/@material/top-app-bar/constants.js ***!
+  \*********************************************************/
+/*! exports provided: strings, cssClasses, numbers */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "strings", function() { return strings; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cssClasses", function() { return cssClasses; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "numbers", function() { return numbers; });
+/**
+ * @license
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/** @enum {string} */
+const cssClasses = {
+  FIXED_CLASS: 'mdc-top-app-bar--fixed',
+  FIXED_SCROLLED_CLASS: 'mdc-top-app-bar--fixed-scrolled',
+  SHORT_CLASS: 'mdc-top-app-bar--short',
+  SHORT_HAS_ACTION_ITEM_CLASS: 'mdc-top-app-bar--short-has-action-item',
+  SHORT_COLLAPSED_CLASS: 'mdc-top-app-bar--short-collapsed',
+};
+
+/** @enum {number} */
+const numbers = {
+  DEBOUNCE_THROTTLE_RESIZE_TIME_MS: 100,
+  MAX_TOP_APP_BAR_HEIGHT: 128,
+};
+
+/** @enum {string} */
+const strings = {
+  ACTION_ITEM_SELECTOR: '.mdc-top-app-bar__action-item',
+  NAVIGATION_EVENT: 'MDCTopAppBar:nav',
+  NAVIGATION_ICON_SELECTOR: '.mdc-top-app-bar__navigation-icon',
+  ROOT_SELECTOR: '.mdc-top-app-bar',
+  TITLE_SELECTOR: '.mdc-top-app-bar__title',
+};
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@material/top-app-bar/fixed/foundation.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/@material/top-app-bar/fixed/foundation.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../constants */ "./node_modules/@material/top-app-bar/constants.js");
+/* harmony import */ var _adapter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../adapter */ "./node_modules/@material/top-app-bar/adapter.js");
+/* harmony import */ var _foundation__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../foundation */ "./node_modules/@material/top-app-bar/foundation.js");
+/**
+ * @license
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+
+
+/**
+ * @extends {MDCTopAppBarFoundation<!MDCFixedTopAppBarFoundation>}
+ * @final
+ */
+class MDCFixedTopAppBarFoundation extends _foundation__WEBPACK_IMPORTED_MODULE_2__["default"] {
+  /**
+   * @param {!MDCTopAppBarAdapter} adapter
+   */
+  constructor(adapter) {
+    super(adapter);
+    /** State variable for the previous scroll iteration top app bar state */
+    this.wasScrolled_ = false;
+
+    this.scrollHandler_ = () => this.fixedScrollHandler_();
+  }
+
+  init() {
+    super.init();
+    this.adapter_.registerScrollHandler(this.scrollHandler_);
+  }
+
+  destroy() {
+    super.destroy();
+    this.adapter_.deregisterScrollHandler(this.scrollHandler_);
+  }
+
+  /**
+   * Scroll handler for applying/removing the modifier class
+   * on the fixed top app bar.
+   */
+  fixedScrollHandler_() {
+    const currentScroll = this.adapter_.getViewportScrollY();
+
+    if (currentScroll <= 0) {
+      if (this.wasScrolled_) {
+        this.adapter_.removeClass(_constants__WEBPACK_IMPORTED_MODULE_0__["cssClasses"].FIXED_SCROLLED_CLASS);
+        this.wasScrolled_ = false;
+      }
+    } else {
+      if (!this.wasScrolled_) {
+        this.adapter_.addClass(_constants__WEBPACK_IMPORTED_MODULE_0__["cssClasses"].FIXED_SCROLLED_CLASS);
+        this.wasScrolled_ = true;
+      }
+    }
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (MDCFixedTopAppBarFoundation);
+
+
+/***/ }),
+
+/***/ "./node_modules/@material/top-app-bar/foundation.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/@material/top-app-bar/foundation.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./constants */ "./node_modules/@material/top-app-bar/constants.js");
+/* harmony import */ var _adapter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./adapter */ "./node_modules/@material/top-app-bar/adapter.js");
+/* harmony import */ var _material_base_foundation__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @material/base/foundation */ "./node_modules/@material/base/foundation.js");
+/**
+ * @license
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+
+
+/**
+ * @extends {MDCFoundation<!MDCTopAppBarAdapter>}
+ */
+class MDCTopAppBarBaseFoundation extends _material_base_foundation__WEBPACK_IMPORTED_MODULE_2__["default"] {
+  /** @return enum {string} */
+  static get strings() {
+    return _constants__WEBPACK_IMPORTED_MODULE_0__["strings"];
+  }
+
+  /** @return enum {string} */
+  static get cssClasses() {
+    return _constants__WEBPACK_IMPORTED_MODULE_0__["cssClasses"];
+  }
+
+  /** @return enum {number} */
+  static get numbers() {
+    return _constants__WEBPACK_IMPORTED_MODULE_0__["numbers"];
+  }
+
+  /**
+   * {@see MDCTopAppBarAdapter} for typing information on parameters and return
+   * types.
+   * @return {!MDCTopAppBarAdapter}
+   */
+  static get defaultAdapter() {
+    return /** @type {!MDCTopAppBarAdapter} */ ({
+      hasClass: (/* className: string */) => {},
+      addClass: (/* className: string */) => {},
+      removeClass: (/* className: string */) => {},
+      setStyle: (/* property: string, value: string */) => {},
+      getTopAppBarHeight: () => {},
+      registerNavigationIconInteractionHandler: (/* type: string, handler: EventListener */) => {},
+      deregisterNavigationIconInteractionHandler: (/* type: string, handler: EventListener */) => {},
+      notifyNavigationIconClicked: () => {},
+      registerScrollHandler: (/* handler: EventListener */) => {},
+      deregisterScrollHandler: (/* handler: EventListener */) => {},
+      registerResizeHandler: (/* handler: EventListener */) => {},
+      deregisterResizeHandler: (/* handler: EventListener */) => {},
+      getViewportScrollY: () => /* number */ 0,
+      getTotalActionItems: () => /* number */ 0,
+    });
+  }
+
+  /**
+   * @param {!MDCTopAppBarAdapter} adapter
+   */
+  constructor(/** @type {!MDCTopAppBarAdapter} */ adapter) {
+    super(Object.assign(MDCTopAppBarBaseFoundation.defaultAdapter, adapter));
+
+    this.navClickHandler_ = () => this.adapter_.notifyNavigationIconClicked();
+  }
+
+  init() {
+    this.adapter_.registerNavigationIconInteractionHandler('click', this.navClickHandler_);
+  }
+
+  destroy() {
+    this.adapter_.deregisterNavigationIconInteractionHandler('click', this.navClickHandler_);
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (MDCTopAppBarBaseFoundation);
+
+
+/***/ }),
+
+/***/ "./node_modules/@material/top-app-bar/index.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/@material/top-app-bar/index.js ***!
+  \*****************************************************/
+/*! exports provided: MDCTopAppBar, MDCTopAppBarBaseFoundation, MDCTopAppBarFoundation, MDCFixedTopAppBarFoundation, MDCShortTopAppBarFoundation */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MDCTopAppBar", function() { return MDCTopAppBar; });
+/* harmony import */ var _adapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./adapter */ "./node_modules/@material/top-app-bar/adapter.js");
+/* harmony import */ var _material_base_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @material/base/component */ "./node_modules/@material/base/component.js");
+/* harmony import */ var _material_ripple_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @material/ripple/index */ "./node_modules/@material/ripple/index.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./constants */ "./node_modules/@material/top-app-bar/constants.js");
+/* harmony import */ var _foundation__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./foundation */ "./node_modules/@material/top-app-bar/foundation.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MDCTopAppBarBaseFoundation", function() { return _foundation__WEBPACK_IMPORTED_MODULE_4__["default"]; });
+
+/* harmony import */ var _fixed_foundation__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./fixed/foundation */ "./node_modules/@material/top-app-bar/fixed/foundation.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MDCFixedTopAppBarFoundation", function() { return _fixed_foundation__WEBPACK_IMPORTED_MODULE_5__["default"]; });
+
+/* harmony import */ var _short_foundation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./short/foundation */ "./node_modules/@material/top-app-bar/short/foundation.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MDCShortTopAppBarFoundation", function() { return _short_foundation__WEBPACK_IMPORTED_MODULE_6__["default"]; });
+
+/* harmony import */ var _standard_foundation__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./standard/foundation */ "./node_modules/@material/top-app-bar/standard/foundation.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MDCTopAppBarFoundation", function() { return _standard_foundation__WEBPACK_IMPORTED_MODULE_7__["default"]; });
+
+/**
+ * @license
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+
+
+
+
+
+
+
+/**
+ * @extends {MDCComponent<!MDCTopAppBarBaseFoundation>}
+ * @final
+ */
+class MDCTopAppBar extends _material_base_component__WEBPACK_IMPORTED_MODULE_1__["default"] {
+  /**
+   * @param {...?} args
+   */
+  constructor(...args) {
+    super(...args);
+    /** @private {?Element} */
+    this.navIcon_;
+    /** @type {?Array<MDCRipple>} */
+    this.iconRipples_;
+  }
+
+  initialize(
+    rippleFactory = (el) => _material_ripple_index__WEBPACK_IMPORTED_MODULE_2__["MDCRipple"].attachTo(el)) {
+    this.navIcon_ = this.root_.querySelector(_constants__WEBPACK_IMPORTED_MODULE_3__["strings"].NAVIGATION_ICON_SELECTOR);
+
+    // Get all icons in the toolbar and instantiate the ripples
+    const icons = [].slice.call(this.root_.querySelectorAll(_constants__WEBPACK_IMPORTED_MODULE_3__["strings"].ACTION_ITEM_SELECTOR));
+    if (this.navIcon_) {
+      icons.push(this.navIcon_);
+    }
+
+    this.iconRipples_ = icons.map((icon) => {
+      const ripple = rippleFactory(icon);
+      ripple.unbounded = true;
+      return ripple;
+    });
+  }
+
+  destroy() {
+    this.iconRipples_.forEach((iconRipple) => iconRipple.destroy());
+    super.destroy();
+  }
+
+  /**
+   * @param {!Element} root
+   * @return {!MDCTopAppBar}
+   */
+  static attachTo(root) {
+    return new MDCTopAppBar(root);
+  }
+
+  /**
+   * @return {!MDCTopAppBarBaseFoundation}
+   */
+  getDefaultFoundation() {
+    /** @type {!MDCTopAppBarAdapter} */
+    const adapter = /** @type {!MDCTopAppBarAdapter} */ (Object.assign({
+      hasClass: (className) => this.root_.classList.contains(className),
+      addClass: (className) => this.root_.classList.add(className),
+      removeClass: (className) => this.root_.classList.remove(className),
+      setStyle: (property, value) => this.root_.style.setProperty(property, value),
+      getTopAppBarHeight: () => this.root_.clientHeight,
+      registerNavigationIconInteractionHandler: (evtType, handler) => {
+        if (this.navIcon_) {
+          this.navIcon_.addEventListener(evtType, handler);
+        }
+      },
+      deregisterNavigationIconInteractionHandler: (evtType, handler) => {
+        if (this.navIcon_) {
+          this.navIcon_.removeEventListener(evtType, handler);
+        }
+      },
+      notifyNavigationIconClicked: () => {
+        this.emit(_constants__WEBPACK_IMPORTED_MODULE_3__["strings"].NAVIGATION_EVENT, {});
+      },
+      registerScrollHandler: (handler) => window.addEventListener('scroll', handler),
+      deregisterScrollHandler: (handler) => window.removeEventListener('scroll', handler),
+      registerResizeHandler: (handler) => window.addEventListener('resize', handler),
+      deregisterResizeHandler: (handler) => window.removeEventListener('resize', handler),
+      getViewportScrollY: () => window.pageYOffset,
+      getTotalActionItems: () =>
+        this.root_.querySelectorAll(_constants__WEBPACK_IMPORTED_MODULE_3__["strings"].ACTION_ITEM_SELECTOR).length,
+    })
+    );
+
+    /** @type {!MDCTopAppBarBaseFoundation} */
+    let foundation;
+    if (this.root_.classList.contains(_constants__WEBPACK_IMPORTED_MODULE_3__["cssClasses"].SHORT_CLASS)) {
+      foundation = new _short_foundation__WEBPACK_IMPORTED_MODULE_6__["default"](adapter);
+    } else if (this.root_.classList.contains(_constants__WEBPACK_IMPORTED_MODULE_3__["cssClasses"].FIXED_CLASS)) {
+      foundation = new _fixed_foundation__WEBPACK_IMPORTED_MODULE_5__["default"](adapter);
+    } else {
+      foundation = new _standard_foundation__WEBPACK_IMPORTED_MODULE_7__["default"](adapter);
+    }
+
+    return foundation;
+  }
+}
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@material/top-app-bar/short/foundation.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/@material/top-app-bar/short/foundation.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _adapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../adapter */ "./node_modules/@material/top-app-bar/adapter.js");
+/* harmony import */ var _foundation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../foundation */ "./node_modules/@material/top-app-bar/foundation.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../constants */ "./node_modules/@material/top-app-bar/constants.js");
+/**
+ * @license
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+
+
+/**
+ * @extends {MDCTopAppBarBaseFoundation<!MDCShortTopAppBarFoundation>}
+ * @final
+ */
+class MDCShortTopAppBarFoundation extends _foundation__WEBPACK_IMPORTED_MODULE_1__["default"] {
+  /**
+   * @param {!MDCTopAppBarAdapter} adapter
+   */
+  constructor(adapter) {
+    super(adapter);
+    // State variable for the current top app bar state
+    this.isCollapsed = false;
+
+    this.scrollHandler_ = () => this.shortAppBarScrollHandler_();
+  }
+
+  init() {
+    super.init();
+    const isAlwaysCollapsed = this.adapter_.hasClass(_constants__WEBPACK_IMPORTED_MODULE_2__["cssClasses"].SHORT_COLLAPSED_CLASS);
+
+    if (this.adapter_.getTotalActionItems() > 0) {
+      this.adapter_.addClass(_constants__WEBPACK_IMPORTED_MODULE_2__["cssClasses"].SHORT_HAS_ACTION_ITEM_CLASS);
+    }
+
+    if (!isAlwaysCollapsed) {
+      this.adapter_.registerScrollHandler(this.scrollHandler_);
+      this.shortAppBarScrollHandler_();
+    }
+  }
+
+  destroy() {
+    super.destroy();
+    this.adapter_.deregisterScrollHandler(this.scrollHandler_);
+  }
+
+
+  /**
+   * Scroll handler for applying/removing the collapsed modifier class
+   * on the short top app bar.
+   * @private
+   */
+  shortAppBarScrollHandler_() {
+    const currentScroll = this.adapter_.getViewportScrollY();
+
+    if (currentScroll <= 0) {
+      if (this.isCollapsed) {
+        this.adapter_.removeClass(_constants__WEBPACK_IMPORTED_MODULE_2__["cssClasses"].SHORT_COLLAPSED_CLASS);
+        this.isCollapsed = false;
+      }
+    } else {
+      if (!this.isCollapsed) {
+        this.adapter_.addClass(_constants__WEBPACK_IMPORTED_MODULE_2__["cssClasses"].SHORT_COLLAPSED_CLASS);
+        this.isCollapsed = true;
+      }
+    }
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (MDCShortTopAppBarFoundation);
+
+
+/***/ }),
+
+/***/ "./node_modules/@material/top-app-bar/standard/foundation.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/@material/top-app-bar/standard/foundation.js ***!
+  \*******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _adapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../adapter */ "./node_modules/@material/top-app-bar/adapter.js");
+/* harmony import */ var _foundation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../foundation */ "./node_modules/@material/top-app-bar/foundation.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../constants */ "./node_modules/@material/top-app-bar/constants.js");
+/**
+ * @license
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+
+
+const INITIAL_VALUE = 0;
+/**
+ * @extends {MDCTopAppBarBaseFoundation<!MDCTopAppBarFoundation>}
+ * @final
+ */
+class MDCTopAppBarFoundation extends _foundation__WEBPACK_IMPORTED_MODULE_1__["default"] {
+  /**
+   * @param {!MDCTopAppBarAdapter} adapter
+   */
+  constructor(adapter) {
+    super(adapter);
+    /**
+     * Used for diffs of current scroll position vs previous scroll position
+     * @private {number}
+     */
+    this.lastScrollPosition_ = this.adapter_.getViewportScrollY();
+
+    /**
+     * Used to verify when the top app bar is completely showing or completely hidden
+     * @private {number}
+     */
+    this.topAppBarHeight_ = this.adapter_.getTopAppBarHeight();
+
+    /**
+     * wasDocked_ is used to indicate if the top app bar was docked in the previous
+     * scroll handler iteration.
+     * @private {boolean}
+     */
+    this.wasDocked_ = true;
+
+    /**
+     * isDockedShowing_ is used to indicate if the top app bar is docked in the fully
+     * shown position.
+     * @private {boolean}
+     */
+    this.isDockedShowing_ = true;
+
+    /**
+     * Variable for current scroll position of the top app bar
+     * @private {number}
+     */
+    this.currentAppBarOffsetTop_ = 0;
+
+    /**
+     * Used to prevent the top app bar from being scrolled out of view during resize events
+     * @private {boolean} */
+    this.isCurrentlyBeingResized_ = false;
+
+    /**
+     * The timeout that's used to throttle the resize events
+     * @private {number}
+     */
+    this.resizeThrottleId_ = INITIAL_VALUE;
+
+    /**
+     * The timeout that's used to debounce toggling the isCurrentlyBeingResized_ variable after a resize
+     * @private {number}
+     */
+    this.resizeDebounceId_ = INITIAL_VALUE;
+
+    this.scrollHandler_ = () => this.topAppBarScrollHandler_();
+    this.resizeHandler_ = () => this.topAppBarResizeHandler_();
+  }
+
+  init() {
+    super.init();
+    this.adapter_.registerScrollHandler(this.scrollHandler_);
+    this.adapter_.registerResizeHandler(this.resizeHandler_);
+  }
+
+  destroy() {
+    super.destroy();
+    this.adapter_.deregisterScrollHandler(this.scrollHandler_);
+    this.adapter_.deregisterResizeHandler(this.resizeHandler_);
+    this.adapter_.setStyle('top', '');
+  }
+
+  /**
+   * Function to determine if the DOM needs to update.
+   * @return {boolean}
+   * @private
+   */
+  checkForUpdate_() {
+    const offscreenBoundaryTop = -this.topAppBarHeight_;
+    const hasAnyPixelsOffscreen = this.currentAppBarOffsetTop_ < 0;
+    const hasAnyPixelsOnscreen = this.currentAppBarOffsetTop_ > offscreenBoundaryTop;
+    const partiallyShowing = hasAnyPixelsOffscreen && hasAnyPixelsOnscreen;
+
+    // If it's partially showing, it can't be docked.
+    if (partiallyShowing) {
+      this.wasDocked_ = false;
+    } else {
+      // Not previously docked and not partially showing, it's now docked.
+      if (!this.wasDocked_) {
+        this.wasDocked_ = true;
+        return true;
+      } else if (this.isDockedShowing_ !== hasAnyPixelsOnscreen) {
+        this.isDockedShowing_ = hasAnyPixelsOnscreen;
+        return true;
+      }
+    }
+
+    return partiallyShowing;
+  }
+
+  /**
+   * Function to move the top app bar if needed.
+   * @private
+   */
+  moveTopAppBar_() {
+    if (this.checkForUpdate_()) {
+      // Once the top app bar is fully hidden we use the max potential top app bar height as our offset
+      // so the top app bar doesn't show if the window resizes and the new height > the old height.
+      let offset = this.currentAppBarOffsetTop_;
+      if (Math.abs(offset) >= this.topAppBarHeight_) {
+        offset = -_constants__WEBPACK_IMPORTED_MODULE_2__["numbers"].MAX_TOP_APP_BAR_HEIGHT;
+      }
+
+      this.adapter_.setStyle('top', offset + 'px');
+    }
+  }
+
+  /**
+   * Scroll handler for the default scroll behavior of the top app bar.
+   * @private
+   */
+  topAppBarScrollHandler_() {
+    const currentScrollPosition = Math.max(this.adapter_.getViewportScrollY(), 0);
+    const diff = currentScrollPosition - this.lastScrollPosition_;
+    this.lastScrollPosition_ = currentScrollPosition;
+
+    // If the window is being resized the lastScrollPosition_ needs to be updated but the
+    // current scroll of the top app bar should stay in the same position.
+    if (!this.isCurrentlyBeingResized_) {
+      this.currentAppBarOffsetTop_ -= diff;
+
+      if (this.currentAppBarOffsetTop_ > 0) {
+        this.currentAppBarOffsetTop_ = 0;
+      } else if (Math.abs(this.currentAppBarOffsetTop_) > this.topAppBarHeight_) {
+        this.currentAppBarOffsetTop_ = -this.topAppBarHeight_;
+      }
+
+      this.moveTopAppBar_();
+    }
+  }
+
+  /**
+   * Top app bar resize handler that throttle/debounce functions that execute updates.
+   * @private
+   */
+  topAppBarResizeHandler_() {
+    // Throttle resize events 10 p/s
+    if (!this.resizeThrottleId_) {
+      this.resizeThrottleId_ = setTimeout(() => {
+        this.resizeThrottleId_ = INITIAL_VALUE;
+        this.throttledResizeHandler_();
+      }, _constants__WEBPACK_IMPORTED_MODULE_2__["numbers"].DEBOUNCE_THROTTLE_RESIZE_TIME_MS);
+    }
+
+    this.isCurrentlyBeingResized_ = true;
+
+    if (this.resizeDebounceId_) {
+      clearTimeout(this.resizeDebounceId_);
+    }
+
+    this.resizeDebounceId_ = setTimeout(() => {
+      this.topAppBarScrollHandler_();
+      this.isCurrentlyBeingResized_ = false;
+      this.resizeDebounceId_ = INITIAL_VALUE;
+    }, _constants__WEBPACK_IMPORTED_MODULE_2__["numbers"].DEBOUNCE_THROTTLE_RESIZE_TIME_MS);
+  }
+
+  /**
+   * Throttled function that updates the top app bar scrolled values if the
+   * top app bar height changes.
+   * @private
+   */
+  throttledResizeHandler_() {
+    const currentHeight = this.adapter_.getTopAppBarHeight();
+    if (this.topAppBarHeight_ !== currentHeight) {
+      this.wasDocked_ = false;
+
+      // Since the top app bar has a different height depending on the screen width, this
+      // will ensure that the top app bar remains in the correct location if
+      // completely hidden and a resize makes the top app bar a different height.
+      this.currentAppBarOffsetTop_ -= this.topAppBarHeight_ - currentHeight;
+      this.topAppBarHeight_ = currentHeight;
+    }
+    this.topAppBarScrollHandler_();
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (MDCTopAppBarFoundation);
+
+
+/***/ }),
+
 /***/ "./node_modules/autobind-decorator/lib/index.js":
 /*!******************************************************!*\
   !*** ./node_modules/autobind-decorator/lib/index.js ***!
@@ -2545,6 +3631,283 @@ function boundMethod(target, key, descriptor) {
 
 /***/ }),
 
+/***/ "./node_modules/preact-material-components/Base/MaterialComponent.js":
+/*!***************************************************************************!*\
+  !*** ./node_modules/preact-material-components/Base/MaterialComponent.js ***!
+  \***************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.MaterialComponent = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"));
+
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js"));
+
+var _ripple = __webpack_require__(/*! @material/ripple */ "./node_modules/@material/ripple/index.js");
+
+var _autobindDecorator = _interopRequireDefault(__webpack_require__(/*! autobind-decorator */ "./node_modules/autobind-decorator/lib/index.js"));
+
+var _preact = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.mjs");
+
+var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+  var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+  if ((typeof Reflect === "undefined" ? "undefined" : (0, _typeof2.default)(Reflect)) === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
+    if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+  }
+  return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var doNotRemoveProps = ['disabled'];
+/**
+ * Base class for every Material component in this package
+ * NOTE: every component should add a ref by the name of `control` to its root dom for autoInit Properties
+ *
+ * @export
+ * @class MaterialComponent
+ * @extends {Component}
+ */
+
+var MaterialComponent =
+/*#__PURE__*/
+function (_Component) {
+  (0, _inherits2.default)(MaterialComponent, _Component);
+
+  function MaterialComponent() {
+    (0, _classCallCheck2.default)(this, MaterialComponent);
+    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(MaterialComponent).apply(this, arguments));
+  }
+
+  (0, _createClass2.default)(MaterialComponent, [{
+    key: "render",
+    value: function render(props) {
+      if (!this.classText) {
+        this.classText = this.buildClassName(props);
+      } // Fetch a VNode
+
+
+      var componentProps = props;
+      var userDefinedClasses = componentProps.className || componentProps.class || ''; // We delete class props and add them later in the final
+      // step so every component does not need to handle user specified classes.
+
+      if (componentProps.class) {
+        delete componentProps.class;
+      }
+
+      if (componentProps.className) {
+        delete componentProps.className;
+      }
+
+      var element = this.materialDom(componentProps);
+      element.attributes = element.attributes || {};
+      element.attributes.className = "".concat(userDefinedClasses, " ").concat(this.getClassName(element)).split(' ').filter(function (value, index, self) {
+        return self.indexOf(value) === index && value !== '';
+      }) // Unique + exclude empty class names
+      .join(' '); // Clean this shit of proxy attributes
+
+      this.mdcProps.forEach(function (prop) {
+        // TODO: Fix this better
+        if (prop in doNotRemoveProps) {
+          return;
+        }
+
+        delete element.attributes[prop];
+      });
+      return element;
+    }
+    /** Attach the ripple effect */
+
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      if (this.props.ripple && this.control) {
+        this.ripple = new _ripple.MDCRipple(this.control);
+      }
+    }
+  }, {
+    key: "componentWillUpdate",
+    value: function componentWillUpdate(nextProps) {
+      if (this.MDComponent && this.mdcNotifyProps) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.mdcNotifyProps[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var prop = _step.value;
+
+            if (this.props[prop] !== nextProps[prop]) {
+              this.MDComponent[prop] = nextProps[prop];
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return != null) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.mdcProps[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var _prop = _step2.value;
+
+          if (this.props[_prop] !== nextProps[_prop]) {
+            this.classText = this.buildClassName(nextProps);
+            break;
+          }
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      if (this.ripple) {
+        this.ripple.destroy();
+      }
+    }
+  }, {
+    key: "afterComponentDidMount",
+    value: function afterComponentDidMount() {
+      if (this.MDComponent && this.mdcNotifyProps) {
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
+
+        try {
+          for (var _iterator3 = this.mdcNotifyProps[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var prop = _step3.value;
+            this.MDComponent[prop] = this.props[prop];
+          }
+        } catch (err) {
+          _didIteratorError3 = true;
+          _iteratorError3 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+              _iterator3.return();
+            }
+          } finally {
+            if (_didIteratorError3) {
+              throw _iteratorError3;
+            }
+          }
+        }
+      }
+    } // Shared setter for the root element ref
+
+  }, {
+    key: "setControlRef",
+    value: function setControlRef(control) {
+      this.control = control;
+    }
+    /** Build the className based on component names and mdc props */
+
+  }, {
+    key: "buildClassName",
+    value: function buildClassName(props) {
+      // Class name based on component name
+      var classText = 'mdc-' + this.componentName; // Loop over mdcProps to turn them into classNames
+
+      for (var propKey in props) {
+        if (props.hasOwnProperty(propKey)) {
+          var prop = props[propKey];
+
+          if (typeof prop === 'boolean' && prop) {
+            if (this.mdcProps.indexOf(propKey) !== -1) {
+              classText += " mdc-".concat(this.componentName, "--").concat(propKey);
+            }
+          }
+        }
+      }
+
+      return classText;
+    }
+    /** Returns the class name for element */
+
+  }, {
+    key: "getClassName",
+    value: function getClassName(element) {
+      if (!element) {
+        return '';
+      }
+
+      var attrs = element.attributes = element.attributes || {};
+      var classText = this.classText;
+
+      if (attrs.class) {
+        classText += ' ' + attrs.class;
+      }
+
+      if (attrs.className && attrs.className !== attrs.class) {
+        classText += ' ' + attrs.className;
+      }
+
+      return classText;
+    }
+  }]);
+  return MaterialComponent;
+}(_preact.Component);
+
+exports.MaterialComponent = MaterialComponent;
+
+__decorate([_autobindDecorator.default], MaterialComponent.prototype, "afterComponentDidMount", null);
+
+__decorate([_autobindDecorator.default], MaterialComponent.prototype, "setControlRef", null);
+
+__decorate([_autobindDecorator.default], MaterialComponent.prototype, "buildClassName", null);
+
+__decorate([_autobindDecorator.default], MaterialComponent.prototype, "getClassName", null);
+
+var _default = MaterialComponent;
+exports.default = _default;
+//# sourceMappingURL=MaterialComponent.js.map
+
+/***/ }),
+
 /***/ "./node_modules/preact-material-components/Button/style.css":
 /*!******************************************************************!*\
   !*** ./node_modules/preact-material-components/Button/style.css ***!
@@ -2567,10 +3930,342 @@ function boundMethod(target, key, descriptor) {
 
 /***/ }),
 
+/***/ "./node_modules/preact-material-components/Icon/index.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/preact-material-components/Icon/index.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.Icon = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"));
+
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js"));
+
+var _autobindDecorator = _interopRequireDefault(__webpack_require__(/*! autobind-decorator */ "./node_modules/autobind-decorator/lib/index.js"));
+
+var _preact = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.mjs");
+
+var _MaterialComponent2 = _interopRequireDefault(__webpack_require__(/*! ../Base/MaterialComponent */ "./node_modules/preact-material-components/Base/MaterialComponent.js"));
+
+var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+  var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+  if ((typeof Reflect === "undefined" ? "undefined" : (0, _typeof2.default)(Reflect)) === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
+    if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+  }
+  return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var Icon =
+/*#__PURE__*/
+function (_MaterialComponent) {
+  (0, _inherits2.default)(Icon, _MaterialComponent);
+
+  function Icon() {
+    var _this;
+
+    (0, _classCallCheck2.default)(this, Icon);
+    _this = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(Icon).apply(this, arguments));
+    _this.componentName = 'icon';
+    _this.mdcProps = [];
+    return _this;
+  }
+
+  (0, _createClass2.default)(Icon, [{
+    key: "materialDom",
+    value: function materialDom(props) {
+      var classes = ['material-icons']; // CardActionIcon sends className
+
+      if (props.className) {
+        classes.push(props.className);
+      }
+
+      return (0, _preact.h)("i", Object.assign({}, props, {
+        className: classes.join(' ')
+      }), props.children);
+    }
+  }]);
+  return Icon;
+}(_MaterialComponent2.default);
+
+exports.Icon = Icon;
+
+__decorate([_autobindDecorator.default], Icon.prototype, "materialDom", null);
+
+var _default = Icon;
+exports.default = _default;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
 /***/ "./node_modules/preact-material-components/List/style.css":
 /*!****************************************************************!*\
   !*** ./node_modules/preact-material-components/List/style.css ***!
   \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./node_modules/preact-material-components/TopAppBar/index.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/preact-material-components/TopAppBar/index.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = exports.TopAppBar = exports.TopAppBarTitle = exports.TopAppBarIcon = exports.TopAppBarSection = exports.TopAppBarRow = void 0;
+
+var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/get */ "./node_modules/@babel/runtime/helpers/get.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"));
+
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js"));
+
+var _topAppBar = __webpack_require__(/*! @material/top-app-bar */ "./node_modules/@material/top-app-bar/index.js");
+
+var _autobindDecorator = _interopRequireDefault(__webpack_require__(/*! autobind-decorator */ "./node_modules/autobind-decorator/lib/index.js"));
+
+var _preact = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.mjs");
+
+var _MaterialComponent6 = _interopRequireDefault(__webpack_require__(/*! ../Base/MaterialComponent */ "./node_modules/preact-material-components/Base/MaterialComponent.js"));
+
+var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
+  var c = arguments.length,
+      r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc,
+      d;
+  if ((typeof Reflect === "undefined" ? "undefined" : (0, _typeof2.default)(Reflect)) === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) {
+    if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+  }
+  return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var TopAppBarRow =
+/*#__PURE__*/
+function (_MaterialComponent) {
+  (0, _inherits2.default)(TopAppBarRow, _MaterialComponent);
+
+  function TopAppBarRow() {
+    var _this;
+
+    (0, _classCallCheck2.default)(this, TopAppBarRow);
+    _this = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(TopAppBarRow).apply(this, arguments));
+    _this.componentName = 'top-app-bar__row';
+    _this.mdcProps = [];
+    return _this;
+  }
+
+  (0, _createClass2.default)(TopAppBarRow, [{
+    key: "materialDom",
+    value: function materialDom(props) {
+      return (0, _preact.h)("div", Object.assign({}, props), this.props.children);
+    }
+  }]);
+  return TopAppBarRow;
+}(_MaterialComponent6.default);
+
+exports.TopAppBarRow = TopAppBarRow;
+
+__decorate([_autobindDecorator.default], TopAppBarRow.prototype, "materialDom", null);
+
+var TopAppBarSection =
+/*#__PURE__*/
+function (_MaterialComponent2) {
+  (0, _inherits2.default)(TopAppBarSection, _MaterialComponent2);
+
+  function TopAppBarSection() {
+    var _this2;
+
+    (0, _classCallCheck2.default)(this, TopAppBarSection);
+    _this2 = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(TopAppBarSection).apply(this, arguments));
+    _this2.componentName = 'top-app-bar__section';
+    _this2.mdcProps = ['align-start', 'align-end'];
+    return _this2;
+  }
+
+  (0, _createClass2.default)(TopAppBarSection, [{
+    key: "materialDom",
+    value: function materialDom(props) {
+      return (0, _preact.h)("section", Object.assign({}, props), props.children);
+    }
+  }]);
+  return TopAppBarSection;
+}(_MaterialComponent6.default);
+
+exports.TopAppBarSection = TopAppBarSection;
+
+__decorate([_autobindDecorator.default], TopAppBarSection.prototype, "materialDom", null);
+
+var TopAppBarIcon =
+/*#__PURE__*/
+function (_MaterialComponent3) {
+  (0, _inherits2.default)(TopAppBarIcon, _MaterialComponent3);
+
+  function TopAppBarIcon() {
+    var _this3;
+
+    (0, _classCallCheck2.default)(this, TopAppBarIcon);
+    _this3 = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(TopAppBarIcon).apply(this, arguments));
+    _this3.componentName = 'top-app-bar__icon';
+    _this3.mdcProps = [];
+    return _this3;
+  }
+
+  (0, _createClass2.default)(TopAppBarIcon, [{
+    key: "materialDom",
+    value: function materialDom(props) {
+      var className = props.navigation ? 'material-icons mdc-top-app-bar__navigation-icon' : 'material-icons';
+      return (0, _preact.h)("a", Object.assign({
+        className: className
+      }, props), props.children);
+    }
+  }]);
+  return TopAppBarIcon;
+}(_MaterialComponent6.default);
+
+exports.TopAppBarIcon = TopAppBarIcon;
+
+__decorate([_autobindDecorator.default], TopAppBarIcon.prototype, "materialDom", null);
+
+var TopAppBarTitle =
+/*#__PURE__*/
+function (_MaterialComponent4) {
+  (0, _inherits2.default)(TopAppBarTitle, _MaterialComponent4);
+
+  function TopAppBarTitle() {
+    var _this4;
+
+    (0, _classCallCheck2.default)(this, TopAppBarTitle);
+    _this4 = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(TopAppBarTitle).apply(this, arguments));
+    _this4.componentName = 'top-app-bar__title';
+    _this4.mdcProps = [];
+    return _this4;
+  }
+
+  (0, _createClass2.default)(TopAppBarTitle, [{
+    key: "materialDom",
+    value: function materialDom(props) {
+      return (0, _preact.h)("span", Object.assign({}, props), props.children);
+    }
+  }]);
+  return TopAppBarTitle;
+}(_MaterialComponent6.default);
+
+exports.TopAppBarTitle = TopAppBarTitle;
+
+__decorate([_autobindDecorator.default], TopAppBarTitle.prototype, "materialDom", null);
+
+var TopAppBar =
+/*#__PURE__*/
+function (_MaterialComponent5) {
+  (0, _inherits2.default)(TopAppBar, _MaterialComponent5);
+
+  function TopAppBar() {
+    var _this5;
+
+    (0, _classCallCheck2.default)(this, TopAppBar);
+    _this5 = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(TopAppBar).apply(this, arguments));
+    _this5.componentName = 'top-app-bar';
+    _this5.mdcProps = ['short', 'short-collapsed', 'fixed', 'prominent'];
+    return _this5;
+  }
+
+  (0, _createClass2.default)(TopAppBar, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      (0, _get2.default)((0, _getPrototypeOf2.default)(TopAppBar.prototype), "componentDidMount", this).call(this);
+
+      if (this.control) {
+        var comp = new _topAppBar.MDCTopAppBar(this.control);
+        comp.listen('MDCTopAppBar:nav', this.onNav);
+        this.MDComponent = comp;
+      }
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      (0, _get2.default)((0, _getPrototypeOf2.default)(TopAppBar.prototype), "componentWillUnmount", this).call(this);
+
+      if (this.MDComponent) {
+        this.MDComponent.unlisten('MDCTopAppBar:nav', this.onNav);
+        this.MDComponent.destroy();
+      }
+    }
+  }, {
+    key: "onNav",
+    value: function onNav(e) {
+      if (this.props.onNav) {
+        this.props.onNav(e);
+      }
+    }
+  }, {
+    key: "materialDom",
+    value: function materialDom(props) {
+      return (0, _preact.h)("header", Object.assign({
+        ref: this.setControlRef
+      }, props), props.children);
+    }
+  }]);
+  return TopAppBar;
+}(_MaterialComponent6.default);
+
+exports.TopAppBar = TopAppBar;
+TopAppBar.Section = TopAppBarSection;
+TopAppBar.Icon = TopAppBarIcon;
+TopAppBar.Title = TopAppBarTitle;
+TopAppBar.Row = TopAppBarRow;
+
+__decorate([_autobindDecorator.default], TopAppBar.prototype, "onNav", null);
+
+__decorate([_autobindDecorator.default], TopAppBar.prototype, "materialDom", null);
+
+var _default = TopAppBar;
+exports.default = _default;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ "./node_modules/preact-material-components/TopAppBar/style.css":
+/*!*********************************************************************!*\
+  !*** ./node_modules/preact-material-components/TopAppBar/style.css ***!
+  \*********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2749,69 +4444,6 @@ let MaterialComponent = (_class = class MaterialComponent extends preact__WEBPAC
 
 }, (_applyDecoratedDescriptor(_class.prototype, "afterComponentDidMount", [autobind_decorator__WEBPACK_IMPORTED_MODULE_1___default.a], Object.getOwnPropertyDescriptor(_class.prototype, "afterComponentDidMount"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "setControlRef", [autobind_decorator__WEBPACK_IMPORTED_MODULE_1___default.a], Object.getOwnPropertyDescriptor(_class.prototype, "setControlRef"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "buildClassName", [autobind_decorator__WEBPACK_IMPORTED_MODULE_1___default.a], Object.getOwnPropertyDescriptor(_class.prototype, "buildClassName"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "getClassName", [autobind_decorator__WEBPACK_IMPORTED_MODULE_1___default.a], Object.getOwnPropertyDescriptor(_class.prototype, "getClassName"), _class.prototype)), _class);
 /* harmony default export */ __webpack_exports__["default"] = (MaterialComponent);
-
-/***/ }),
-
-/***/ "./node_modules/preact-material-components/ts/Button/index.tsx":
-/*!*********************************************************************!*\
-  !*** ./node_modules/preact-material-components/ts/Button/index.tsx ***!
-  \*********************************************************************/
-/*! exports provided: ButtonIcon, Button, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ButtonIcon", function() { return ButtonIcon; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Button", function() { return Button; });
-/* harmony import */ var autobind_decorator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! autobind-decorator */ "./node_modules/autobind-decorator/lib/index.js");
-/* harmony import */ var autobind_decorator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(autobind_decorator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.mjs");
-/* harmony import */ var _Base_MaterialComponent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Base/MaterialComponent */ "./node_modules/preact-material-components/ts/Base/MaterialComponent.ts");
-/* harmony import */ var _Icon__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Icon */ "./node_modules/preact-material-components/ts/Icon/index.tsx");
-/* harmony import */ var _themeUtils_generateThemeClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../themeUtils/generateThemeClass */ "./node_modules/preact-material-components/ts/themeUtils/generateThemeClass.ts");
-var _class, _class2, _temp3;
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object['ke' + 'ys'](descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object['define' + 'Property'](target, property, desc); desc = null; } return desc; }
-
-
-
-
-
-
-class ButtonIcon extends _Icon__WEBPACK_IMPORTED_MODULE_3__["default"] {
-  constructor(...args) {
-    var _temp;
-
-    return _temp = super(...args), this.componentName = 'button__icon', _temp;
-  }
-
-}
-let Button = (_class = (_temp3 = _class2 = class Button extends _Base_MaterialComponent__WEBPACK_IMPORTED_MODULE_2__["default"] {
-  constructor(...args) {
-    var _temp2;
-
-    return _temp2 = super(...args), this.componentName = 'button', this.mdcProps = ['dense', 'raised', 'unelevated', 'outlined'], this.themeProps = ['primary', 'secondary'], _temp2;
-  }
-
-  materialDom(props) {
-    const ButtonElement = props.href ? 'a' : 'button';
-    let className = '';
-    this.themeProps.forEach(themeProp => {
-      if (themeProp in props && props[themeProp] !== false) {
-        className += Object(_themeUtils_generateThemeClass__WEBPACK_IMPORTED_MODULE_4__["default"])(themeProp) + ' ';
-      }
-    });
-    return Object(preact__WEBPACK_IMPORTED_MODULE_1__["h"])(ButtonElement, _extends({
-      ref: this.setControlRef
-    }, props, {
-      className: className
-    }), this.props.children);
-  }
-
-}, _class2.Icon = ButtonIcon, _temp3), (_applyDecoratedDescriptor(_class.prototype, "materialDom", [autobind_decorator__WEBPACK_IMPORTED_MODULE_0___default.a], Object.getOwnPropertyDescriptor(_class.prototype, "materialDom"), _class.prototype)), _class);
-/* harmony default export */ __webpack_exports__["default"] = (Button);
 
 /***/ }),
 
@@ -3267,21 +4899,6 @@ let List = (_class15 = (_temp12 = _class16 = class List extends _Base_MaterialCo
 
 }, _class16.Item = ListItem, _class16.LinkItem = ListLinkItem, _class16.ItemGraphic = ListItemGraphic, _class16.ItemMeta = ListItemMeta, _class16.Divider = ListDivider, _class16.TextContainer = ListTextContainer, _class16.PrimaryText = ListPrimaryText, _class16.SecondaryText = ListSecondaryText, _class16.Group = ListGroup, _class16.GroupHeader = ListGroupHeader, _temp12), (_applyDecoratedDescriptor(_class15.prototype, "materialDom", [autobind_decorator__WEBPACK_IMPORTED_MODULE_0___default.a], Object.getOwnPropertyDescriptor(_class15.prototype, "materialDom"), _class15.prototype)), _class15);
 /* harmony default export */ __webpack_exports__["default"] = (List);
-
-/***/ }),
-
-/***/ "./node_modules/preact-material-components/ts/themeUtils/generateThemeClass.ts":
-/*!*************************************************************************************!*\
-  !*** ./node_modules/preact-material-components/ts/themeUtils/generateThemeClass.ts ***!
-  \*************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = (function (prop) {
-  return `mdc-theme--${prop}-bg`;
-});
 
 /***/ }),
 
@@ -4448,7 +6065,7 @@ module.exports = {"message":"error__message___33p_h"};
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
-module.exports = {"app":"layout__app___35DR7"};
+module.exports = {"app":"layout__app___35DR7","main":"layout__main___32xUv"};
 
 /***/ }),
 
@@ -4689,15 +6306,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var preact__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! preact */ "./node_modules/preact/dist/preact.mjs");
 /* harmony import */ var preact_material_components_ts_Drawer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! preact-material-components/ts/Drawer */ "./node_modules/preact-material-components/ts/Drawer/index.tsx");
 /* harmony import */ var preact_material_components_ts_List__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! preact-material-components/ts/List */ "./node_modules/preact-material-components/ts/List/index.tsx");
-/* harmony import */ var preact_material_components_ts_Button__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! preact-material-components/ts/Button */ "./node_modules/preact-material-components/ts/Button/index.tsx");
-/* harmony import */ var css_layout_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! css/layout.scss */ "./src/css/layout.scss");
-/* harmony import */ var css_layout_scss__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(css_layout_scss__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var preact_material_components_Drawer_style_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! preact-material-components/Drawer/style.css */ "./node_modules/preact-material-components/Drawer/style.css");
-/* harmony import */ var preact_material_components_Drawer_style_css__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(preact_material_components_Drawer_style_css__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var preact_material_components_List_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! preact-material-components/List/style.css */ "./node_modules/preact-material-components/List/style.css");
-/* harmony import */ var preact_material_components_List_style_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(preact_material_components_List_style_css__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var preact_material_components_Button_style_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! preact-material-components/Button/style.css */ "./node_modules/preact-material-components/Button/style.css");
-/* harmony import */ var preact_material_components_Button_style_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(preact_material_components_Button_style_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! preact-material-components/TopAppBar */ "./node_modules/preact-material-components/TopAppBar/index.js");
+/* harmony import */ var preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var preact_material_components_Icon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! preact-material-components/Icon */ "./node_modules/preact-material-components/Icon/index.js");
+/* harmony import */ var preact_material_components_Icon__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(preact_material_components_Icon__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var preact_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! preact-router */ "./node_modules/preact-router/dist/preact-router.es.js");
+/* harmony import */ var css_layout_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! css/layout.scss */ "./src/css/layout.scss");
+/* harmony import */ var css_layout_scss__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(css_layout_scss__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var preact_material_components_Drawer_style_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! preact-material-components/Drawer/style.css */ "./node_modules/preact-material-components/Drawer/style.css");
+/* harmony import */ var preact_material_components_Drawer_style_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(preact_material_components_Drawer_style_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var preact_material_components_List_style_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! preact-material-components/List/style.css */ "./node_modules/preact-material-components/List/style.css");
+/* harmony import */ var preact_material_components_List_style_css__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(preact_material_components_List_style_css__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var preact_material_components_Button_style_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! preact-material-components/Button/style.css */ "./node_modules/preact-material-components/Button/style.css");
+/* harmony import */ var preact_material_components_Button_style_css__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(preact_material_components_Button_style_css__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var preact_material_components_TopAppBar_style_css__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! preact-material-components/TopAppBar/style.css */ "./node_modules/preact-material-components/TopAppBar/style.css");
+/* harmony import */ var preact_material_components_TopAppBar_style_css__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(preact_material_components_TopAppBar_style_css__WEBPACK_IMPORTED_MODULE_10__);
+
+
+
 
 
 
@@ -4725,19 +6351,28 @@ class Layout extends preact__WEBPACK_IMPORTED_MODULE_0__["Component"] {
 
   render() {
     return Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])("div", {
-      className: css_layout_scss__WEBPACK_IMPORTED_MODULE_4__["app"]
-    }, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_Button__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      onClick: this.openDrawer.bind(this)
-    }, "Open Drawer"), Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_Drawer__WEBPACK_IMPORTED_MODULE_1__["default"].TemporaryDrawer, {
+      className: css_layout_scss__WEBPACK_IMPORTED_MODULE_6__["app"]
+    }, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3___default.a, {
+      onNav: () => {}
+    }, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3___default.a.Row, null, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3___default.a.Section, {
+      "align-start": true
+    }, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3___default.a.Icon, {
+      onClick: this.openDrawer.bind(this),
+      navigation: true
+    }, "menu"), Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3___default.a.Title, null, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_router__WEBPACK_IMPORTED_MODULE_5__["Link"], {
+      href: "/"
+    }, "ComicBox"))), Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3___default.a.Section, {
+      "align-end": true
+    }, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_TopAppBar__WEBPACK_IMPORTED_MODULE_3___default.a.Icon, null, "more_vert")))), Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_Drawer__WEBPACK_IMPORTED_MODULE_1__["default"].TemporaryDrawer, {
       open: this.state.drawerOpened,
-      onClose: () => {
-        this.setState({
-          drawerOpened: false
-        });
-      }
+      onClose: () => this.setState({
+        drawerOpened: false
+      })
     }, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_Drawer__WEBPACK_IMPORTED_MODULE_1__["default"].DrawerHeader, {
       className: "mdc-theme--primary-bg"
-    }, "Components"), Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_Drawer__WEBPACK_IMPORTED_MODULE_1__["default"].DrawerContent, null, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_List__WEBPACK_IMPORTED_MODULE_2__["default"], null, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_List__WEBPACK_IMPORTED_MODULE_2__["default"].LinkItem, null, "Home")))), Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])("main", null, this.props.children));
+    }, "Components"), Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_Drawer__WEBPACK_IMPORTED_MODULE_1__["default"].DrawerContent, null, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_List__WEBPACK_IMPORTED_MODULE_2__["default"], null, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_ts_List__WEBPACK_IMPORTED_MODULE_2__["default"].LinkItem, null, Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])(preact_material_components_Icon__WEBPACK_IMPORTED_MODULE_4___default.a, null, "home"), "Home")))), Object(preact__WEBPACK_IMPORTED_MODULE_0__["h"])("main", {
+      class: css_layout_scss__WEBPACK_IMPORTED_MODULE_6__["main"]
+    }, this.props.children));
   }
 
 }
