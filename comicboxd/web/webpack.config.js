@@ -36,16 +36,6 @@ module.exports = (env, argv) => {
                         ]
                     },
                 },
-                // {
-                //     test: /\.jsx?$/,
-                //     loader: 'babel-loader',
-                //     options: {
-                //         plugins: [
-                //             ['@babel/plugin-transform-react-jsx', { pragma: 'preact.h' }]
-                //         ]
-                //     },
-                //     exclude: /node_modules/
-                // },
                 {
                     test: /\.scss$/,
                     use: [

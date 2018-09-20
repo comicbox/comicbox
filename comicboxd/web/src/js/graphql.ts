@@ -1,6 +1,6 @@
 
 export interface GraphqlResponse {
-    data: {[name: string]: any}
+    data: { [name: string]: any }
 }
 
 export async function Exec(query: string, variables?: any): Promise<GraphqlResponse> {
@@ -16,5 +16,10 @@ export async function Exec(query: string, variables?: any): Promise<GraphqlRespo
         })
     })
 
-    return await response.json()
+    let data = await response.json()
+
+    if (data.errors !== undefined) {
+        throw data.errors.map((err: any) => err.message).join(", ")
+    }
+    return data
 }

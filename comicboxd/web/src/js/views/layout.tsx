@@ -1,9 +1,7 @@
 import { Component, h } from 'preact'
-import Drawer from 'preact-material-components/ts/Drawer';
-import List from 'preact-material-components/ts/List';
-import Button from 'preact-material-components/ts/Button';
+import Drawer from 'preact-material-components/Drawer';
+import List from 'preact-material-components/List';
 import TopAppBar from 'preact-material-components/TopAppBar';
-import Icon from 'preact-material-components/Icon';
 import { Link } from 'preact-router';
 
 import * as s from 'css/layout.scss'
@@ -22,6 +20,22 @@ interface State {
 }
 
 export default class Layout extends Component<Props, State> {
+
+    get menu() {
+        return [
+            {
+                name: "Home",
+                icon: "home",
+                href: "/"
+            },
+            {
+                name: "Series",
+                icon: "collections_bookmark",
+                href: "/series"
+            },
+        ]
+    }
+
     constructor() {
         super();
         this.state = {
@@ -31,8 +45,7 @@ export default class Layout extends Component<Props, State> {
     componentDidMount() {
     }
 
-    openDrawer() {
-        console.log("open")
+    toggleDrawer() {
         this.setState({
             drawerOpened: !this.state.drawerOpened
         })
@@ -41,10 +54,10 @@ export default class Layout extends Component<Props, State> {
     render() {
 
         return <div className={s.app}>
-            <TopAppBar onNav={()=>{}}>
+            <TopAppBar onNav={() => { }}>
                 <TopAppBar.Row>
                     <TopAppBar.Section align-start>
-                        <TopAppBar.Icon onClick={this.openDrawer.bind(this)} navigation>menu</TopAppBar.Icon>
+                        <TopAppBar.Icon onClick={this.toggleDrawer.bind(this)} navigation>menu</TopAppBar.Icon>
                         <TopAppBar.Title>
                             <Link href="/">ComicBox</Link>
                         </TopAppBar.Title>
@@ -60,10 +73,14 @@ export default class Layout extends Component<Props, State> {
                 </Drawer.DrawerHeader>
                 <Drawer.DrawerContent>
                     <List>
-                        <List.LinkItem>
-                            <Icon>home</Icon>
-                            Home
-                        </List.LinkItem>
+                        {this.menu.map(item =>
+                            <Link href={item.href} onClick={this.toggleDrawer.bind(this)}>
+                                <List.LinkItem className={location.pathname === item.href ? "mdc-list-item--activated" : ""}>
+                                    <List.ItemGraphic>{item.icon}</List.ItemGraphic>
+                                    {item.name}
+                                </List.LinkItem>
+                            </Link>
+                        )}
                     </List>
                 </Drawer.DrawerContent>
             </Drawer.TemporaryDrawer>

@@ -3,14 +3,14 @@ import Layout from 'js/views/layout'
 import * as graphql from 'js/graphql'
 
 import * as s from 'css/book.scss'
-import Book from 'js/components/book';
+import Book, { BookData } from 'js/components/book';
 
 interface Props {
 
 }
 
 interface State {
-    books: any[]
+    books: BookData[]
 }
 
 export default class BookList extends Component<Props, State> {
@@ -32,16 +32,19 @@ export default class BookList extends Component<Props, State> {
                 }
               }
             }
-          }`).then(response => this.setState({ books: response.data.books.results }))
+          }`).then(response => this.setState({
+                books: response.data.books.results.map((book: any): BookData => {
+                    book.link = `/book/${book.id}`
+                    return book
+                })
+            }))
     }
 
     render() {
         console.log(this.state.books);
         let image = "https://comicbox.ca/book/01e91cb5-e8be-4463-bd5d-42a2e6271a59/page/0";
-        let books: any[] = this.state.books || [];
+        let books: BookData[] = this.state.books || [];
         return <div className={s.bookList} >
-            {books.map(book => <Book data={book} />)}
-            {books.map(book => <Book data={book} />)}
             {books.map(book => <Book data={book} />)}
         </div>
     }
