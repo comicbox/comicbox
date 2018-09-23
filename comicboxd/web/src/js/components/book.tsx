@@ -5,7 +5,7 @@ import { Link } from 'preact-router'
 import * as s from 'css/book.scss'
 import 'preact-material-components/Elevation/style.css'
 
-export interface PageData{
+export interface PageData {
     url: string
 }
 export interface BookData {
@@ -35,8 +35,8 @@ export default class Book extends Component<Props, State> {
         let title = ""
 
         if (book.pages[0]) {
-            image = "https://comicbox.ca/" + book.pages[0].url
-        }else{
+            image = book.pages[0].url + "?height=200"
+        } else {
             image = "https://mangadex.org/images/manga/7139.jpg?1536006542";
         }
 

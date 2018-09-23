@@ -28,6 +28,7 @@ type Book struct {
 	DateReleased     *time.Time `json:"date_released"     db:"date_released"`
 	PagesJSON        []byte     `json:"-"                 db:"pages"`
 	PageCount        int        `json:"page_count"        db:"page_count"`
+	Pages            []*Page    `json:"pages"             db:"-"`
 }
 
 type UserBook struct {

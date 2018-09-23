@@ -81,3 +81,26 @@ func (c Context) SGetInt64(key interface{}) (int64, bool) {
 	strVal, ok := value.(int64)
 	return strVal, ok
 }
+
+func (c Context) QGet(key string) (string, bool) {
+	values, ok := c.request.URL.Query()[key]
+	if !ok {
+		return "", false
+	}
+	if len(values) == 0 {
+		return "", false
+	}
+	return values[0], true
+}
+
+func (c Context) QGetInt64(key string) (int64, bool) {
+	value, ok := c.QGet(key)
+	if !ok {
+		return 0, false
+	}
+	i, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return 0, false
+	}
+	return i, true
+}

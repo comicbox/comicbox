@@ -159,8 +159,9 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 					return nil, err
 				}
 
-				for _, page := range allPages {
+				for i, page := range allPages {
 					if page.Type == t || !typeOk {
+						page.URL = fmt.Sprintf("/api/v1/book/%s/page/%d.png", book.ID, i)
 						pages = append(pages, page)
 					}
 				}

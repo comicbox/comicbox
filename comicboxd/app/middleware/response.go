@@ -3,6 +3,7 @@ package middleware
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"runtime/debug"
 
@@ -25,6 +26,13 @@ func Response(next http.Handler) http.Handler {
 				writeError(w, v, 500)
 			case string:
 				fmt.Fprintf(w, "%s", v)
+			case io.ReadCloser:
+				_, err := io.Copy(w, v)
+				if err != nil {
+					writeError(w, err, 500)
+					return
+				}
+				v.Close()
 			default:
 				writeJSON(w, v)
 			}
