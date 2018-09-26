@@ -24,7 +24,7 @@ export default class SeriesList extends Component<Props, State> {
               results {
                 name
                 books(take: 1) {
-                  pages(type: COVER) {
+                  cover {
                     url
                   }
                 }
@@ -34,7 +34,7 @@ export default class SeriesList extends Component<Props, State> {
                 series: response.data.series.results.map((serie: any): BookData => {
                     return {
                         series: serie.name,
-                        pages: serie.books[0].pages,
+                        cover: serie.books[0].cover,
                         link: `/series/${serie.name}`,
                         volume: null,
                         chapter: null,

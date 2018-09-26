@@ -19,7 +19,7 @@ module.exports = (env, argv) => {
         mode: process.env.NODE_ENV,
         devtool: devMode ? 'source-map' : '',
         entry: {
-            // polyfill: "babel-polyfill",
+            polyfill: "@babel/polyfill",
             main: path.join(paths.JS, 'index.tsx'),
         },
         module: {
@@ -27,14 +27,13 @@ module.exports = (env, argv) => {
                 {
                     test: /\.tsx?$/,
                     loader: 'babel-loader',
-                    options: {
-                        plugins: [
-                            ['@babel/plugin-transform-typescript', { isTSX: true, jsxPragma: "h" }],
-                            ['@babel/plugin-proposal-decorators', { "legacy": true }],
-                            ['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
-                            'transform-class-properties'
-                        ]
-                    },
+                },
+                {
+                    test: /\.js$/,
+                    loader: 'babel-loader',
+
+                    include: [/node_modules\/@material/],
+
                 },
                 {
                     test: /\.scss$/,
@@ -60,12 +59,7 @@ module.exports = (env, argv) => {
             modules: [
                 "node_modules",
                 paths.SRC
-            ],
-
-            alias: {
-                'react': 'preact',
-                'react-dom': 'preact'
-            }
+            ]
         },
         output: {
             path: paths.DIST,
@@ -75,7 +69,10 @@ module.exports = (env, argv) => {
         },
         plugins: [
             new HtmlWebpackPlugin({
-                chunks: ['main'],
+                chunks: [
+                    // "polyfill",
+                    'main',
+                ],
                 template: path.join(paths.SRC, 'index.html'),
                 filename: "index.html",
             }),

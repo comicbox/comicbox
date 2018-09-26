@@ -106,11 +106,15 @@ func Web(s *server.Server) {
 		if height, ok := c.QGetInt64("height"); ok {
 			img = resize.Resize(uint(height), 0, img, resize.Lanczos3)
 		}
+		quality, ok := c.QGetInt64("quality")
+		if !ok {
+			quality = 30
+		}
 
 		switch c.Var("ext") {
 		case "jpg":
 			jpeg.Encode(w, img, &jpeg.Options{
-				Quality: 30,
+				Quality: int(quality),
 			})
 			// w.Header().Set("Content-Type", "image/jpeg")
 		case "png":

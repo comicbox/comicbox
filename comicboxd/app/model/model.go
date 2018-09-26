@@ -67,3 +67,8 @@ func getTags(t reflect.Type, tag string) []string {
 	}
 	return tags
 }
+
+func GetArgs(moedel interface{}) {
+	// fields := GetTags(moedel, "db")
+
+}

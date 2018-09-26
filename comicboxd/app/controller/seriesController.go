@@ -7,6 +7,8 @@ import (
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/database"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/gql"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
+	"bitbucket.org/zwzn/comicbox/comicboxd/errors"
+	sq "github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 )
@@ -40,6 +42,9 @@ var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 				"skip": &graphql.ArgumentConfig{
 					Type: graphql.Int,
 				},
+				"read": &graphql.ArgumentConfig{
+					Type: graphql.Boolean,
+				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				c := gql.Ctx(p)
@@ -47,8 +52,25 @@ var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 				series := p.Source.(*model.Series)
 				skip, _ := p.Args["skip"].(int)
 				take, _ := p.Args["take"].(int)
+				read, readOk := p.Args["read"].(bool)
 
-				err := database.DB.Select(&books, `SELECT * FROM "book_user_book" where user_id=? and series=? limit ? offset ?;`, c.User.ID, series.Name, take, skip)
+				query := sq.Select("*").
+					From("book_user_book").
+					// OrderBy("chapter").
+					Offset(uint64(skip)).
+					Limit(uint64(take)).
+					Where(sq.Eq{"series": series.Name}).
+					Where(sq.Eq{"user_id": c.User.ID})
+
+				if readOk {
+					query = query.Where(sq.Eq{"read": read})
+				}
+
+				sqll, args, err := query.ToSql()
+				errors.Check(err)
+
+				err = database.DB.Select(&books, sqll, args...)
+				// err := database.DB.Select(&books, `SELECT * FROM "book_user_book" where user_id=? and series=? order by chapter limit ? offset ?;`, c.User.ID, series.Name, take, skip)
 				if err == sql.ErrNoRows {
 					return nil, nil
 				} else if err != nil {

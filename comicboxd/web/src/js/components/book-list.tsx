@@ -27,7 +27,7 @@ export default class BookList extends Component<Props, State> {
                 volume
                 chapter
                 series
-                pages(type: COVER) {
+                cover {
                   url
                 }
               }

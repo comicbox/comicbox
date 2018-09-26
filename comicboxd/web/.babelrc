@@ -1,0 +1,28 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "useBuiltIns": "usage",
+                "targets": {
+                    "chrome": "60"
+                }
+            }
+        ]
+    ],
+    "plugins": [
+        [
+            "@babel/plugin-transform-typescript",
+            {
+                "isTSX": true,
+                "jsxPragma": "h"
+            }
+        ],
+        [
+            "@babel/plugin-transform-react-jsx",
+            {
+                "pragma": "h"
+            }
+        ]
+    ]
+}

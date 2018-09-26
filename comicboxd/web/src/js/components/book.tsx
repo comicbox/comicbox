@@ -10,7 +10,7 @@ export interface PageData {
 }
 export interface BookData {
     series: string
-    pages: PageData[]
+    cover: PageData
     volume: number
     chapter: number
     title: string
@@ -34,8 +34,8 @@ export default class Book extends Component<Props, State> {
         let image = ""
         let title = ""
 
-        if (book.pages[0]) {
-            image = book.pages[0].url + "?height=200"
+        if (book.cover) {
+            image = book.cover.url + "?height=200"
         } else {
             image = "https://mangadex.org/images/manga/7139.jpg?1536006542";
         }

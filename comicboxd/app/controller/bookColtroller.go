@@ -18,6 +18,12 @@ type BookQuery struct {
 	Results  []*model.BookUserBook `json:"results"`
 }
 
+const (
+	Cover   = "FrontCover"
+	Deleted = "Deleted"
+	Story   = "Story"
+)
+
 var BookType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Book",
 	Fields: graphql.Fields{
@@ -137,6 +143,34 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Type:    graphql.Boolean,
 			Resolve: gql.ResolveVal("Read"),
 		},
+		"cover": &graphql.Field{
+			Type: PageType,
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				book := p.Source.(*model.BookUserBook)
+				allPages := []*model.Page{}
+				pages := []*model.Page{}
+
+				if len(book.PagesJSON) == 0 {
+					return pages, nil
+				}
+
+				err := json.Unmarshal(book.PagesJSON, &allPages)
+				if err != nil {
+					return nil, err
+				}
+				if len(allPages) == 0 {
+					return nil, nil
+				}
+				for i, page := range allPages {
+					page.URL = fmt.Sprintf("/api/v1/book/%s/page/%d.png", book.ID, i)
+					if page.Type == Cover {
+						return page, nil
+					}
+				}
+
+				return allPages[0], nil
+			},
+		},
 		"pages": &graphql.Field{
 			Type: graphql.NewList(PageType),
 			Args: graphql.FieldConfigArgument{
@@ -175,14 +209,14 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 var PageTypeEnum = graphql.NewEnum(graphql.EnumConfig{
 	Name: "PageType",
 	Values: graphql.EnumValueConfigMap{
-		"COVER": &graphql.EnumValueConfig{
-			Value: "FrontCover",
+		Cover: &graphql.EnumValueConfig{
+			Value: Cover,
 		},
-		"STORY": &graphql.EnumValueConfig{
-			Value: "Story",
+		Story: &graphql.EnumValueConfig{
+			Value: Story,
 		},
-		"DELETED": &graphql.EnumValueConfig{
-			Value: "Deleted",
+		Deleted: &graphql.EnumValueConfig{
+			Value: Deleted,
 		},
 	},
 })
