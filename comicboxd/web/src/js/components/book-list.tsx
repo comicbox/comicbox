@@ -17,7 +17,7 @@ export default class BookList extends Component<Props, State> {
 
     componentDidMount() {
         graphql.Exec(`query {
-            books(take: 100) {
+            books(take: 30) {
               page_info {
                 total
               }

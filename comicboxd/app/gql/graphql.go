@@ -9,6 +9,7 @@ import (
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
+	sq "github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
 	"github.com/graphql-go/graphql"
 	"github.com/jmoiron/sqlx"
@@ -89,6 +90,18 @@ func ToSQL(model interface{}, args map[string]interface{}) (string, []interface{
 	// query += strings.Join(wheres, " and ")
 	query += " COLLATE NOCASE"
 	return query, data
+}
+
+func Args(query sq.SelectBuilder, model interface{}, args map[string]interface{}) sq.SelectBuilder {
+
+	for name, val := range args {
+		switch name {
+		case "skip", "take":
+		default:
+			query = query.Where(sq.Eq{name: val})
+		}
+	}
+	return query
 }
 
 func QueryArgs(model interface{}, args graphql.FieldConfigArgument) graphql.FieldConfigArgument {
