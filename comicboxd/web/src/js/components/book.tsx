@@ -59,7 +59,7 @@ export default class Book extends Component<Props, State> {
         return <Elevation z={2} className={s.book}>
             <Link href={book.link}>
                 <div className={s.cover} style={{ backgroundImage: `url(${image})` }}></div>
-                <div className={s.series} title={book.series}>{book.series}</div>
+                <div className={s.series} title={book.series}>{book.series || "\u00A0"}</div>
                 <div className={s.title} title={title}>{title}</div>
             </Link>
         </Elevation>

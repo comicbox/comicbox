@@ -92,13 +92,46 @@ func ToSQL(model interface{}, args map[string]interface{}) (string, []interface{
 	return query, data
 }
 
-func Args(query sq.SelectBuilder, model interface{}, args map[string]interface{}) sq.SelectBuilder {
+func Args(query sq.SelectBuilder, m interface{}, args map[string]interface{}) sq.SelectBuilder {
 
 	for name, val := range args {
 		switch name {
 		case "skip", "take":
+		case "sort":
+			query = query.OrderBy(val.(string))
+		case "search":
+			exprs := []sq.Sqlizer{}
+			// for _, tag := range model.GetTags(m, "db") {
+			// 	exprs = append(exprs, sq.Expr(fmt.Sprintf("%s like ?", tag), fmt.Sprint("%", val, "%")))
+			// }
+			for name := range QueryArgs(m, nil) {
+				if strings.HasSuffix(name, "_co") {
+					exprs = append(exprs, sq.Expr(fmt.Sprintf("%s like ?", name[:len(name)-3]), fmt.Sprint("%", val, "%")))
+				}
+			}
+			query = query.Where(sq.Or(exprs))
 		default:
-			query = query.Where(sq.Eq{name: val})
+			parts := strings.Split(name, "_")
+			subName := ""
+			if len(parts) > 1 {
+				subName = strings.Join(parts[:len(parts)-1], "_")
+			}
+			switch parts[len(parts)-1] {
+			case "lt":
+				query = query.Where(sq.Lt{subName: val})
+			case "gt":
+				query = query.Where(sq.Gt{subName: val})
+			case "ne":
+				query = query.Where(sq.NotEq{subName: val})
+			case "sw":
+				query = query.Where(sq.Expr(fmt.Sprintf("%s like ?", subName), fmt.Sprint(val, "%")))
+			case "ew":
+				query = query.Where(sq.Expr(fmt.Sprintf("%s like ?", subName), fmt.Sprint("%", val)))
+			case "co":
+				query = query.Where(sq.Expr(fmt.Sprintf("%s like ?", subName), fmt.Sprint("%", val, "%")))
+			default:
+				query = query.Where(sq.Eq{name: val})
+			}
 		}
 	}
 	return query
@@ -124,30 +157,78 @@ func QueryArgs(model interface{}, args graphql.FieldConfigArgument) graphql.Fiel
 			continue
 		}
 
+		str := false
+		numeric := false
+		boolean := false
+
 		tag, ok := field.Tag.Lookup("db")
 		if ok && tag != "-" {
 			switch val.(type) {
 			case string, *string:
 				fieldType = graphql.String
-			case int, int64, int32, int16, int8,
-				*int, *int64, *int32, *int16, *int8:
+				str = true
+
+			case int, int64, int32, int16, int8, *int, *int64, *int32, *int16, *int8:
 				fieldType = graphql.Int
+				numeric = true
+
 			case float32, float64, *float32, *float64:
 				fieldType = graphql.Float
+				numeric = true
+
 			case time.Time, *time.Time:
 				fieldType = graphql.DateTime
+				numeric = true
+
+			case bool, *bool:
+				fieldType = graphql.Boolean
+				boolean = true
+
 			}
 
 			if fieldType != nil {
 				fields[tag] = &graphql.ArgumentConfig{
 					Type: fieldType,
 				}
+				if !boolean {
+					fields[tag+"_ne"] = &graphql.ArgumentConfig{
+						Type: fieldType,
+					}
+				}
+				if str {
+					fields[tag+"_sw"] = &graphql.ArgumentConfig{
+						Type: fieldType,
+					}
+					fields[tag+"_ew"] = &graphql.ArgumentConfig{
+						Type: fieldType,
+					}
+					fields[tag+"_co"] = &graphql.ArgumentConfig{
+						Type: fieldType,
+					}
+				}
+				if numeric {
+					fields[tag+"_lt"] = &graphql.ArgumentConfig{
+						Type: fieldType,
+					}
+					fields[tag+"_gt"] = &graphql.ArgumentConfig{
+						Type: fieldType,
+					}
+				}
 			}
 		}
 	}
 
-	for name, field := range args {
-		fields[name] = field
+	fields["search"] = &graphql.ArgumentConfig{
+		Type: graphql.String,
+	}
+	fields["sort"] = &graphql.ArgumentConfig{
+		Type: graphql.String,
+	}
+
+	if args != nil {
+		for name, field := range args {
+			fields[name] = field
+		}
 	}
 
 	return fields

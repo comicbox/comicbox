@@ -270,17 +270,14 @@ var BookQueries = graphql.Fields{
 		},
 	},
 	"books": &graphql.Field{
-		Args: graphql.FieldConfigArgument{
+		Args: gql.QueryArgs(model.BookUserBook{}, graphql.FieldConfigArgument{
 			"take": &graphql.ArgumentConfig{
 				Type: graphql.NewNonNull(graphql.Int),
 			},
 			"skip": &graphql.ArgumentConfig{
 				Type: graphql.Int,
 			},
-			"series": &graphql.ArgumentConfig{
-				Type: graphql.String,
-			},
-		},
+		}),
 		Type: BookQueryType,
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			c := gql.Ctx(p)
@@ -290,38 +287,35 @@ var BookQueries = graphql.Fields{
 			if 0 > take || take > 100 {
 				return nil, fmt.Errorf("you must take between 0 and 100 items")
 			}
-			// data := []interface{}{c.User.ID}
-			// wheres, whereData := gql.ToSQL(model.BookUserBook{}, p.Args)
-			// data = append(data, whereData...)
 
 			query := sq.Select().
 				From("book_user_book").
-				OrderBy("series").
-				OrderBy("chapter").
-				OrderBy("volume").
-				Offset(uint64(skip)).
-				Limit(uint64(take)).
 				Where(sq.Eq{"user_id": c.User.ID})
 
 			query = gql.Args(query, model.BookUserBook{}, p.Args)
-
+			query = query.
+				OrderBy("series").
+				OrderBy("chapter").
+				OrderBy("volume")
 			sqll, args, err := query.Columns("count(*)").ToSql()
 			errors.Check(err)
 
 			var count int
 			err = database.DB.Get(&count, sqll, args...)
-			// err := database.DB.Get(&count, fmt.Sprintf(`SELECT count(*) FROM "book_user_book" where user_id=? %s;`, wheres), data...)
 			if err == sql.ErrNoRows {
 				count = 0
 			} else if err != nil {
 				return nil, err
 			}
 			books := []*model.BookUserBook{}
-			sqll, args, err = query.Columns("*").ToSql()
+			sqll, args, err = query.
+				Columns("*").
+				Offset(uint64(skip)).
+				Limit(uint64(take)).
+				ToSql()
 			errors.Check(err)
 
 			err = database.DB.Select(&books, sqll, args...)
-			// err = database.DB.Select(&books, fmt.Sprintf(`SELECT * FROM "book_user_book" where user_id=? %s limit ? offset ?;`, wheres), append(data, take, skip)...)
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {

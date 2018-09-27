@@ -138,7 +138,7 @@ var SeriesQueries = graphql.Fields{
 		},
 	},
 	"series": &graphql.Field{
-		Args: graphql.FieldConfigArgument{
+		Args: gql.QueryArgs(model.Series{}, graphql.FieldConfigArgument{
 			"take": &graphql.ArgumentConfig{
 				Type: graphql.NewNonNull(graphql.Int),
 			},
@@ -148,7 +148,7 @@ var SeriesQueries = graphql.Fields{
 			"list": &graphql.ArgumentConfig{
 				Type: ListEnum,
 			},
-		},
+		}),
 		Type: SeriesQueryType,
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			c := gql.Ctx(p)
@@ -159,8 +159,17 @@ var SeriesQueries = graphql.Fields{
 				return nil, fmt.Errorf("you must take between 0 and 100 items")
 			}
 
+			query := sq.Select().
+				From("series").
+				Where(sq.Eq{"user_id": c.User.ID})
+
+			query = gql.Args(query, model.BookUserBook{}, p.Args)
+			query = query.OrderBy("name")
+			sqll, args, err := query.Columns("count(*)").ToSql()
+			errors.Check(err)
+
 			var count int
-			err := database.DB.Get(&count, `SELECT count(*) FROM "series" where user_id=?;`, c.User.ID)
+			err = database.DB.Get(&count, sqll, args...)
 			if err == sql.ErrNoRows {
 				count = 0
 			} else if err != nil {
@@ -168,8 +177,14 @@ var SeriesQueries = graphql.Fields{
 			}
 
 			series := []*model.Series{}
+			sqll, args, err = query.
+				Columns("*").
+				Offset(uint64(skip)).
+				Limit(uint64(take)).
+				ToSql()
+			errors.Check(err)
 
-			err = database.DB.Select(&series, `SELECT * FROM "series" where user_id=? limit ? offset ?;`, c.User.ID, take, skip)
+			err = database.DB.Select(&series, sqll, args...)
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {
