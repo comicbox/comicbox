@@ -2,9 +2,7 @@ package middleware
 
 import (
 	"database/sql"
-	"encoding/base64"
 	"net/http"
-	"strings"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/controller"
@@ -28,19 +26,9 @@ func Auth(next http.Handler) http.Handler {
 		}
 
 		if ctx.User == nil {
+			user, pass, ok := r.BasicAuth()
 
-			auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
-
-			if len(auth) != 2 || auth[0] != "Basic" {
-				http.Error(w, "authorization failed", http.StatusUnauthorized)
-				return
-			}
-
-			payload, _ := base64.StdEncoding.DecodeString(auth[1])
-			pair := strings.SplitN(string(payload), ":", 2)
-			user, pass := pair[0], pair[1]
-
-			if len(pair) != 2 {
+			if !ok {
 				http.Error(w, "authorization failed", http.StatusUnauthorized)
 				return
 			}

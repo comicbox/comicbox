@@ -33,6 +33,10 @@ func Ctx(r *http.Request) *Context {
 	return c
 }
 
+func CtxSet(r *http.Request, c *Context) {
+	context.Set(r, "context", c)
+}
+
 func (c Context) Var(key string) string {
 	if c.vars == nil {
 		c.vars = mux.Vars(c.request)

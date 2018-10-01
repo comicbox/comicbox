@@ -5,11 +5,24 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 
+	"bitbucket.org/zwzn/comicbox/comicboxd/app"
 	"github.com/graphql-go/graphql"
+	"github.com/graphql-go/handler"
 )
 
-func Query(query string, vars, response interface{}) error {
+var GQLHandler *handler.Handler
+
+type CloserBuffer struct {
+	*bytes.Buffer
+}
+
+func (cb *CloserBuffer) Close() error {
+	return nil
+}
+
+func Query(r *http.Request, query string, vars map[string]interface{}, response interface{}) error {
 	request := map[string]interface{}{
 		// "operationName": "getBook",
 		"query":     query,
@@ -20,16 +33,18 @@ func Query(query string, vars, response interface{}) error {
 	if err != nil {
 		return err
 	}
-	buf := bytes.NewBuffer(b)
-	resp, err := http.Post("http://localhost:8080/graphql", "application/json", buf)
-	if err != nil {
-		return err
-	}
+
+	resp := httptest.NewRecorder()
+	newR := httptest.NewRequest("POST", "http://0.0.0.0/graphql", &CloserBuffer{bytes.NewBuffer(b)})
+
+	app.CtxSet(newR, app.Ctx(r))
+
+	GQLHandler.ServeHTTP(resp, newR)
 
 	qr := graphql.Result{}
 
 	json.NewDecoder(resp.Body).Decode(&qr)
-	resp.Body.Close()
+	// resp.Body.Close()
 
 	for _, err := range qr.Errors {
 		return err

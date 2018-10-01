@@ -559,7 +559,7 @@ func BookPage(w http.ResponseWriter, r *http.Request) {
 	bookID := c.Var("id")
 	pageNum := int(c.VarInt64("page"))
 	book := model.BookUserBook{}
-	err := gql.Query(`query getBook($id:ID!) {
+	err := gql.Query(r, `query getBook($id:ID!) {
 		book(id: $id){
 			file
 			pages {
@@ -567,7 +567,7 @@ func BookPage(w http.ResponseWriter, r *http.Request) {
 				type
 			}
 		}
-	}`, obj{"id": bookID}, &book)
+	}`, map[string]interface{}{"id": bookID}, &book)
 	errors.Check(err)
 
 	pages := book.Pages

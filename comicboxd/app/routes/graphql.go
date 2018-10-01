@@ -6,8 +6,8 @@ import (
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/controller"
+	"bitbucket.org/zwzn/comicbox/comicboxd/app/gql"
 	"bitbucket.org/zwzn/comicbox/comicboxd/errors"
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
@@ -39,18 +39,16 @@ func GraphQL(r *mux.Router) {
 		// GraphiQL: true,
 		RootObjectFn: func(ctx context.Context, r *http.Request) map[string]interface{} {
 			c := app.Ctx(r)
-			strUserID := r.Header.Get("x-user")
-
-			userID, err := uuid.Parse(strUserID)
-			if err == nil {
-				c.User.ID = userID
-			}
-
+			// if c.User == nil {
+			// 	c.User = &model.User{}
+			// }
 			return map[string]interface{}{
 				"context": c,
 			}
 		},
 	})
+
+	gql.GQLHandler = h
 
 	r.Handle("/graphql", h)
 }
