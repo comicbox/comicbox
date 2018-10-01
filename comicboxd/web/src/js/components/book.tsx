@@ -35,7 +35,7 @@ export default class Book extends Component<Props, State> {
         let title = ""
 
         if (book.cover) {
-            image = book.cover.url + "?height=200"
+            image = book.cover.url + "?height=200&quality=30"
         } else {
             image = "https://mangadex.org/images/manga/7139.jpg?1536006542";
         }

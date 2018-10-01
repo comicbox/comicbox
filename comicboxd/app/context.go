@@ -27,12 +27,7 @@ func Ctx(r *http.Request) *Context {
 		return ctx.(*Context)
 	}
 
-	c := &Context{
-		User: &model.User{
-			Name:     "Guest",
-			Username: "guest",
-		},
-	}
+	c := &Context{}
 	c.request = r
 	context.Set(r, "context", c)
 	return c

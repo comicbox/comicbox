@@ -23,3 +23,7 @@ export async function Exec(query: string, variables?: any): Promise<GraphqlRespo
     }
     return data
 }
+
+// export async function gql(strings: string[], ...args: any[]) {
+
+// }

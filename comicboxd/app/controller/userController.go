@@ -1,12 +1,14 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/gql"
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
 	"bitbucket.org/zwzn/comicbox/comicboxd/errors"
+	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -40,47 +42,9 @@ func (a *user) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.SSet("user_id", user.ID)
+	c.SSet("user_id", user.ID.String())
 
 	c.Response = user
-}
-
-func (a *user) Create(w http.ResponseWriter, r *http.Request) {
-	c := app.Ctx(r)
-
-	// since password doesn't have a json tag i need to make a new struct
-	body := struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-		Name     string `json:"name"`
-	}{}
-	err := c.DecodeBody(&body)
-	if err != nil {
-		c.Response = err
-		return
-	}
-
-	hash, err := HashPassword(body.Password)
-	user := model.User{
-		Username: body.Username,
-		Password: hash,
-		Name:     body.Name,
-	}
-
-	_, err = c.DB.NamedExec(model.InsertSQL("user", user), user)
-	if err != nil {
-		c.Response = err
-		return
-	}
-	user2 := model.User{}
-
-	err = c.DB.Get(&user2, `select * from user where username=?`, user.Username)
-	if err != nil {
-		c.Response = err
-		return
-	}
-
-	c.Response = user2
 }
 
 // from https://gowebexamples.com/password-hashing/
@@ -127,6 +91,83 @@ var UserQueries = graphql.Fields{
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			c := gql.Ctx(p)
 			return c.User, nil
+		},
+	},
+}
+
+var UserInput = graphql.NewInputObject(graphql.InputObjectConfig{
+	Name: "UserInput",
+	Fields: graphql.InputObjectConfigFieldMap{
+		"name": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"username": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+		"password": &graphql.InputObjectFieldConfig{
+			Type: graphql.String,
+		},
+	},
+})
+
+var UserMutations = graphql.Fields{
+	"user": &graphql.Field{
+		Type: UserType,
+		Args: graphql.FieldConfigArgument{
+			"id": &graphql.ArgumentConfig{
+				Type: graphql.ID,
+			},
+			"user": &graphql.ArgumentConfig{
+				Type: graphql.NewNonNull(UserInput),
+			},
+		},
+		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			var err error
+			c := gql.Ctx(p)
+
+			if (c.User.ID == uuid.UUID{}) {
+				return nil, fmt.Errorf("you must be logged in to mutate series")
+			}
+
+			id, ok := p.Args["id"]
+
+			if ok {
+				numRows := 0
+				err := c.DB.Get(&numRows, "select count(*) from user where id=?", id)
+				if err != nil {
+					return nil, err
+				}
+				if numRows == 0 {
+					return nil, fmt.Errorf("no user with id %s", id)
+				}
+			} else {
+				id, err = uuid.NewRandom()
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			userMap := p.Args["user"].(map[string]interface{})
+			hash, err := HashPassword(userMap["password"].(string))
+			if err != nil {
+				return nil, err
+			}
+
+			userMap["password"] = hash
+			err = gql.InsertOrUpdate(c.DB, "user", model.User{}, userMap, map[string]interface{}{
+				"id": id,
+			})
+			if err != nil {
+				return nil, err
+			}
+
+			user := &model.User{}
+			err = c.DB.Get(user, "select * from user where id=?", id)
+			if err != nil {
+				return nil, err
+			}
+
+			return user, nil
 		},
 	},
 }

@@ -8,6 +8,7 @@ func Global(r *mux.Router) {
 	r.Use(Recover)
 	r.Use(Log)
 	r.Use(Database)
-	r.Use(Session)
 	r.Use(Response)
+	r.Use(Session)
+	// r.Use(Auth)
 }
