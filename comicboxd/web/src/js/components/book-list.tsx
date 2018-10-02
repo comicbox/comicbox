@@ -1,9 +1,28 @@
 import { Component, h } from 'preact'
 import Layout from 'js/views/layout'
-import * as graphql from 'js/graphql'
 
 import * as s from 'css/book.scss'
 import Book, { BookData } from 'js/components/book';
+import { query } from 'js/graphql';
+
+
+const GET_BOOKS = `
+books(take: 15) {
+  page_info {
+    total
+  }
+  results {
+    id
+    title
+    volume
+    chapter
+    series
+    cover {
+      url
+    }
+  }
+}
+`
 
 interface Props {
 
@@ -16,28 +35,12 @@ interface State {
 export default class BookList extends Component<Props, State> {
 
     componentDidMount() {
-        graphql.Exec(`query {
-            books(take: 15) {
-              page_info {
-                total
-              }
-              results {
-                id
-                title
-                volume
-                chapter
-                series
-                cover {
-                  url
-                }
-              }
-            }
-          }`).then(response => this.setState({
-                books: response.data.books.results.map((book: any): BookData => {
-                    book.link = `/book/${book.id}`
-                    return book
-                })
-            }))
+        query(GET_BOOKS).then(books => this.setState({
+            books: books.results.map((book: any): BookData => {
+                book.link = `/book/${book.id}`
+                return book
+            })
+        }))
     }
 
     render() {

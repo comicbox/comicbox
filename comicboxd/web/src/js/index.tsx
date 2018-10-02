@@ -7,26 +7,26 @@ import { Exec } from 'js/graphql'
 
 import "css/app.scss"
 
-(async () => {
+// (async () => {
 
-    let data = await fetch("/login", {
-        method: "POST",
-        body: JSON.stringify({
-            username: "adam",
-            password: "test"
-        })
-    }).then(r => r.json())
+//     let data = await fetch("/login", {
+//         method: "POST",
+//         body: JSON.stringify({
+//             username: "adam",
+//             password: "test"
+//         })
+//     }).then(r => r.json())
 
-    console.log(data)
+//     console.log(data)
 
-    let me = await Exec(`{
-        me {
-            id
-        }
-    }`)
+//     let me = await Exec(`{
+//         me {
+//             id
+//         }
+//     }`)
 
-    console.log(me.data.me)
-})()
+//     console.log(me.data.me)
+// })()
 
 render((
     <Router>
