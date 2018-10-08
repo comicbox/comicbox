@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"bitbucket.org/zwzn/comicbox/comicboxd/app/middleware"
 	_ "github.com/golang-migrate/migrate/source/file"
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
@@ -23,8 +22,6 @@ func New() *Server {
 	s := &Server{}
 
 	s.Router = mux.NewRouter()
-
-	middleware.Global(s.Router)
 
 	s.srv = &http.Server{
 		Addr:    ":8080",

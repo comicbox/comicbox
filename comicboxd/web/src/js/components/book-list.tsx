@@ -1,13 +1,11 @@
 import { Component, h } from 'preact'
-import Layout from 'js/views/layout'
-
 import * as s from 'css/book.scss'
 import Book, { BookData } from 'js/components/book';
 import { query } from 'js/graphql';
 
-
-const GET_BOOKS = `
-books(take: 15) {
+const BookListTypes = { take: "Int!", skip: "Int", series: "String" }
+const BookListQuery = `
+books(take: $take skip: $skip series: $series) {
   page_info {
     total
   }
@@ -25,7 +23,8 @@ books(take: 15) {
 `
 
 interface Props {
-
+    series: string
+    page: number
 }
 
 interface State {
@@ -35,7 +34,11 @@ interface State {
 export default class BookList extends Component<Props, State> {
 
     componentDidMount() {
-        query(GET_BOOKS).then(books => this.setState({
+        query(BookListQuery, BookListTypes, {
+            series: this.props.series,
+            take: 15,
+            skip: this.props.page * 15
+        }).then(books => this.setState({
             books: books.results.map((book: any): BookData => {
                 book.link = `/book/${book.id}`
                 return book

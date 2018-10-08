@@ -13,13 +13,17 @@ import (
 
 func Web(s *server.Server) {
 
-	auth := s.Router.PathPrefix("/").Subrouter()
-	auth.Use(middleware.Auth)
-	GraphQL(auth)
+	middleware.Global(s.Router)
 
-	auth.HandleFunc("/api/v1/book/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}/page/{page:[0-9]+}.{ext:(?:jpg|png)}", controller.BookPage).Methods("GET")
+	s.Router.HandleFunc("/login", controller.User.Login).Methods("POST")
 
-	auth.HandleFunc("/login", controller.User.Login).Methods("POST")
+	if auth := s.Router.PathPrefix("/").Subrouter(); true {
+		auth.Use(middleware.Auth)
+
+		GraphQL(auth)
+
+		auth.HandleFunc("/api/v1/book/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}/page/{page:[0-9]+}.{ext:(?:jpg|png)}", controller.BookPage).Methods("GET")
+	}
 
 	s.Router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(&assetfs.AssetFS{
 		Asset:     data.Asset,

@@ -1,27 +1,27 @@
 import { Component, h } from 'preact'
 import Layout from 'js/views/layout'
-import SeriesList from 'js/components/series-list';
+import BookList from 'js/components/book-list';
 import * as s from 'css/home.scss'
 
 interface Props {
-
+    matches?: { [name: string]: string }
 }
 
 interface State {
 
 }
 
-export default class Home extends Component<Props, State> {
+export default class SeriesView extends Component<Props, State> {
 
     componentDidMount() {
-
+        console.log()
     }
 
     render() {
         console.log(this.props);
 
         return <Layout>
-            <SeriesList list="READING" />
+            <BookList series={this.props.matches.name} page={Number(this.props.matches.page) || 0} />
         </Layout >
     }
 

@@ -3,35 +3,32 @@ import Router from 'preact-router';
 import Home from 'js/views/home'
 import Error from 'js/views/error';
 import SeriesIndex from 'js/views/series-index';
-import { Exec } from 'js/graphql'
+import { query } from 'js/graphql'
 
 import "css/app.scss"
+import SeriesView from 'js/views/series-view';
 
-// (async () => {
+const jsx = <Router>
+    <Home path="/" />
+    <SeriesIndex path="/series" />
+    <SeriesView path="/series/:name/:page?" />
+    <Error default />
+</Router>
 
-//     let data = await fetch("/login", {
-//         method: "POST",
-//         body: JSON.stringify({
-//             username: "adam",
-//             password: "test"
-//         })
-//     }).then(r => r.json())
+query(`me { id }`).catch(async err => {
+    let data = await fetch("/login", {
+        method: "POST",
+        body: JSON.stringify({
+            username: "adam",
+            password: "test"
+        })
+    }).then(r => r.json())
 
-//     console.log(data)
+    console.log("login:", data)
 
-//     let me = await Exec(`{
-//         me {
-//             id
-//         }
-//     }`)
+    render(jsx, document.getElementById("app"));
+})
 
-//     console.log(me.data.me)
-// })()
 
-render((
-    <Router>
-        <Home path="/" />
-        <SeriesIndex path="/series" />
-        <Error default />
-    </Router>
-), document.getElementById("app"));
+render(jsx, document.getElementById("app"));
+

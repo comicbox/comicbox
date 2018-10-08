@@ -1,11 +1,11 @@
 import { Component, h } from 'preact'
-import Layout from 'js/views/layout'
 import * as s from 'css/book.scss'
 import Book, { BookData } from 'js/components/book';
 import { query } from 'js/graphql';
 
-const GET_SERIES = `
-series(take: 100 list: READING) {
+const SeriesListTypes = { list: "List" }
+const SeriesListQuery = `
+series(take: 100 list: $list) {
   page_info {
     total
   }
@@ -21,7 +21,7 @@ series(take: 100 list: READING) {
 `
 
 interface Props {
-
+    list?: "READING" | "COMPLETED" | "PAUSED" | "DROPPED" | "PLANNING"
 }
 
 interface State {
@@ -31,7 +31,7 @@ interface State {
 export default class SeriesList extends Component<Props, State> {
 
     componentDidMount() {
-        query(GET_SERIES).then(series => this.setState({
+        query(SeriesListQuery, SeriesListTypes, this.props).then(series => this.setState({
             series: series.results.map((serie: any): BookData => {
                 return {
                     series: serie.name,
