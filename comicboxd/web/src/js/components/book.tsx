@@ -1,6 +1,8 @@
 import { Component, h } from 'preact'
 import Elevation from 'preact-material-components/Elevation'
 import { Link } from 'preact-router'
+import Image from 'pimg/preact';
+
 
 import * as s from 'css/book.scss'
 import 'preact-material-components/Elevation/style.css'
@@ -58,7 +60,10 @@ export default class Book extends Component<Props, State> {
 
         return <Elevation z={2} className={s.book}>
             <Link href={book.link}>
-                <div className={s.cover} style={{ backgroundImage: `url(${image})` }}></div>
+                <div className={s.cover}>
+                    <Image fetchOnDemand src={image} />
+
+                </div>
                 <div className={s.series} title={book.series}>{book.series || "\u00A0"}</div>
                 <div className={s.title} title={title}>{title}</div>
             </Link>

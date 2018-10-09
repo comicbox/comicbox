@@ -22,14 +22,28 @@
         $title-padding: 5px;
 
         .cover {
+            // padding-bottom: calc(100% / (#{$aspect-ratio}));
+            // width: 100%;
+            overflow: hidden; // background-repeat: no-repeat;
+            // background-size: contain;
+            // background-position: center;
+            // height: 200px;
+            img {
+                &:global {
+                    &.pimg__placeholder {
+                        height: 200px;
+                    }
+                } // zoom: 2; //increase if you have very small images
+                display: block;
+                margin: auto;
 
-            padding-bottom: calc(100% / (#{$aspect-ratio}));
-            width: 100%;
-            overflow: hidden;
+                height: auto;
+                max-height: 100%;
 
-            background-repeat: no-repeat;
-            background-size: contain;
-            background-position: center;
+                width: auto;
+                max-width: 100%;
+
+            }
         }
 
         .series,
