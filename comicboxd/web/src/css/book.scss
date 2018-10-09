@@ -2,24 +2,23 @@
     display: grid;
     grid-template-columns: repeat( auto-fill, minmax(150px, 1fr));
 
-    $gap: 5px;
+    $gap: 15px;
 
     grid-column-gap: $gap;
-    grid-row-gap: $gap;
-
-    width: calc(100% - $gap - $gap);
-
-    padding: $gap;
-
-
+    grid-row-gap: $gap; // padding: $gap;
     .book {
         background: white;
-        margin: 5px;
+        margin: 0px;
 
         $aspect-ratio: 7/10;
         $series-size: 18px;
         $title-size: 14px;
         $title-padding: 5px;
+
+        &:empty {
+            background: lightgrey;
+        }
+        min-height: 250px;
 
         .cover {
             // padding-bottom: calc(100% / (#{$aspect-ratio}));
@@ -29,11 +28,6 @@
             // background-position: center;
             // height: 200px;
             img {
-                &:global {
-                    &.pimg__placeholder {
-                        height: 200px;
-                    }
-                } // zoom: 2; //increase if you have very small images
                 display: block;
                 margin: auto;
 
