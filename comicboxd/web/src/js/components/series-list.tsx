@@ -5,7 +5,7 @@ import { query } from 'js/graphql';
 
 const SeriesListTypes = { list: "List" }
 const SeriesListQuery = `
-series(take: 100 list: $list) {
+series(take: 100 list: $list name_ne: "") {
   page_info {
     total
   }

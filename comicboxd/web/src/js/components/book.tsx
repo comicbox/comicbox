@@ -58,8 +58,7 @@ export default class Book extends Component<Props, State> {
         let title = ""
 
         if (book === null) {
-            return <Elevation z={2} className={s.book}>
-            </Elevation>
+            return <Elevation z={2} className={s.book} />
         }
 
         if (book.cover) {
