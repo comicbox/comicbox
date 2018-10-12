@@ -2,9 +2,9 @@ import { Component, h } from 'preact'
 import Elevation from 'preact-material-components/Elevation'
 import { Link } from 'preact-router'
 
-
 import * as s from 'css/book.scss'
 import 'preact-material-components/Elevation/style.css'
+import { query } from 'js/graphql'
 
 export interface PageData {
     url: string
@@ -20,14 +20,36 @@ export interface BookData {
 
 interface Props {
     data: BookData
+    onIntersection?: (element: IntersectionObserverEntry) => void
 }
 
 interface State {
 }
 
 export default class Book extends Component<Props, State> {
+    observer: IntersectionObserver
+
 
     componentDidMount() {
+        let options = {
+            root: null as HTMLElement,
+            rootMargin: '0px',
+            threshold: 0.1,
+        }
+        this.observer = new IntersectionObserver(elements => {
+            for (let element of elements) {
+                if (this.props.onIntersection) {
+                    this.props.onIntersection(element)
+                }
+            }
+        }, options)
+        this.observer.observe(this.base)
+    }
+
+    componentWillUnmount() {
+        if (this.observer) {
+            this.observer.disconnect()
+        }
     }
 
     render() {

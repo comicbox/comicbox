@@ -1,10 +1,11 @@
-import { message } from "css/error.scss";
+import { str_random } from "./util";
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
 }
 
 interface query {
+    name: string
     query: string
     types: { [name: string]: string }
     variables: any
@@ -18,18 +19,19 @@ export function query(query: string, types?: { [name: string]: string }, variabl
     return new Promise(function (resolve, reject) {
         let name = query.trim().split(/[ :(]/, 2)[0]
         queries.push({
+            name: name,
             query: query,
             variables: variables || {},
             types: types,
             success: data => {
-                resolve(data.data[name]);
+                resolve(data);
             },
             fail: err => {
                 reject(err)
             },
         })
         if (queries.length === 1) {
-            setTimeout(runQueries, 10)
+            setTimeout(runQueries, 50)
         }
     });
 
@@ -40,13 +42,22 @@ async function runQueries() {
     queries = [];
 
     let types: any[] = [];
+    let variables: any = {}
     for (let q of localQueries) {
+        q.name = `${q.name}_${str_random()}`
+        q.query = `${q.name}: ${q.query}`
+
         for (const name in q.types) {
             if (q.types.hasOwnProperty(name)) {
-                const type = q.types[name];
+                const type = q.types[name]
+                const newName = `${name}_${str_random()}`
+
+                q.query = q.query.replace(new RegExp("\\$" + name, 'g'), "$" + newName)
+
+                variables[newName] = q.variables[name];
 
                 types.push({
-                    name: name,
+                    name: newName,
                     type: type,
                 })
             }
@@ -62,12 +73,6 @@ async function runQueries() {
     let query = `query ${typesStr} {
         ${localQueries.map(q => q.query).join("\n")}
     }`
-
-    let variables = {}
-    for (let q of localQueries) {
-        variables = { ...variables, ...q.variables }
-    }
-    // console.log(query, variables);
 
     let response = await fetch('/graphql', {
         method: 'POST',
@@ -88,7 +93,6 @@ async function runQueries() {
         return
     }
 
-    console.log(response)
     let data = await response.json()
 
     if (data.errors !== undefined) {
@@ -99,7 +103,7 @@ async function runQueries() {
     }
 
     for (let q of localQueries) {
-        q.success(data)
+        q.success(data.data[q.name])
     }
 }
 

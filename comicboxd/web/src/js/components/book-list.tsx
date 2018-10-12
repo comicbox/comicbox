@@ -61,11 +61,27 @@ export default class BookList extends Component<Props, State> {
         })
     }
 
+    bookIntersection(element: IntersectionObserverEntry, index: number, book: BookData) {
+        if (element.intersectionRatio > 0 && book === null) {
+            query(BookListQuery, BookListTypes, {
+                series: this.props.series,
+                take: 1,
+                skip: index,
+            }).then(books => {
+                let newBooks = this.state.books;
+                newBooks[books.page_info.skip] = books.results[0]
+                this.setState({ books: newBooks })
+            })
+        }
+    }
+
     render() {
-        let image = "https://comicbox.ca/book/01e91cb5-e8be-4463-bd5d-42a2e6271a59/page/0";
         let books: BookData[] = this.state.books || [];
+
         return <div className={s.bookList} >
-            {books.map(book => <Book data={book} />)}
+            {books.map((book, i) => <Book data={book} onIntersection={element => {
+                this.bookIntersection(element, i, book)
+            }} />)}
         </div>
     }
 
