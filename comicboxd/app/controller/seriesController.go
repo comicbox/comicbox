@@ -56,7 +56,8 @@ var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 
 				query := sq.Select("*").
 					From("book_user_book").
-					// OrderBy("chapter").
+					OrderBy("chapter").
+					OrderBy("volume").
 					Offset(uint64(skip)).
 					Limit(uint64(take)).
 					Where(sq.Eq{"series": series.Name}).
