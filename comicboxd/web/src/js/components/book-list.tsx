@@ -20,6 +20,7 @@ books(take: $take skip: $skip series: $series) {
     cover {
       url
     }
+    read
   }
 }
 `

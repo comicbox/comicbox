@@ -16,6 +16,7 @@ export interface BookData {
     chapter: number
     title: string
     link: string
+    read: boolean | number
 }
 
 interface Props {
@@ -83,12 +84,19 @@ export default class Book extends Component<Props, State> {
             title += book.title
         }
 
+        let readMark = null
+        if (!book.read) {
+            readMark = <div class={s.unread}>
+                <svg viewBox="0 0 100 100">
+                    <polygon points="0 0,100 0,100,100" class="secondary-colour"></polygon>
+                </svg>
+            </div>
+        }
+
         return <Elevation z={2} className={s.book}>
             <Link href={book.link}>
-                <div className={s.cover}>
-                    <img src={image} />
-
-                </div>
+                {readMark}
+                <img className={s.cover} src={image} />
                 <div className={s.series} title={book.series}>{book.series || "\u00A0"}</div>
                 <div className={s.title} title={title}>{title}</div>
             </Link>
