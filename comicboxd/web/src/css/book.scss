@@ -68,8 +68,14 @@
                 position: absolute;
                 right: 0;
                 width: 20%;
-                
+
                 fill: var(--mdc-theme-secondary);
+
+                text {
+                    fill: white;
+                    font-size: 1.3em;
+                    font-weight: bold;
+                }
             }
         }
 

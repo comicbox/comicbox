@@ -11,6 +11,8 @@ series(take: 100 list: $list name_ne: "") {
   }
   results {
     name
+    read
+    total
     books(take: 1) {
       cover {
         url
@@ -40,6 +42,7 @@ export default class SeriesList extends Component<Props, State> {
                     volume: null,
                     chapter: null,
                     title: null,
+                    read: serie.total - serie.read
                 }
             })
         }))

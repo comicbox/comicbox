@@ -85,10 +85,19 @@ export default class Book extends Component<Props, State> {
         }
 
         let readMark = null
-        if (!book.read) {
+        if (book.read === false) {
             readMark = <div class={s.unread}>
-                <svg viewBox="0 0 100 100">
-                    <polygon points="0 0,100 0,100,100" class="secondary-colour"></polygon>
+                <svg viewBox="0 0 40 40">
+                    <polygon points="0 0,40 0,40,40"></polygon>
+                </svg>
+            </div>
+        } else if (typeof book.read === "number" && book.read != 0) {
+            console.log(book.read);
+
+            readMark = <div class={s.unread}>
+                <svg viewBox="0 0 40 40">
+                    <rect width="300" height="40" />
+                    <text x="50%" y="50%" alignment-baseline="middle" text-anchor="middle">{book.read}</text>
                 </svg>
             </div>
         }
