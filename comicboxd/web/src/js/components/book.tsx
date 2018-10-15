@@ -92,7 +92,6 @@ export default class Book extends Component<Props, State> {
                 </svg>
             </div>
         } else if (typeof book.read === "number" && book.read != 0) {
-            console.log(book.read);
 
             readMark = <div class={s.unread}>
                 <svg viewBox="0 0 40 40">

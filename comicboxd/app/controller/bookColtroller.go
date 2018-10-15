@@ -554,12 +554,18 @@ var BookMutations = graphql.Fields{
 	},
 }
 
-func BookPage(w http.ResponseWriter, r *http.Request) {
+func BookPage(rw http.ResponseWriter, r *http.Request) {
+	w, err := app.Cache(rw, r)
+	if err == nil {
+		return
+	}
+	// defer w.Close()
+
 	c := app.Ctx(r)
 	bookID := c.Var("id")
 	pageNum := int(c.VarInt64("page"))
 	book := model.BookUserBook{}
-	err := gql.Query(r, `query getBook($id:ID!) {
+	err = gql.Query(r, `query getBook($id:ID!) {
 		book(id: $id){
 			file
 			pages {
@@ -647,5 +653,4 @@ func BookPage(w http.ResponseWriter, r *http.Request) {
 		png.Encode(w, img)
 		// w.Header().Set("Content-Type", "image/png")
 	}
-
 }
