@@ -12,7 +12,7 @@ import 'preact-material-components/TopAppBar/style.css';
 
 
 interface Props {
-
+    backLink: string
 }
 
 interface State {
@@ -52,12 +52,17 @@ export default class Layout extends Component<Props, State> {
     }
 
     render() {
+        let backButton = <TopAppBar.Icon onClick={this.toggleDrawer.bind(this)} navigation>menu</TopAppBar.Icon>
+        
+        if (location.pathname !== "/") {
+            backButton = <TopAppBar.Icon href="/" navigation>arrow_back</TopAppBar.Icon>
+        }
 
         return <div className={s.app}>
             <TopAppBar onNav={() => { }}>
                 <TopAppBar.Row>
                     <TopAppBar.Section align-start>
-                        <TopAppBar.Icon onClick={this.toggleDrawer.bind(this)} navigation>menu</TopAppBar.Icon>
+                        {backButton}
                         <TopAppBar.Title>
                             <Link href="/">ComicBox</Link>
                         </TopAppBar.Title>
@@ -67,6 +72,7 @@ export default class Layout extends Component<Props, State> {
                     </TopAppBar.Section>
                 </TopAppBar.Row>
             </TopAppBar>
+
             <Drawer.TemporaryDrawer open={this.state.drawerOpened} onClose={() => this.setState({ drawerOpened: false })}>
                 <Drawer.DrawerHeader className="mdc-theme--primary-bg">
                     Components
@@ -84,6 +90,7 @@ export default class Layout extends Component<Props, State> {
                     </List>
                 </Drawer.DrawerContent>
             </Drawer.TemporaryDrawer>
+
             <main class={s.main}>
                 {this.props.children}
             </main>
