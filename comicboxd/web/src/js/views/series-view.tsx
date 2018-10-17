@@ -41,7 +41,7 @@ export default class SeriesView extends Component<Props, State> {
 
     render() {
 
-        return <Layout>
+        return <Layout backLink="/series">
             <h1>{this.props.matches.name}</h1>
 
             <BookList series={this.props.matches.name} />

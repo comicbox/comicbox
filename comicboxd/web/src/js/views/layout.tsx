@@ -2,13 +2,14 @@ import { Component, h } from 'preact'
 import Drawer from 'preact-material-components/Drawer';
 import List from 'preact-material-components/List';
 import TopAppBar from 'preact-material-components/TopAppBar';
-import { Link } from 'preact-router';
+import { Link, route } from 'preact-router';
 
 import * as s from 'css/layout.scss'
 import 'preact-material-components/Drawer/style.css';
 import 'preact-material-components/List/style.css';
 import 'preact-material-components/Button/style.css';
 import 'preact-material-components/TopAppBar/style.css';
+import { historyPrevious, historyPop } from 'js/history';
 
 
 interface Props {
@@ -51,11 +52,21 @@ export default class Layout extends Component<Props, State> {
         })
     }
 
+    btnBack() {
+        if (historyPrevious() !== null) {
+            historyPop()
+            history.back()
+            
+            return
+        }
+        route(this.props.backLink)
+    }
+
     render() {
         let backButton = <TopAppBar.Icon onClick={this.toggleDrawer.bind(this)} navigation>menu</TopAppBar.Icon>
-        
+
         if (location.pathname !== "/") {
-            backButton = <TopAppBar.Icon href="/" navigation>arrow_back</TopAppBar.Icon>
+            backButton = <TopAppBar.Icon onClick={this.btnBack.bind(this)} href="#" navigation>arrow_back</TopAppBar.Icon>
         }
 
         return <div className={s.app}>

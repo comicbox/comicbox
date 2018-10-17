@@ -7,8 +7,9 @@ import { query } from 'js/graphql'
 
 import "css/app.scss"
 import SeriesView from 'js/views/series-view';
+import { historyPush } from './history';
 
-const jsx = <Router>
+const jsx = <Router onChange={historyPush}>
     <Home path="/" />
     <SeriesIndex path="/series" />
     <SeriesView path="/series/:name/:page?" />

@@ -20,7 +20,7 @@ export default class Home extends Component<Props, State> {
     render() {
         console.log(this.props);
 
-        return <Layout>
+        return <Layout backLink="/">
             <SeriesList list="READING" />
         </Layout >
     }

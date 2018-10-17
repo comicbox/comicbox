@@ -20,7 +20,7 @@ export default class SeriesIndex extends Component<Props, State> {
 
     render() {
 
-        return <Layout>
+        return <Layout backLink="/">
             <SeriesList />
         </Layout >
     }
