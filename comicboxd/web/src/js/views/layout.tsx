@@ -86,7 +86,7 @@ export default class Layout extends Component<Props, State> {
 
             <Drawer.TemporaryDrawer open={this.state.drawerOpened} onClose={() => this.setState({ drawerOpened: false })}>
                 <Drawer.DrawerHeader className="mdc-theme--primary-bg">
-                    Components
+                    Drawer Header
                 </Drawer.DrawerHeader>
                 <Drawer.DrawerContent>
                     <List>
