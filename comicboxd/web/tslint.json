@@ -1,0 +1,30 @@
+{
+    "extends": [
+        "tslint:recommended",
+        "tslint-react"
+    ],
+    "rules": {
+        "semicolon": [
+            true,
+            "never"
+        ],
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "interface-name": [
+            true,
+            "never-prefix"
+        ],
+        "jsx-wrap-multiline": false,
+        "arrow-parens": [
+            true,
+            "ban-single-arg-parens"
+        ],
+        "object-literal-sort-keys": [
+            true,
+            "ignore-case",
+            "match-declaration-order"
+        ]
+    }
+}

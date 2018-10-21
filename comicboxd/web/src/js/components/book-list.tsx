@@ -1,9 +1,9 @@
-import { Component, h } from 'preact'
 import * as s from 'css/book.scss'
-import Book, { BookData } from 'js/components/book';
-import { query } from 'js/graphql';
+import Book, { BookData } from 'js/components/book'
+import { query } from 'js/graphql'
+import { Component, h } from 'preact'
 
-const BookListTypes = { take: "Int!", skip: "Int", series: "String" }
+const BookListTypes = { take: 'Int!', skip: 'Int', series: 'String' }
 const BookListQuery = `
 books(take: $take skip: $skip series: $series) {
   page_info {
@@ -36,7 +36,7 @@ interface State {
 
 export default class BookList extends Component<Props, State> {
 
-    componentDidMount() {
+    public componentDidMount() {
         if (!this.props.books) {
             query(BookListQuery, BookListTypes, {
                 series: this.props.series,
@@ -47,11 +47,11 @@ export default class BookList extends Component<Props, State> {
                 const take = books.page_info.take
                 const total = books.page_info.total
 
-                let newBooks: BookData[] = []
+                const newBooks: BookData[] = []
 
                 for (let i = 0; i < total; i++) {
                     if (i >= skip && i < skip + take) {
-                        let book = books.results[i + skip]
+                        const book = books.results[i + skip]
                         book.link = `/book/${book.id}`
                         newBooks[i] = book
                     } else {
@@ -59,35 +59,34 @@ export default class BookList extends Component<Props, State> {
                     }
                 }
                 this.setState({
-                    books: newBooks
+                    books: newBooks,
                 })
             })
         }
 
     }
 
-    bookIntersection(element: IntersectionObserverEntry, index: number, book: BookData) {
+    public render() {
+        const books: BookData[] = this.props.books || this.state.books || []
+
+        return (<div className={s.bookList} >
+            {books.map((book, i) => <Book key={i} data={book} onIntersection={e => this.bookIntersection(e, i, book)} />)}
+        </div>)
+    }
+
+    private bookIntersection(element: IntersectionObserverEntry, index: number, book: BookData) {
         if (element.intersectionRatio > 0 && book === null) {
             query(BookListQuery, BookListTypes, {
                 series: this.props.series,
                 take: 1,
                 skip: index,
             }).then(books => {
-                let newBooks = this.state.books;
-                newBooks[books.page_info.skip] = books.results[0]
+                const newBooks = this.state.books
+                const b = books.results[0]
+                b.link = `/book/${b.id}`
+                newBooks[books.page_info.skip] = b
                 this.setState({ books: newBooks })
             })
         }
     }
-
-    render() {
-        let books: BookData[] = this.props.books || this.state.books || [];
-
-        return <div className={s.bookList} >
-            {books.map((book, i) => <Book data={book} onIntersection={element => {
-                this.bookIntersection(element, i, book)
-            }} />)}
-        </div>
-    }
-
 }

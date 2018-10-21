@@ -26,14 +26,11 @@ module.exports = (env, argv) => {
             rules: [
                 {
                     test: /\.tsx?$/,
-                    loader: 'babel-loader',
+                    loader: ['babel-loader', 'tslint-loader'],
                 },
                 {
                     test: /\.js$/,
                     loader: 'babel-loader',
-
-                    include: [/node_modules\/@material/],
-
                 },
                 {
                     test: /\.scss$/,
