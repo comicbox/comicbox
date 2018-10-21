@@ -1,6 +1,6 @@
 import * as s from 'css/book.scss'
 import Book, { BookData } from 'js/components/book'
-import { query } from 'js/graphql'
+import { gql } from 'js/graphql'
 import { Component, h } from 'preact'
 
 const BookListTypes = { take: 'Int!', skip: 'Int', series: 'String' }
@@ -38,7 +38,7 @@ export default class BookList extends Component<Props, State> {
 
     public componentDidMount() {
         if (!this.props.books) {
-            query(BookListQuery, BookListTypes, {
+            gql(BookListQuery, BookListTypes, {
                 series: this.props.series,
                 take: 15,
                 skip: 0,
@@ -71,6 +71,7 @@ export default class BookList extends Component<Props, State> {
 
         return (<div className={s.bookList} >
             {books.map((book, i) => (
+                // tslint:disable-next-line:jsx-no-lambda
                 <Book key={i} data={book} onIntersection={e => this.bookIntersection(e, i, book)} />
             ))}
         </div>)
@@ -78,7 +79,7 @@ export default class BookList extends Component<Props, State> {
 
     private bookIntersection(element: IntersectionObserverEntry, index: number, book: BookData) {
         if (element.intersectionRatio > 0 && book === null) {
-            query(BookListQuery, BookListTypes, {
+            gql(BookListQuery, BookListTypes, {
                 series: this.props.series,
                 take: 1,
                 skip: index,

@@ -1,26 +1,12 @@
-import { Component, h } from 'preact'
+import SeriesList from 'js/components/series-list'
 import Layout from 'js/views/layout'
-import BookList from 'js/components/book-list';
-import * as s from 'css/home.scss'
-import SeriesList from 'js/components/series-list';
+import { Component, h } from 'preact'
 
-interface Props {
+export default class SeriesIndex extends Component {
 
-}
+    public render() {
 
-interface State {
-
-}
-
-export default class SeriesIndex extends Component<Props, State> {
-
-    componentDidMount() {
-
-    }
-
-    render() {
-
-        return <Layout backLink="/">
+        return <Layout backLink='/'>
             <SeriesList />
         </Layout >
     }

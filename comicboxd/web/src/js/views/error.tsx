@@ -1,25 +1,14 @@
-import { Component, h } from 'preact'
-import Layout from 'js/views/layout'
-
 import * as s from 'css/error.scss'
+import Layout from 'js/views/layout'
+import { Component, h } from 'preact'
 
-interface Props {
+export default class Error extends Component {
+    public render() {
 
-}
-
-interface State {
-
-}
-
-export default class Error extends Component<Props, State> {
-    render() {
-        console.log(this.props);
-
-        return <Layout>
+        return <Layout backLink='/'>
             <div className={s.message}>
                 404 Page Not Found
             </div>
         </Layout>
     }
-
 }

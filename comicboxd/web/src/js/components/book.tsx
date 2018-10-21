@@ -24,10 +24,7 @@ interface Props {
     onIntersection?: (element: IntersectionObserverEntry) => void
 }
 
-interface State {
-}
-
-export default class Book extends Component<Props, State> {
+export default class Book extends Component<Props, null> {
     private observer: IntersectionObserver
 
     public componentDidMount() {

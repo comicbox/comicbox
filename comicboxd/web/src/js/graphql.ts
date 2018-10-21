@@ -1,10 +1,10 @@
-import { str_random } from "./util";
+import { str_random } from 'js/util'
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
 }
 
-interface query {
+interface Query {
     name: string
     query: string
     types: { [name: string]: string }
@@ -13,18 +13,18 @@ interface query {
     fail: (data: QueryError) => void
 }
 
-let queries: query[] = [];
+let queries: Query[] = []
 
-export function query(query: string, types?: { [name: string]: string }, variables?: any): Promise<any> {
-    return new Promise(function (resolve, reject) {
-        let name = query.trim().split(/[ :(]/, 2)[0]
+export function gql(query: string, types?: { [name: string]: string }, variables?: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+        const name = query.trim().split(/[ :(]/, 2)[0]
         queries.push({
             name: name,
             query: query,
             variables: variables || {},
             types: types,
             success: data => {
-                resolve(data);
+                resolve(data)
             },
             fail: err => {
                 reject(err)
@@ -33,17 +33,17 @@ export function query(query: string, types?: { [name: string]: string }, variabl
         if (queries.length === 1) {
             setTimeout(runQueries, 50)
         }
-    });
+    })
 
 }
 
 async function runQueries() {
-    let localQueries = queries;
-    queries = [];
+    const localQueries = queries
+    queries = []
 
-    let types: any[] = [];
-    let variables: any = {}
-    for (let q of localQueries) {
+    const types: any[] = []
+    const variables: any = {}
+    for (const q of localQueries) {
         q.name = `${q.name}_${str_random()}`
         q.query = `${q.name}: ${q.query}`
 
@@ -52,9 +52,9 @@ async function runQueries() {
                 const type = q.types[name]
                 const newName = `${name}_${str_random()}`
 
-                q.query = q.query.replace(new RegExp("\\$" + name, 'g'), "$" + newName)
+                q.query = q.query.replace(new RegExp('\\$' + name, 'g'), '$' + newName)
 
-                variables[newName] = q.variables[name];
+                variables[newName] = q.variables[name]
 
                 types.push({
                     name: newName,
@@ -64,17 +64,17 @@ async function runQueries() {
         }
     }
 
-    let typesStr = types.reduce((acc: string, val) => acc += ` $${val.name}: ${val.type}`, "")
+    let typesStr = types.reduce((acc: string, val) => acc += ` $${val.name}: ${val.type}`, '')
 
-    if (typesStr !== "") {
+    if (typesStr !== '') {
         typesStr = `(${typesStr})`
     }
 
-    let query = `query ${typesStr} {
-        ${localQueries.map(q => q.query).join("\n")}
+    const query = `query ${typesStr} {
+        ${localQueries.map(q => q.query).join('\n')}
     }`
 
-    let response = await fetch('/graphql', {
+    const response = await fetch('/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -83,32 +83,32 @@ async function runQueries() {
         body: JSON.stringify({
             query: query,
             variables: variables,
-        })
+        }),
     })
     if (response.status < 200 || response.status > 299) {
 
-        for (let q of localQueries) {
+        for (const q of localQueries) {
             q.fail(new QueryError(response, response.statusText))
         }
         return
     }
 
-    let data = await response.json()
+    const data = await response.json()
 
     if (data.errors !== undefined) {
-        for (let q of localQueries) {
-            q.fail(new QueryError(response, data.errors.map((err: any) => err.message).join(", ")))
+        for (const q of localQueries) {
+            q.fail(new QueryError(response, data.errors.map((err: any) => err.message).join(', ')))
         }
         return
     }
 
-    for (let q of localQueries) {
+    for (const q of localQueries) {
         q.success(data.data[q.name])
     }
 }
 
 export class QueryError extends Error {
-    status: number
+    private status: number
 
     constructor(response: Response, message: string) {
         super(message)
