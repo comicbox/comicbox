@@ -23,6 +23,12 @@
             {
                 "pragma": "h"
             }
+        ],
+        [
+            "@babel/plugin-proposal-decorators",
+            {
+                "legacy": true
+            }
         ]
     ]
 }

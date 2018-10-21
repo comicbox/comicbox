@@ -1,3 +1,4 @@
+import autobind from 'autobind-decorator'
 import * as s from 'css/layout.scss'
 import { historyPop, historyPrevious } from 'js/history'
 import { Component, h } from 'preact'
@@ -43,10 +44,10 @@ export default class Layout extends Component<Props, State> {
     }
 
     public render() {
-        let backButton = <TopAppBar.Icon onClick={this.toggleDrawer.call(this)} navigation={true}>menu</TopAppBar.Icon>
+        let backButton = <TopAppBar.Icon onClick={this.toggleDrawer} navigation={true}>menu</TopAppBar.Icon>
 
         if (location.pathname !== '/') {
-            backButton = <TopAppBar.Icon onClick={this.btnBack.call(this)} href='#' navigation={true}>
+            backButton = <TopAppBar.Icon onClick={this.btnBack} href='#' navigation={true}>
                 arrow_back
             </TopAppBar.Icon>
         }
@@ -66,14 +67,14 @@ export default class Layout extends Component<Props, State> {
                 </TopAppBar.Row>
             </TopAppBar>
 
-            <Drawer.TemporaryDrawer open={this.state.drawerOpened} onClose={this.drawerClosed.call(this)}>
+            <Drawer.TemporaryDrawer open={this.state.drawerOpened} onClose={this.drawerClosed}>
                 <Drawer.DrawerHeader className='mdc-theme--primary-bg'>
                     Drawer Header
                 </Drawer.DrawerHeader>
                 <Drawer.DrawerContent>
                     <List>
                         {this.menu.map((item, i) =>
-                            <Link key={i} href={item.href} onClick={this.toggleDrawer.call(this)}>
+                            <Link key={i} href={item.href} onClick={this.toggleDrawer}>
                                 <List.LinkItem
                                     className={location.pathname === item.href ? 'mdc-list-item--activated' : ''}
                                 >
@@ -92,18 +93,21 @@ export default class Layout extends Component<Props, State> {
         </div >
     }
 
+    @autobind
     private toggleDrawer() {
         this.setState({
             drawerOpened: !this.state.drawerOpened,
         })
     }
 
+    @autobind
     private drawerClosed() {
         this.setState({
             drawerOpened: false,
         })
     }
 
+    @autobind
     private btnBack() {
         if (historyPrevious() !== null) {
             historyPop()

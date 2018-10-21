@@ -3,9 +3,6 @@
         "tslint:recommended",
         "tslint-react"
     ],
-    "rulesDirectory": [
-        "node_modules/tslint-eslint-rules/dist/rules"
-    ],
     "rules": {
         "semicolon": [
             true,
@@ -27,7 +24,6 @@
             "ban-single-arg-parens"
         ],
         "object-literal-sort-keys": false,
-        "no-relitive-imports": true,
         "object-literal-shorthand": [
             true,
             "never"

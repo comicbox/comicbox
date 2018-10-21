@@ -5,6 +5,7 @@ import { Component, h } from 'preact'
 export default class Home extends Component {
 
     public render() {
+
         return <Layout backLink='/'>
             <SeriesList list='READING' />
         </Layout >

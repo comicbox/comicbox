@@ -13,7 +13,8 @@
             "css/*": [
                 "src/css/*"
             ]
-        }
+        },
+        "experimentalDecorators": true
     },
     "exclude": [
         "node_modules",
