@@ -70,7 +70,9 @@ export default class BookList extends Component<Props, State> {
         const books: BookData[] = this.props.books || this.state.books || []
 
         return (<div className={s.bookList} >
-            {books.map((book, i) => <Book key={i} data={book} onIntersection={e => this.bookIntersection(e, i, book)} />)}
+            {books.map((book, i) => (
+                <Book key={i} data={book} onIntersection={e => this.bookIntersection(e, i, book)} />
+            ))}
         </div>)
     }
 

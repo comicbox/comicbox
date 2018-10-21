@@ -17,6 +17,8 @@
             "never-prefix"
         ],
         "jsx-wrap-multiline": false,
+        "jsx-alignment": true,
+        "jsx-no-multiline-js": false,
         "arrow-parens": [
             true,
             "ban-single-arg-parens"
