@@ -10,10 +10,10 @@
         "paths": {
             "*": ["types/*"],
             "js/*": [
-                "www/src/js/*"
+                "src/js/*"
             ],
             "css/*": [
-                "www/src/css/*"
+                "src/css/*"
             ]
         },
         "experimentalDecorators": true,

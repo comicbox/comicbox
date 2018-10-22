@@ -31,11 +31,11 @@ func Web(s *server.Server) {
 		Asset:     data.Asset,
 		AssetDir:  data.AssetDir,
 		AssetInfo: data.AssetInfo,
-		Prefix:    "../cordova/www/dist",
+		Prefix:    "../cordova/www",
 	}))
 
 	// s.Router.Methods("GET").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 	d, err := data.Asset("../cordova/www/dist/index.html")
+	// 	d, err := data.Asset("../cordova/www/index.html")
 	// 	errors.Check(err)
 	// 	_, err = w.Write(d)
 	// 	errors.Check(err)

@@ -1,4 +1,4 @@
-bindata = -o data/bindata.go -pkg data migrations/ ../cordova/www/dist/ ../cordova/www/dist/assets
+bindata = -o data/bindata.go -pkg data migrations/ ../cordova/www/ ../cordova/www/assets/
 build = go build -o ../bin/comicboxd
 
 all:
