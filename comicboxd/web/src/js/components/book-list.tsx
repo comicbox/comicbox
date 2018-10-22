@@ -68,7 +68,7 @@ export default class BookList extends Component<Props, State> {
 
     public render() {
         const books: BookData[] = this.props.books || this.state.books || []
-
+        // let i: number = 'ten'
         return (<div className={s.bookList} >
             {books.map((book, i) => (
                 // tslint:disable-next-line:jsx-no-lambda

@@ -26,7 +26,7 @@ module.exports = (env, argv) => {
             rules: [
                 {
                     test: /\.tsx?$/,
-                    loader: ['babel-loader', 'tslint-loader'],
+                    loader: ['babel-loader', 'ts-loader', 'tslint-loader'],
                 },
                 {
                     test: /\.js$/,

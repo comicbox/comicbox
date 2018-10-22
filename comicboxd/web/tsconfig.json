@@ -14,7 +14,8 @@
                 "src/css/*"
             ]
         },
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "pretty": true
     },
     "exclude": [
         "node_modules",
