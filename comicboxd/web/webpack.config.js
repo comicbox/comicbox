@@ -19,7 +19,7 @@ module.exports = (env, argv) => {
         mode: process.env.NODE_ENV,
         devtool: devMode ? 'source-map' : '',
         entry: {
-            polyfill: "@babel/polyfill",
+            // polyfill: "@babel/polyfill",
             main: path.join(paths.JS, 'index.tsx'),
         },
         module: {
