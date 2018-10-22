@@ -68,10 +68,10 @@ module.exports = (env, argv) => {
         },
         output: {
             path: paths.DIST,
-            publicPath: './assets/',
+            publicPath: '',
             // publicPath: '',
-            filename: devMode ? '[name].js' : '[name].[hash].js',
-            chunkFilename: devMode ? '[id].js' : '[id].[hash].js',
+            filename: './assets/' +( devMode ? '[name].js' : '[name].[hash].js'),
+            chunkFilename: './assets/' + (devMode ? '[id].js' : '[id].[hash].js'),
         },
         plugins: [
             new HtmlWebpackPlugin({
@@ -85,8 +85,8 @@ module.exports = (env, argv) => {
             new MiniCssExtractPlugin({
                 // Options similar to the same options in webpackOptions.output
                 // both options are optional
-                filename: devMode ? '[name].css' : '[name].[hash].css',
-                chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+                filename: './assets/' + (devMode ? '[name].css' : '[name].[hash].css'),
+                chunkFilename: './assets/' + (devMode ? '[id].css' : '[id].[hash].css'),
             }),
             new webpack.WatchIgnorePlugin([
                 /css\.d\.ts$/
