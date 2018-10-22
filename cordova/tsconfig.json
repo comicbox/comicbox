@@ -8,6 +8,7 @@
         "jsx": "preserve",
         "jsxFactory": "h", 
         "paths": {
+            "*": ["types/*"],
             "js/*": [
                 "www/src/js/*"
             ],

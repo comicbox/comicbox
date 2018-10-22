@@ -1,3 +1,4 @@
+import createHashHistory from 'history/createHashHistory'
 import { gql } from 'js/graphql'
 import Error from 'js/views/error'
 import Home from 'js/views/home'
@@ -9,7 +10,7 @@ import 'css/app.scss'
 import SeriesView from 'js/views/series-view'
 import { historyPush } from './history'
 
-const jsx = <Router onChange={historyPush}>
+const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
     <Home path='/' />
     <SeriesIndex path='/series' />
     <SeriesView path='/series/:name/:page?' />

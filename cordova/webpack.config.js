@@ -68,7 +68,8 @@ module.exports = (env, argv) => {
         },
         output: {
             path: paths.DIST,
-            publicPath: '/assets/',
+            publicPath: './assets/',
+            // publicPath: '',
             filename: devMode ? '[name].js' : '[name].[hash].js',
             chunkFilename: devMode ? '[id].js' : '[id].[hash].js',
         },

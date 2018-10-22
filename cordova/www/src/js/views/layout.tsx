@@ -44,13 +44,13 @@ export default class Layout extends Component<Props, State> {
     }
 
     public render() {
-        let backButton = <TopAppBar.Icon onClick={this.toggleDrawer} navigation={true}>menu</TopAppBar.Icon>
+        const backButton = <TopAppBar.Icon onClick={this.toggleDrawer} navigation={true}>menu</TopAppBar.Icon>
 
-        if (location.pathname !== '/') {
-            backButton = <TopAppBar.Icon onClick={this.btnBack} href='#' navigation={true}>
-                arrow_back
-            </TopAppBar.Icon>
-        }
+        // if (location.pathname !== '/') {
+        //     backButton = <TopAppBar.Icon onClick={this.btnBack} href='#' navigation={true}>
+        //         arrow_back
+        //     </TopAppBar.Icon>
+        // }
 
         return <div className={s.app}>
             <TopAppBar onNav={null}>

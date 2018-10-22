@@ -7,3 +7,4 @@ comicboxd/web/dist/*
 .cache/*
 cordova/node_modules/*
 cordova/platforms/*
+cordova/www/dist/*
