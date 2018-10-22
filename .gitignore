@@ -5,5 +5,5 @@ comicboxd/web/node_modules/*
 comicboxd/web-old/node_modules/*
 comicboxd/web/dist/*
 .cache/*
-app/node_modules/*
-app/platforms/*
+cordova/node_modules/*
+cordova/platforms/*

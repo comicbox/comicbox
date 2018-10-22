@@ -67,7 +67,7 @@ export default class Layout extends Component<Props, State> {
                 </TopAppBar.Row>
             </TopAppBar>
 
-            <Drawer.TemporaryDrawer open={this.state.drawerOpened} onClose={this.drawerClosed}>
+            <Drawer modal={true} open={this.state.drawerOpened} onClose={this.drawerClosed}>
                 <Drawer.DrawerHeader className='mdc-theme--primary-bg'>
                     Drawer Header
                 </Drawer.DrawerHeader>
@@ -85,7 +85,7 @@ export default class Layout extends Component<Props, State> {
                         )}
                     </List>
                 </Drawer.DrawerContent>
-            </Drawer.TemporaryDrawer>
+            </Drawer>
 
             <main class={s.main}>
                 {this.props.children}

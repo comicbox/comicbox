@@ -1,8 +1,8 @@
-bindata = -o data/bindata.go -pkg data migrations/ web/dist/
+bindata = -o data/bindata.go -pkg data migrations/ ../cordova/www/dist/
 build = go build -o ../bin/comicboxd
 
 all:
-	cd web; npm run build-prod
+	cd ../cordova; npm run build-prod
 	go-bindata $(bindata)
 	$(build)
 	

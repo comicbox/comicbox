@@ -6,13 +6,13 @@
         "target": "es6",
         "baseUrl": "./",
         "jsx": "preserve",
-        "jsxFactory": "h",
+        "jsxFactory": "h", 
         "paths": {
             "js/*": [
-                "src/js/*"
+                "www/src/js/*"
             ],
             "css/*": [
-                "src/css/*"
+                "www/src/css/*"
             ]
         },
         "experimentalDecorators": true,
