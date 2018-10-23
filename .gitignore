@@ -7,6 +7,10 @@ comicboxd/web/dist/*
 .cache/*
 
 cordova/www/dist/*
-cordova/plugins/*
 
 **/node_modules/*
+
+# android 
+cordova/platforms/android/.gradle/*
+cordova/platforms/android/CordovaLib/build/*
+cordova/platforms/android/app/build/*
