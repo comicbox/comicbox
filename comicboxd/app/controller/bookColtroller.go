@@ -161,6 +161,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 		"cover": &graphql.Field{
 			Type: PageType,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				c := gql.Ctx(p)
 				book := p.Source.(*model.BookUserBook)
 				allPages := []*model.Page{}
 				pages := []*model.Page{}
@@ -177,7 +178,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 					return nil, nil
 				}
 				for i, page := range allPages {
-					page.URL = fmt.Sprintf("/api/v1/book/%s/page/%d.jpg", book.ID, i)
+					page.URL = c.URL("/api/v1/book/%s/page/%d.jpg", book.ID, i)
 					if page.Type == Cover {
 						return page, nil
 					}
@@ -194,6 +195,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				c := gql.Ctx(p)
 				t, typeOk := p.Args["type"].(string)
 				book := p.Source.(*model.BookUserBook)
 				allPages := []*model.Page{}
@@ -210,7 +212,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 
 				for i, page := range allPages {
 					if page.Type == t || !typeOk {
-						page.URL = fmt.Sprintf("/api/v1/book/%s/page/%d.png", book.ID, i)
+						page.URL = c.URL("/api/v1/book/%s/page/%d.png", book.ID, i)
 						pages = append(pages, page)
 					}
 				}

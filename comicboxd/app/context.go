@@ -2,8 +2,10 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
 	"github.com/gorilla/context"
@@ -102,4 +104,14 @@ func (c Context) QGetInt64(key string) (int64, bool) {
 		return 0, false
 	}
 	return i, true
+}
+
+func (c Context) URL(format string, a ...interface{}) string {
+	url := fmt.Sprintf(format, a...)
+	if strings.HasPrefix(url, "/") {
+		fmt.Printf("%#v\n", url)
+		url = fmt.Sprintf("%s://%s", "http", c.request.Host) + url
+		fmt.Printf("%#v\n", url)
+	}
+	return url
 }

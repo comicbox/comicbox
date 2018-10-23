@@ -5,7 +5,7 @@ module.exports = function (context) {
     var Q = context.requireCordovaModule('q');
     var deferral = new Q.defer();
 
-    console.log("Building JS", context)
+    console.log("Building JS")
 
     webpack(wpConfig(null, { mode: 'development' })).run((err, stats) => {
         if (err || stats.hasErrors()) {
