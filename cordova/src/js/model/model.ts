@@ -5,8 +5,11 @@ import { map } from 'lodash'
 interface StaticThis<T> { new(...args: any): T }
 
 export abstract class Model {
+
+    public static types: { [key: string]: { type: string, jsType: any } }
+
     public static async find<T extends Model>(this: StaticThis<T>, id: string): Promise<T> {
-        const model = await (new QueryBuilder<T>(this)).where('id', id).get()
+        const model = await (new QueryBuilder<T>(this)).where('id', id).take(1).get()
         if (model.length === 0) {
             return null
         }
@@ -17,7 +20,9 @@ export abstract class Model {
         return (new QueryBuilder<T>(this)).where(...args)
     }
 
-    private static types: { [key: string]: string }
+    public static select<T extends Model>(this: StaticThis<T>, ...args: string[]): QueryBuilder<T> {
+        return (new QueryBuilder<T>(this)).select(...args)
+    }
 
     protected data: any = {}
 
@@ -28,13 +33,13 @@ export abstract class Model {
     }
 }
 
-export function prop(type: string): any {
+export function prop(type: string, jsType?: any): any {
     return (target: any, key: string) => {
 
         if (!target.constructor.types) {
             target.constructor.types = {}
         }
-        target.constructor.types[key] = type
+        target.constructor.types[key] = { type: type, jsType: jsType }
 
         return {
             set: function (value: any) {

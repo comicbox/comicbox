@@ -78,7 +78,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 					return authors, nil
 				}
 
-				err := json.Unmarshal(book.AuthorsJSON, authors)
+				err := json.Unmarshal(book.AuthorsJSON, &authors)
 				if err != nil {
 					return nil, err
 				}
@@ -98,8 +98,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 				if len(book.GenresJSON) == 0 {
 					return genres, nil
 				}
-
-				err := json.Unmarshal(book.GenresJSON, genres)
+				err := json.Unmarshal(book.GenresJSON, &genres)
 				if err != nil {
 					return nil, err
 				}

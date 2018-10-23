@@ -5,8 +5,8 @@ import { map } from 'lodash'
 interface Where {
     field: string
     operator: string
-    value: string | number
-    type: string
+    value: string | number | boolean
+    type: { type: string, jsType: any }
 }
 
 const opConv: { [key: string]: string } = {
@@ -20,6 +20,10 @@ const opConv: { [key: string]: string } = {
 export class QueryBuilder<T extends Model> {
     private TClass: any
     private wheres: Where[] = []
+    private selects: string[] = []
+
+    private _skip: number = 0
+    private _take: number = 100
 
     constructor(TClass: any) {
         this.TClass = TClass
@@ -55,28 +59,63 @@ export class QueryBuilder<T extends Model> {
         return this
     }
 
+    public select(...selects: string[]): QueryBuilder<T> {
+        this.selects = this.selects.concat(selects)
+        return this
+    }
+
+    public skip(skip: number): QueryBuilder<T> {
+        this._skip = skip
+        return this
+    }
+    public take(take: number): QueryBuilder<T> {
+        this._take = take
+        return this
+    }
+
     public async get(): Promise<T[]> {
 
         const types: { [key: string]: string } = {}
-        const variables: { [key: string]: string | number } = {}
+        const variables: { [key: string]: string | number | boolean } = {}
 
         for (const where of this.wheres) {
             const field = where.field + opConv[where.operator]
-            types[field] = where.type
+            types[field] = where.type.type
             variables[field] = where.value
         }
 
-        const query = `${this.TClass.table}(take: 100 ${map(types, (type, key) => `${key}: $${key}`).join(', ')}) {
+        if (this.selects.length === 0) {
+            this.selects = map(this.TClass.types, (type, key) => {
+                if (type.jsType === undefined) {
+                    return key
+                }
+                return key + `{${map(type.jsType.types, (t, k) => k).join(', ')}}`
+            })
+        }
+
+        const query = `${this.TClass.table}(take: $take skip: $skip
+            ${map(types, (type, key) => `${key}: $${key}`).join(', ')}) {
+            page_info {
+                total
+            }
             results {
-                ${map(this.TClass.types, (type, key) => key).join(', ')}
+                ${this.selects.join(', ')}
             }
         }`
 
-        console.log('get', query, types, variables)
+        variables.take = this._take
+        types.take = 'Int!'
+
+        variables.skip = this._skip
+        types.skip = 'Int'
+
+        // console.log('get', query, types, variables)
 
         const data = await gql(query, types, variables)
-        console.log(data)
+        // console.log(data)
 
-        return data.results.map((result: any) => new this.TClass(result))
+        const list = data.results.map((result: any) => new this.TClass(result))
+        list.total = data.page_info.total
+        return list
     }
 }

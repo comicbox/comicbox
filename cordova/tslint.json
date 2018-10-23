@@ -33,6 +33,14 @@
             {
                 "anonymous": "always"
             }
+        ],
+        "variable-name": [
+            true,
+            "ban-keywords",
+            "check-format",
+            "allow-snake-case",
+            "allow-pascal-case",
+            "allow-leading-underscore"
         ]
     }
 }
