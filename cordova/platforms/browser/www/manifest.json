@@ -1,0 +1,11 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "ComicBox",
+  "short_name": "ComicBox",
+  "version": "ca.comicbox.comicbox",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "author": "Comic Box Dev Team",
+  "icons": [],
+  "start_url": "index.html"
+}
