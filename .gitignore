@@ -6,7 +6,7 @@ comicboxd/web-old/node_modules/*
 comicboxd/web/dist/*
 .cache/*
 
-cordova/www/dist/*
+cordova/www/*
 
 **/node_modules/*
 
@@ -14,3 +14,7 @@ cordova/www/dist/*
 cordova/platforms/android/.gradle/*
 cordova/platforms/android/CordovaLib/build/*
 cordova/platforms/android/app/build/*
+cordova/platforms/android/app/src/main/assets/www/*
+
+# browser
+cordova/platforms/browser/www/*
