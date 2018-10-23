@@ -109,9 +109,7 @@ func (c Context) QGetInt64(key string) (int64, bool) {
 func (c Context) URL(format string, a ...interface{}) string {
 	url := fmt.Sprintf(format, a...)
 	if strings.HasPrefix(url, "/") {
-		fmt.Printf("%#v\n", url)
 		url = fmt.Sprintf("%s://%s", "http", c.request.Host) + url
-		fmt.Printf("%#v\n", url)
 	}
 	return url
 }

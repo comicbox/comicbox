@@ -1,5 +1,5 @@
 import { str_random } from 'js/util'
-const url = 'http://192.168.50.213:8080/graphql'
+import Device from './plugins/device'
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
@@ -74,6 +74,12 @@ async function runQueries() {
     const query = `query ${typesStr} {
         ${localQueries.map(q => q.query).join('\n')}
     }`
+
+    let url = '/graphql'
+
+    if ((await Device()).platform !== 'browser') {
+        url = 'http://192.168.50.213:8080' + url
+    }
 
     const response = await fetch(url, {
         method: 'POST',

@@ -8,3 +8,4 @@ comicboxd/web/dist/*
 cordova/node_modules/*
 cordova/platforms/*
 cordova/www/dist/*
+cordova/plugins/*

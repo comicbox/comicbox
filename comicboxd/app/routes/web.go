@@ -29,7 +29,7 @@ func Web(s *server.Server) {
 		Asset:     data.Asset,
 		AssetDir:  data.AssetDir,
 		AssetInfo: data.AssetInfo,
-		Prefix:    "../cordova/www",
+		Prefix:    "../cordova/platforms/browser/www",
 	}))
 
 	// s.Router.Methods("GET").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
