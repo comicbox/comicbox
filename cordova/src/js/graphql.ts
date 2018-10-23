@@ -1,6 +1,5 @@
 import { str_random } from 'js/util'
-
-const url = 'http://localhost:8080/graphql'
+const url = 'http://192.168.50.213:8080/graphql'
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
@@ -87,6 +86,7 @@ async function runQueries() {
             variables: variables,
         }),
     })
+
     if (response.status < 200 || response.status > 299) {
 
         for (const q of localQueries) {
@@ -107,6 +107,7 @@ async function runQueries() {
     for (const q of localQueries) {
         q.success(data.data[q.name])
     }
+
 }
 
 export class QueryError extends Error {

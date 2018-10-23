@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/controller"
@@ -26,7 +25,6 @@ func Web(s *server.Server) {
 		auth.HandleFunc("/v1/book/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}/page/{page:[0-9]+}.{ext:(?:jpg|png)}", controller.BookPage).Methods("GET")
 	}
 
-	fmt.Printf("%#v\n", data.AssetNames())
 	s.Router.Methods("GET").Handler(http.FileServer(&assetfs.AssetFS{
 		Asset:     data.Asset,
 		AssetDir:  data.AssetDir,
