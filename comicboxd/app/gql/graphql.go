@@ -11,6 +11,7 @@ import (
 	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
+	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 	"github.com/jmoiron/sqlx"
 )
@@ -183,6 +184,9 @@ func QueryArgs(model interface{}, args graphql.FieldConfigArgument) graphql.Fiel
 			case bool, *bool:
 				fieldType = graphql.Boolean
 				boolean = true
+
+			case uuid.UUID, *uuid.UUID:
+				fieldType = graphql.ID
 
 			}
 

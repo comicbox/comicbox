@@ -5,9 +5,14 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
+const WebpackOnBuildPlugin = require('on-build-webpack');
+const { ncp } = require('ncp');
+
+ncp.limit = 16;
 
 const paths = {
     DIST: path.resolve(__dirname, 'www'),
+    DIST: path.resolve(__dirname, 'platforms/browser/www'),
     SRC: path.resolve(__dirname, 'src'),
     JS: path.resolve(__dirname, 'src/js'),
     CSS: path.resolve(__dirname, 'src/css'),
@@ -70,7 +75,7 @@ module.exports = (env, argv) => {
             path: paths.DIST,
             publicPath: '',
             // publicPath: '',
-            filename: './assets/' +( devMode ? '[name].js' : '[name].[hash].js'),
+            filename: './assets/' + (devMode ? '[name].js' : '[name].[hash].js'),
             chunkFilename: './assets/' + (devMode ? '[id].js' : '[id].[hash].js'),
         },
         plugins: [
@@ -91,6 +96,14 @@ module.exports = (env, argv) => {
             new webpack.WatchIgnorePlugin([
                 /css\.d\.ts$/
             ]),
+            new WebpackOnBuildPlugin(function (stats) {
+                ncp(paths.DIST, paths.BROWSER, function (err) {
+                    if (err) {
+                        return console.error(err);
+                    }
+                    console.log('done!');
+                });
+            }),
         ],
     }
 };

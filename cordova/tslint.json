@@ -27,6 +27,12 @@
         "object-literal-shorthand": [
             true,
             "never"
+        ],
+        "space-before-function-paren": [
+            true,
+            {
+                "anonymous": "always"
+            }
         ]
     }
 }

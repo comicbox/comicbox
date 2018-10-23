@@ -9,6 +9,7 @@ import Router from 'preact-router'
 import 'css/app.scss'
 import SeriesView from 'js/views/series-view'
 import { historyPush } from './history'
+import Book from './model/book'
 
 const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
     <Home path='/' />
@@ -16,6 +17,15 @@ const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
     <SeriesView path='/series/:name/:page?' />
     <Error default={true} />
 </Router>
+
+Book.find('8cdc6f18-e2c8-4015-b1c6-c9e9aa997482').then(book => {
+    console.log(book)
+})
+
+Book.
+    where('series', '~=', 'story').
+    where('chapter', '>', '10').
+    get().then(console.log)
 
 gql(`me { id }`).catch(async err => {
     const data = await fetch('/login', {
