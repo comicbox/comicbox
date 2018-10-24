@@ -117,8 +117,32 @@ export class QueryBuilder<T extends Model> {
         const table: Dexie.Table<T, string> = (db as any)[this.TClass.table]
         const cacheData = await table.filter((item: any) => {
             for (const where of this.wheres) {
-                if (item[where.field] !== where.value) {
-                    return false
+                switch (where.operator) {
+                    case '=':
+                        if (item[where.field] !== where.value) {
+                            return false
+                        }
+                        break
+                    case '!=':
+                        if (item[where.field] === where.value) {
+                            return false
+                        }
+                        break
+                    case '>':
+                        if (item[where.field] < where.value) {
+                            return false
+                        }
+                        break
+                    case '<':
+                        if (item[where.field] > where.value) {
+                            return false
+                        }
+                        break
+                    case '~=':
+                        if (!new RegExp(where.value as string, 'i').test(item[where.field] as string)) {
+                            return false
+                        }
+                        break
                 }
             }
             return true
