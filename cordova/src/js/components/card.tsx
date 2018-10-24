@@ -87,11 +87,13 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
             image = serie.books[0].cover.url + '?height=200&quality=30'
 
             series = serie.name
-            if (serie.read !== 0) {
+            if (serie.read !== serie.total) {
                 readMark = <div class={s.unread}>
                     <svg viewBox='0 0 40 40'>
                         <rect width='300' height='40' />
-                        <text x='50%' y='50%' alignment-baseline='middle' text-anchor='middle'>{serie.read}</text>
+                        <text x='50%' y='50%' alignment-baseline='middle' text-anchor='middle'>
+                            {serie.total - serie.read}
+                        </text>
                     </svg>
                 </div>
             }

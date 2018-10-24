@@ -1,5 +1,4 @@
 import { str_random } from 'js/util'
-import Device from './plugins/device'
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
@@ -77,7 +76,7 @@ async function runQueries() {
 
     let url = '/graphql'
 
-    if ((await Device()).platform !== 'browser') {
+    if (location.protocol === 'file:') {
         url = 'http://192.168.50.213:8080' + url
     }
 

@@ -7,9 +7,6 @@
     "files": {}
   },
   "installed_plugins": {
-    "cordova-plugin-device": {
-      "PACKAGE_NAME": "ca.comicbox.comicbox"
-    },
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "ca.comicbox.comicbox"
     }
