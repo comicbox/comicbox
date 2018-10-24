@@ -1,11 +1,13 @@
+import { Dexie, IndexableType } from 'dexie'
+import db from 'js/database'
 import { gql } from 'js/graphql'
 import { Model } from 'js/model/model'
-import { map } from 'lodash'
+import map from 'lodash/map'
 
 interface Where {
     field: string
     operator: string
-    value: string | number | boolean
+    value: IndexableType
     type: { type: string, jsType: any }
 }
 
@@ -73,10 +75,14 @@ export class QueryBuilder<T extends Model> {
         return this
     }
 
-    public async get(): Promise<T[]> {
+    public async count(): Promise<number> {
+        return 0
+    }
+
+    public async *get(): AsyncIterableIterator<T> {
 
         const types: { [key: string]: string } = {}
-        const variables: { [key: string]: string | number | boolean } = {}
+        const variables: { [key: string]: IndexableType } = {}
 
         for (const where of this.wheres) {
             const field = where.field + opConv[where.operator]
@@ -95,9 +101,6 @@ export class QueryBuilder<T extends Model> {
 
         const query = `${this.TClass.table}(take: $take skip: $skip
             ${map(types, (type, key) => `${key}: $${key}`).join(', ')}) {
-            page_info {
-                total
-            }
             results {
                 ${this.selects.join(', ')}
             }
@@ -109,13 +112,27 @@ export class QueryBuilder<T extends Model> {
         variables.skip = this._skip
         types.skip = 'Int'
 
+        const gqlQuery = gql(query, types, variables)
         // console.log('get', query, types, variables)
+        const table: Dexie.Table<T, string> = (db as any)[this.TClass.table]
+        const cacheData = await table.filter((item: any) => {
+            for (const where of this.wheres) {
+                if (item[where.field] !== where.value) {
+                    return false
+                }
+            }
+            return true
+        }).toArray()
 
-        const data = await gql(query, types, variables)
-        // console.log(data)
+        for (const item of cacheData) {
+            yield new this.TClass(item, false)
+        }
 
-        const list = data.results.map((result: any) => new this.TClass(result))
-        list.total = data.page_info.total
-        return list
+        const data = await gqlQuery
+
+        for (const result of data.results) {
+            db.books.put(result)
+            yield new this.TClass(result, true)
+        }
     }
 }

@@ -1,6 +1,4 @@
-import { gql } from 'js/graphql'
 import { QueryBuilder } from 'js/model/query-builder'
-import { map } from 'lodash'
 
 interface StaticThis<T> { new(...args: any): T }
 
@@ -8,12 +6,21 @@ export abstract class Model {
 
     public static types: { [key: string]: { type: string, jsType: any } }
 
-    public static async find<T extends Model>(this: StaticThis<T>, id: string): Promise<T> {
-        const model = await (new QueryBuilder<T>(this)).where('id', id).take(1).get()
-        if (model.length === 0) {
+    public static async find<T extends Model>(this: StaticThis<T>, id: string, fresh: boolean = true): Promise<T> {
+        const list = await (new QueryBuilder<T>(this)).where('id', id).take(1).get()
+        const result = await list.next()
+
+        if (result.done) {
             return null
         }
-        return model[0] as T
+
+        if (!result.value.fresh && fresh) {
+            const newResult = await list.next()
+            if (!newResult.done) {
+                return newResult.value
+            }
+        }
+        return result.value
     }
 
     public static where<T extends Model>(this: StaticThis<T>, ...args: string[]): QueryBuilder<T> {
@@ -25,11 +32,11 @@ export abstract class Model {
     }
 
     protected data: any = {}
+    protected fresh: boolean
 
-    private bulkQueryName: string
-
-    constructor(data: any) {
+    constructor(data: any, fresh: boolean) {
         this.data = data
+        this.fresh = fresh
     }
 }
 

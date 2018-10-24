@@ -10,6 +10,7 @@
         "watch": "webpack --watch --progress --display=minimal --mode=development",
         "watch-prod": "webpack --watch --progress --mode=production",
         "icon": "cordova-icon --icon=res/icons/icon.png",
+        "stats": "webpack --mode=production --profile --json > stats.json && webpack-bundle-analyzer stats.json",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Adam Bibby",
@@ -22,6 +23,7 @@
         "cordova-browser": "^5.0.4",
         "cordova-plugin-device": "^2.0.2",
         "cordova-plugin-whitelist": "^1.3.3",
+        "dexie": "^2.0.4",
         "history": "^4.7.2",
         "idb": "^2.1.3",
         "lodash": "^4.17.11",
@@ -38,6 +40,7 @@
         "@babel/preset-env": "^7.1.0",
         "@types/history": "^4.7.2",
         "@types/lodash": "^4.14.117",
+        "@types/lodash-es": "^4.17.1",
         "babel-loader": "^8.0.0-beta.2",
         "babel-minify-webpack-plugin": "^0.3.1",
         "babel-plugin-transform-class-properties": "^6.24.1",
@@ -58,6 +61,7 @@
         "typescript": "^3.0.3",
         "typings-for-css-modules-loader": "^1.7.0",
         "webpack": "^4.20.2",
+        "webpack-bundle-analyzer": "^3.0.3",
         "webpack-cli": "^3.1.1"
     },
     "cordova": {

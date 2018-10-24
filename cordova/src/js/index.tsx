@@ -18,13 +18,22 @@ const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
     <Error default={true} />
 </Router>
 
+Book.find('8cdc6f18-e2c8-4015-b1c6-c9e9aa997482', false).then(console.log)
 Book.find('8cdc6f18-e2c8-4015-b1c6-c9e9aa997482').then(console.log)
+// Book.find('totaly a good id').then(console.log)
 
-Book.
-    where('series', '~=', 'story').
-    where('chapter', '>', '10').
-    take(2).skip(2).
-    get().then(books => books.forEach(b => console.log(b)))
+// const books = Book.
+//     where('series', '~=', 'story').
+//     where('chapter', '>', '10').
+//     take(2).
+//     skip(2).
+//     get();
+
+// (async () => {
+//     for await (const book of books) {
+//         console.log(book)
+//     }
+// })()
 
 gql(`me { id }`).catch(async err => {
     const data = await fetch('/login', {

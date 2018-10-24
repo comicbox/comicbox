@@ -3,7 +3,7 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "moduleResolution": "node",
-        "target": "es6",
+        "target": "esnext",
         "baseUrl": "./",
         "jsx": "preserve",
         "jsxFactory": "h", 
@@ -14,10 +14,13 @@
             ],
             "css/*": [
                 "src/css/*"
+            ],
+            "lodash/*": [
+              "node_modules/@types/lodash-es/*"
             ]
         },
         "experimentalDecorators": true,
-        "pretty": true
+        "pretty": true,
     },
     "exclude": [
         "node_modules",

@@ -12,7 +12,7 @@ ncp.limit = 16;
 
 const paths = {
     DIST: path.resolve(__dirname, 'www'),
-    DIST: path.resolve(__dirname, 'platforms/browser/www'),
+    BROWSER: path.resolve(__dirname, 'platforms/browser/www'),
     SRC: path.resolve(__dirname, 'src'),
     JS: path.resolve(__dirname, 'src/js'),
     CSS: path.resolve(__dirname, 'src/css'),
@@ -101,7 +101,6 @@ module.exports = (env, argv) => {
                     if (err) {
                         return console.error(err);
                     }
-                    console.log('done!');
                 });
             }),
         ],
