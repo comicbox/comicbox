@@ -1,4 +1,5 @@
 import { str_random } from 'js/util'
+import url from './url';
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
@@ -74,13 +75,8 @@ async function runQueries() {
         ${localQueries.map(q => q.query).join('\n')}
     }`
 
-    let url = '/graphql'
 
-    if (location.protocol === 'file:') {
-        url = 'http://192.168.50.213:8080' + url
-    }
-
-    const response = await fetch(url, {
+    const response = await fetch(url('/graphql'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
