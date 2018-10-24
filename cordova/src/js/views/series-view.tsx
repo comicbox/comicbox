@@ -1,7 +1,7 @@
 import * as s from 'css/home.scss'
-import { BookData } from 'js/components/book'
-import BookList from 'js/components/book-list'
+import ModelList from 'js/components/model-list'
 import { gql } from 'js/graphql'
+import Book from 'js/model/book'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 
@@ -27,31 +27,30 @@ interface Props {
 }
 
 interface State {
-    current: BookData
+    current: Book
 }
 
 export default class SeriesView extends Component<Props, State> {
 
-    public componentDidMount() {
-        gql(ListQuery, ListTypes, {
-            series: this.props.matches.name,
-        }).then(books => {
-            const book = books.results[0]
-            if (book !== undefined) {
+    public async componentDidMount() {
+        const books = Book.where('series', this.props.matches.name).where('read', false).take(1).get()
+
+        for await (const book of books) {
+            if (this.state.current === undefined || !this.state.current.fresh) {
                 this.setState({ current: book })
             }
-        })
+        }
     }
 
     public render() {
         let currentBook = null
         if (this.state.current !== undefined) {
-            currentBook = <BookList books={[this.state.current]} />
+            currentBook = <ModelList items={[this.state.current]} />
         }
         return <Layout backLink='/series'>
             <h1>{this.props.matches.name}</h1>
             {currentBook}
-            <BookList series={this.props.matches.name} />
+            <ModelList items={Book.where('series', this.props.matches.name).take(100).get()} />
         </Layout >
     }
 

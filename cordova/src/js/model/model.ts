@@ -23,16 +23,33 @@ export abstract class Model {
         return result.value
     }
 
-    public static where<T extends Model>(this: StaticThis<T>, ...args: string[]): QueryBuilder<T> {
-        return (new QueryBuilder<T>(this)).where(...args)
+    public static where<T extends Model>(
+        this: StaticThis<T>,
+        field: string,
+        value: string | number | boolean): QueryBuilder<T>
+    public static where<T extends Model>(
+        this: StaticThis<T>,
+        field: string,
+        operator: string,
+        value?: string | number | boolean): QueryBuilder<T>
+    public static where<T extends Model>(
+        this: StaticThis<T>,
+        field: string,
+        operator: string,
+        value?: string | number | boolean): QueryBuilder<T> {
+
+        return (new QueryBuilder<T>(this)).where(field, operator, value)
     }
 
     public static select<T extends Model>(this: StaticThis<T>, ...args: string[]): QueryBuilder<T> {
         return (new QueryBuilder<T>(this)).select(...args)
     }
 
+    public abstract get id(): string
+    public abstract get link(): string
+    public fresh: boolean
+
     protected data: any = {}
-    protected fresh: boolean
 
     constructor(data: any, fresh: boolean) {
         this.data = data

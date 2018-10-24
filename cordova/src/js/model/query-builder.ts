@@ -3,11 +3,12 @@ import db from 'js/database'
 import { gql } from 'js/graphql'
 import { Model } from 'js/model/model'
 import map from 'lodash/map'
+import Book from './book';
 
 interface Where {
     field: string
     operator: string
-    value: IndexableType
+    value: string | number | boolean
     type: { type: string, jsType: any }
 }
 
@@ -35,27 +36,24 @@ export class QueryBuilder<T extends Model> {
         return ''
     }
 
-    public where(...args: string[]): QueryBuilder<T> {
+    public where(field: string, value: string | number | boolean): QueryBuilder<T>
+    public where(field: string, operator: string, value?: string | number | boolean): QueryBuilder<T>
+    public where(field: string, operator: string, value?: string | number | boolean): QueryBuilder<T> {
         let where: Where
-        switch (args.length) {
-            case 2:
-                where = {
-                    field: args[0],
-                    operator: '=',
-                    value: args[1],
-                    type: this.TClass.types[args[0]],
-                }
-                break
-            case 3:
-                where = {
-                    field: args[0],
-                    operator: args[1],
-                    value: args[2],
-                    type: this.TClass.types[args[0]],
-                }
-                break
-            default:
-                throw new Error('unsupported number of arguments in where')
+        if (value === undefined) {
+            where = {
+                field: field,
+                operator: '=',
+                value: operator,
+                type: this.TClass.types[field],
+            }
+        } else {
+            where = {
+                field: field,
+                operator: operator,
+                value: value,
+                type: this.TClass.types[field],
+            }
         }
         this.wheres.push(where)
         return this
@@ -82,7 +80,7 @@ export class QueryBuilder<T extends Model> {
     public async *get(): AsyncIterableIterator<T> {
 
         const types: { [key: string]: string } = {}
-        const variables: { [key: string]: IndexableType } = {}
+        const variables: { [key: string]: string | number | boolean } = {}
 
         for (const where of this.wheres) {
             const field = where.field + opConv[where.operator]
@@ -91,16 +89,11 @@ export class QueryBuilder<T extends Model> {
         }
 
         if (this.selects.length === 0) {
-            this.selects = map(this.TClass.types, (type, key) => {
-                if (type.jsType === undefined) {
-                    return key
-                }
-                return key + `{${map(type.jsType.types, (t, k) => k).join(', ')}}`
-            })
+            this.selects = this.generateGQL(this.TClass)
         }
 
-        const query = `${this.TClass.table}(take: $take skip: $skip
-            ${map(types, (type, key) => `${key}: $${key}`).join(', ')}) {
+        // tslint:disable-next-line:max-line-length
+        const query = `${this.TClass.table}(take: $take skip: $skip ${map(types, (type, key) => `${key}: $${key}`).join(', ')}) {
             results {
                 ${this.selects.join(', ')}
             }
@@ -112,10 +105,10 @@ export class QueryBuilder<T extends Model> {
         variables.skip = this._skip
         types.skip = 'Int'
 
-        const gqlQuery = gql(query, types, variables)
+        const gqlQuery = gql(query, types, variables) // start fetching before checking the local cache
         // console.log('get', query, types, variables)
         const table: Dexie.Table<T, string> = (db as any)[this.TClass.table]
-        const cacheData = await table.filter((item: any) => {
+        const cacheData = await table.limit(this._take).filter((item: any) => {
             for (const where of this.wheres) {
                 switch (where.operator) {
                     case '=':
@@ -155,8 +148,22 @@ export class QueryBuilder<T extends Model> {
         const data = await gqlQuery
 
         for (const result of data.results) {
-            db.books.put(result)
+            table.put(result)
             yield new this.TClass(result, true)
         }
+    }
+
+    private generateGQL(jsType: any): string[] {
+        return map(jsType.types, (type, key) => {
+
+            if (type.jsType === undefined) {
+                return key
+            }
+            if (type.jsType === Book) {
+                return `${key} (take: 1) {${this.generateGQL(type.jsType).join(', ')}}`
+            }
+            return `${key} {${this.generateGQL(type.jsType).join(', ')}}`
+        })
+
     }
 }

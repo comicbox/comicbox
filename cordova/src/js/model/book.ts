@@ -87,4 +87,7 @@ export default class Book extends Model {
     @prop('String')
     public web: string
 
+    public get link() {
+        return `/book/${this.id}`
+    }
 }

@@ -1,5 +1,5 @@
 import * as s from 'css/book.scss'
-import Book, { BookData } from 'js/components/book'
+import Book from 'js/components/card'
 import { gql } from 'js/graphql'
 import { Component, h } from 'preact'
 
@@ -27,32 +27,32 @@ interface Props {
 }
 
 interface State {
-    series: BookData[]
+    series: any[]
 }
 
 export default class SeriesList extends Component<Props, State> {
 
-    public componentDidMount() {
-        gql(SeriesListQuery, SeriesListTypes, this.props).then(series => this.setState({
-            series: series.results.map((serie: any): BookData => {
-                return {
-                    id: series.name,
-                    series: serie.name,
-                    cover: serie.books[0].cover,
-                    link: `/series/${serie.name}`,
-                    volume: null,
-                    chapter: null,
-                    title: null,
-                    read: serie.total - serie.read,
-                }
-            }),
-        }))
-    }
+    // public componentDidMount() {
+    //     gql(SeriesListQuery, SeriesListTypes, this.props).then(series => this.setState({
+    //         series: series.results.map((serie: any): BookData => {
+    //             return {
+    //                 id: series.name,
+    //                 series: serie.name,
+    //                 cover: serie.books[0].cover,
+    //                 link: `/series/${serie.name}`,
+    //                 volume: null,
+    //                 chapter: null,
+    //                 title: null,
+    //                 read: serie.total - serie.read,
+    //             }
+    //         }),
+    //     }))
+    // }
 
     public render() {
-        const series: BookData[] = this.state.series || []
+        // const series: any = []
         return <div className={s.bookList} >
-            {series.map(book => <Book key={book.id} data={book} />)}
+            {/* {series.map(book => <Book key={book.id} data={book} />)} */}
         </div>
     }
 

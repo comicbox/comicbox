@@ -26,7 +26,6 @@ const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
 //     where('series', '=', 'Akira').
 //     get();
 
-
 // (async () => {
 //     console.log("books")
 //     for await (const book of books) {
@@ -34,7 +33,6 @@ const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
 //     }
 //     console.log("books done")
 // })()
-
 
 gql(`me { id }`).catch(async err => {
     const data = await fetch('/login', {
