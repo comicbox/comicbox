@@ -3,7 +3,7 @@ import db from 'js/database'
 import { gql } from 'js/graphql'
 import { Model } from 'js/model/model'
 import map from 'lodash/map'
-import Book from './book';
+import Book from './book'
 
 interface Where {
     field: string

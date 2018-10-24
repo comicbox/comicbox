@@ -1,8 +1,6 @@
 import * as s from 'css/book.scss'
 import Card from 'js/components/card'
-import Book from 'js/model/book'
-import { Model } from 'js/model/model'
-import Series from 'js/model/series'
+import { Model, modelSort } from 'js/model/model'
 import { Component, h } from 'preact'
 
 const BookListTypes = { take: 'Int!', skip: 'Int', series: 'String' }
@@ -64,7 +62,7 @@ export default class ModelList<T extends Model> extends Component<Props<T>, Stat
         const items: T[] = this.state.items || []
 
         return (<div className={s.bookList} >
-            {items.map((item, i) => (
+            {items.sort(modelSort).map((item, i) => (
                 <Card key={i} data={item} />
             ))}
         </div>)
@@ -86,17 +84,4 @@ export default class ModelList<T extends Model> extends Component<Props<T>, Stat
     //         })
     //     }
     // }
-}
-function sortSeries(a: Series, b: Series): number {
-    return a.name.localeCompare(b.name)
-}
-
-function sortBooks(a: Book, b: Book): number {
-    if (a.series !== b.series) {
-        return a.series.localeCompare(b.series)
-    }
-    if (a.volume !== b.volume) {
-        return (a.volume || Number.MAX_SAFE_INTEGER) - (b.volume || Number.MAX_SAFE_INTEGER)
-    }
-    return a.chapter - b.chapter
 }

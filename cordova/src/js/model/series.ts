@@ -27,4 +27,8 @@ export default class Series extends Model {
     public get link() {
         return `/series/${this.name}`
     }
+
+    public get sortIndex() {
+        return `series-${this.name}`
+    }
 }

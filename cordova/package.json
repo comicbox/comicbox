@@ -60,7 +60,7 @@
         "tslint-react": "^3.6.0",
         "typescript": "^3.0.3",
         "typings-for-css-modules-loader": "^1.7.0",
-        "webpack": "^4.20.2",
+        "webpack": "^4.23.0",
         "webpack-bundle-analyzer": "^3.0.3",
         "webpack-cli": "^3.1.1"
     },

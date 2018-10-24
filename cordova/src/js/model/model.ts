@@ -47,6 +47,7 @@ export abstract class Model {
 
     public abstract get id(): string
     public abstract get link(): string
+    public abstract get sortIndex(): string
     public fresh: boolean
 
     protected data: any = {}
@@ -83,4 +84,8 @@ export function table(tableName: string): any {
 
         return target
     }
+}
+
+export function modelSort(a: Model, b: Model): number {
+    return a.sortIndex.localeCompare(b.sortIndex)
 }
