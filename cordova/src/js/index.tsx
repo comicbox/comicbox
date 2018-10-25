@@ -8,8 +8,6 @@ import SeriesView from 'js/views/series-view'
 import { h, render } from 'preact'
 import Router from 'preact-router'
 import { cache } from './file'
-// import { historyPush } from './history'
-// import Book from './model/book'
 
 const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
     <Home path='/' />
