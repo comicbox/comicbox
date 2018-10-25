@@ -24,6 +24,7 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <hook src="scripts/build.js" type="before_prepare" />
+    <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <engine name="browser" spec="^5.0.4" />
     <engine name="android" spec="^7.1.1" />
 </widget>

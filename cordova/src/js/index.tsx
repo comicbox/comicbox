@@ -10,6 +10,7 @@ import 'css/app.scss'
 import SeriesView from 'js/views/series-view'
 import { historyPush } from './history'
 import Book from './model/book'
+import { cache } from './file';
 
 const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
     <Home path='/' />
@@ -33,6 +34,11 @@ const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
 //     }
 //     console.log("books done")
 // })()
+(async () => {
+    const fs = await cache()
+    // console.log(fs);
+
+})()
 
 gql(`me { id }`).catch(async err => {
     const data = await fetch('/login', {
