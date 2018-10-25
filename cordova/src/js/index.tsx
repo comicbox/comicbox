@@ -1,16 +1,15 @@
+import 'css/app.scss'
 import createHashHistory from 'history/createHashHistory'
 import { gql } from 'js/graphql'
 import Error from 'js/views/error'
 import Home from 'js/views/home'
 import SeriesIndex from 'js/views/series-index'
+import SeriesView from 'js/views/series-view'
 import { h, render } from 'preact'
 import Router from 'preact-router'
-
-import 'css/app.scss'
-import SeriesView from 'js/views/series-view'
-import { historyPush } from './history'
-import Book from './model/book'
-import { cache } from './file';
+import { cache } from './file'
+// import { historyPush } from './history'
+// import Book from './model/book'
 
 const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
     <Home path='/' />
