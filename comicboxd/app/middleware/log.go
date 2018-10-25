@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"bitbucket.org/zwzn/comicbox/comicboxd/j"
+	"github.com/abibby/comicbox/comicboxd/j"
 )
 
 func Log(next http.Handler) http.Handler {

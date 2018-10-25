@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"bitbucket.org/zwzn/comicbox/comicboxd/app"
+	"github.com/abibby/comicbox/comicboxd/app"
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 )

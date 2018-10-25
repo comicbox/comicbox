@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"bitbucket.org/zwzn/comicbox/comicboxd/app"
-	"bitbucket.org/zwzn/comicbox/comicboxd/errors"
-	"bitbucket.org/zwzn/comicbox/comicboxd/j"
+	"github.com/abibby/comicbox/comicboxd/app"
+	"github.com/abibby/comicbox/comicboxd/errors"
+	"github.com/abibby/comicbox/comicboxd/j"
 )
 
 func Response(next http.Handler) http.Handler {

@@ -6,10 +6,12 @@ import { Component, h } from 'preact'
 export default class SeriesIndex extends Component {
 
     public render() {
-
+        const series = Series.
+            select('name', 'books.cover.url', 'books.volume').
+            where('name', '!=', '').get()
         return <Layout backLink='/'>
             <h1>Series</h1>
-            <ModelList items={Series.where('name', '!=', '').get()} />
+            <ModelList items={series} />
         </Layout >
     }
 

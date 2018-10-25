@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"bitbucket.org/zwzn/comicbox/comicboxd/app"
-	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
 	sq "github.com/Masterminds/squirrel"
+	"github.com/abibby/comicbox/comicboxd/app"
+	"github.com/abibby/comicbox/comicboxd/app/model"
 	"github.com/fatih/structs"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"

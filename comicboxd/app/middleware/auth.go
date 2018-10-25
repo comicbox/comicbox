@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"net/http"
 
-	"bitbucket.org/zwzn/comicbox/comicboxd/app"
-	"bitbucket.org/zwzn/comicbox/comicboxd/app/model"
+	"github.com/abibby/comicbox/comicboxd/app"
+	"github.com/abibby/comicbox/comicboxd/app/model"
 )
 
 func Auth(next http.Handler) http.Handler {

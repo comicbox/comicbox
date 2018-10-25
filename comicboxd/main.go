@@ -9,9 +9,9 @@ import (
 	"log"
 	"os"
 
-	"bitbucket.org/zwzn/comicbox/comicboxd/app/routes"
-	"bitbucket.org/zwzn/comicbox/comicboxd/j"
-	"bitbucket.org/zwzn/comicbox/comicboxd/server"
+	"github.com/abibby/comicbox/comicboxd/app/routes"
+	"github.com/abibby/comicbox/comicboxd/j"
+	"github.com/abibby/comicbox/comicboxd/server"
 	"github.com/kardianos/service"
 )
 

@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	"bitbucket.org/zwzn/comicbox/comicboxd/app"
-	"bitbucket.org/zwzn/comicbox/comicboxd/app/database"
+	"github.com/abibby/comicbox/comicboxd/app"
+	"github.com/abibby/comicbox/comicboxd/app/database"
 )
 
 func Database(next http.Handler) http.Handler {
