@@ -1,3 +1,14 @@
+a {
+  color: inherit;
+  text-decoration: inherit; }
+
+:root {
+  --mdc-theme-primary: #2196f3;
+  --mdc-theme-secondary: hsl(45, 100%, 51%); }
+
+html * {
+  font-family: Roboto, sans-serif; }
+
 .error__message___33p_h {
   font-size: 5em; }
 
@@ -1454,16 +1465,5 @@ a.mdc-list-item {
 .mdc-elevation-transition {
   transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: box-shadow; }
-a {
-  color: inherit;
-  text-decoration: inherit; }
-
-:root {
-  --mdc-theme-primary: #2196f3;
-  --mdc-theme-secondary: hsl(45, 100%, 51%); }
-
-html * {
-  font-family: Roboto, sans-serif; }
-
 
 /*# sourceMappingURL=main.css.map*/
