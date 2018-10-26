@@ -1,5 +1,5 @@
 import { str_random } from 'js/util'
-import url from './url';
+import url from './url'
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
@@ -74,7 +74,6 @@ async function runQueries() {
     const query = `query ${typesStr} {
         ${localQueries.map(q => q.query).join('\n')}
     }`
-
 
     const response = await fetch(url('/graphql'), {
         method: 'POST',

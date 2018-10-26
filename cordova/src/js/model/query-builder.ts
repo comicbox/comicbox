@@ -90,20 +90,21 @@ export class QueryBuilder<T extends Model> {
 
         if (this.selects.length === 0) {
             this.selects = this.generateGQL(this.TClass)
-        } else {
-            let newSelects: any = {}
-            for (const select of this.selects) {
-                const parts = select.split('.')
-                let currentSelect: any = newSelects
-
-                for (const part of parts) {
-                    currentSelect[part] = currentSelect[part] || {}
-                    currentSelect = currentSelect[part]
-                }
-            }
-            console.log(newSelects)
-
         }
+        //  else {
+        //     const newSelects: any = {}
+        //     for (const select of this.selects) {
+        //         const parts = select.split('.')
+        //         let currentSelect: any = newSelects
+
+        //         for (const part of parts) {
+        //             currentSelect[part] = currentSelect[part] || {}
+        //             currentSelect = currentSelect[part]
+        //         }
+        //     }
+        //     console.log(newSelects)
+
+        // }
 
         // tslint:disable-next-line:max-line-length
         const query = `${this.TClass.table}(take: $take skip: $skip ${map(types, (type, key) => `${key}: $${key}`).join(', ')}) {
