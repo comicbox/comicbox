@@ -70,3 +70,11 @@ func (rw *ResponseWriter) WriteHeader(statusCode int) {
 	rw.status = statusCode
 	rw.w.WriteHeader(statusCode)
 }
+
+func HTTPCache(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "max-age=2592000") // 30 days
+
+		next.ServeHTTP(w, r)
+	})
+}

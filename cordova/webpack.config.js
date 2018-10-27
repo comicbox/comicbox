@@ -26,6 +26,7 @@ module.exports = (env, argv) => {
         entry: {
             // polyfill: "@babel/polyfill",
             main: path.join(paths.JS, 'index.tsx'),
+            sw: path.join(paths.JS, 'sw.ts'),
         },
         module: {
             rules: [
@@ -75,8 +76,8 @@ module.exports = (env, argv) => {
             path: paths.DIST,
             publicPath: '',
             // publicPath: '',
-            filename: './assets/' + (devMode ? '[name].js' : '[name].[hash].js'),
-            chunkFilename: './assets/' + (devMode ? '[id].js' : '[id].[hash].js'),
+            filename: './' + (devMode ? '[name].js' : '[name].[hash].js'),
+            chunkFilename: './' + (devMode ? '[id].js' : '[id].[hash].js'),
         },
         plugins: [
             new HtmlWebpackPlugin({
@@ -90,8 +91,8 @@ module.exports = (env, argv) => {
             new MiniCssExtractPlugin({
                 // Options similar to the same options in webpackOptions.output
                 // both options are optional
-                filename: './assets/' + (devMode ? '[name].css' : '[name].[hash].css'),
-                chunkFilename: './assets/' + (devMode ? '[id].css' : '[id].[hash].css'),
+                filename: './' + (devMode ? '[name].css' : '[name].[hash].css'),
+                chunkFilename: './' + (devMode ? '[id].css' : '[id].[hash].css'),
             }),
             new webpack.WatchIgnorePlugin([
                 /css\.d\.ts$/

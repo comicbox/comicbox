@@ -7,7 +7,7 @@ export default class SeriesIndex extends Component {
 
     public render() {
         const series = Series.
-            select('name', 'books.cover.url', 'books.volume').
+            // select('name', 'books.cover.url', 'books.volume').
             where('name', '!=', '').get()
         return <Layout backLink='/'>
             <h1>Series</h1>

@@ -25,12 +25,12 @@ func Web(s *server.Server) {
 		auth.HandleFunc("/v1/book/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}/page/{page:[0-9]+}.{ext:(?:jpg|png)}", controller.BookPage).Methods("GET")
 	}
 
-	s.Router.Methods("GET").Handler(http.FileServer(&assetfs.AssetFS{
+	s.Router.Methods("GET").Handler(middleware.HTTPCache(http.FileServer(&assetfs.AssetFS{
 		Asset:     data.Asset,
 		AssetDir:  data.AssetDir,
 		AssetInfo: data.AssetInfo,
 		Prefix:    "../cordova/platforms/browser/www",
-	}))
+	})))
 
 	// s.Router.Methods("GET").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	// 	d, err := data.Asset("../cordova/www/index.html")
