@@ -8,3 +8,7 @@ export function str_random(len: number = 10) {
 
     return text
 }
+
+export function isString(value: any) {
+    return typeof value === 'string' || value instanceof String
+}

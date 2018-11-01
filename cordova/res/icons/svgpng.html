@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <title>SVG to PNG</title>
+</head>
+
+<body>
+    <img src="icon.svg" alt="icon" height="200px" />
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <br>
+    Size (px) <br>
+    <input type="number" id="size"><br>
+    <button id="save">Download</button>
+
+    <script type="text/javascript"> 
+        save.onclick = function () {
+            var canvas = document.querySelector("canvas");
+            canvas.width = size.value;
+            canvas.height = size.value;
+
+            var context = canvas.getContext("2d");
+
+            var image = new Image;
+            image.src = "icon.svg";
+            image.onload = function () {
+                context.drawImage(image, 0, 0);
+
+                var a = document.createElement("a");
+                a.download = `icon-${size.value}.png`;
+                a.href = canvas.toDataURL("image/png");
+                a.click();
+            };
+        };
+    </script>
+</body>
+
+</html>
