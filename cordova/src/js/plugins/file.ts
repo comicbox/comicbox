@@ -38,30 +38,6 @@ export function getFS(): Promise<FileSystem> {
     })
 }
 
-
-// function writeFileOld(fileEntry: FileEntry, dataObj: any) {
-//     // Create a FileWriter object for our FileEntry (log.txt).
-//     fileEntry.createWriter(fileWriter => {
-
-//         fileWriter.onwriteend = () => {
-//             console.log('Successful file write...')
-//             readFile(fileEntry)
-//         }
-
-//         fileWriter.onerror = e => {
-//             console.log('Failed file write: ' + e.toString())
-//         }
-
-//         // If data object is not passed in,
-//         // create a new Blob instead.
-//         if (!dataObj) {
-//             dataObj = new Blob(['some file data'], { type: 'text/plain' })
-//         }
-
-//         fileWriter.write(dataObj)
-//     })
-// }
-
 export function getFile(path: string, options?: Flags): Promise<AsyncFileEntry> {
     return new Promise(async (resolve, reject) => {
         const fs = await getFS()

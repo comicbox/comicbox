@@ -24,9 +24,9 @@ const jsx = <Router /*onChange={historyPush}*/ history={createHashHistory()}>
 
 // (async () => {
 //     console.log(await getFS())
-//     // console.log(await writeFile('/test.txt', 'content'))
-//     console.log(await getFile('/test.txt'))
-//     console.log(await readFile('/test.txt'))
+//     console.log(await writeFile('/a/path/to/a/file.txt', 'content'))
+//     console.log(await getFile('/a/path/to/a/file.txt'))
+//     console.log(await readFile('/a/path/to/a/file.txt'))
 // })()
 
 render(jsx, document.getElementById('app'))
