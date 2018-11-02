@@ -22,18 +22,19 @@ export async function cache(url: string): Promise<string> {
     try {
         file = await root.getFile(fileName)
     } catch (_) {
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw response
-                }
-                return response.blob()
-            })
-            .then(blob => writeFile(fileName, blob))
+        const response = await fetch(url)
+        if (!response.ok) {
+            throw response
+        }
+        const blob = await response.blob()
+        writeFile(fileName, blob)
 
-        return url
+        return toDataURL(blob)
     }
 
+    if (file.nativeURL) {
+        return file.nativeURL
+    }
     // return file.toURL() // doesn't work on firefox
     return await toDataURL(await file.file())
 }

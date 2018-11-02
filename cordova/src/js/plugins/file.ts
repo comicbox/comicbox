@@ -50,14 +50,14 @@ export async function getRoot(): Promise<AsyncDirectoryEntry> {
     return new AsyncDirectoryEntry(fs.root)
 }
 
-export function readFile(path: string): Promise<string | ArrayBuffer> {
+export function readFile(path: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
         const root = await getRoot()
         const fe = await root.getFile(path)
         const reader = new FileReader()
         const file = await fe.file()
         reader.onloadend = function () {
-            resolve(this.result)
+            resolve(this.result as string)
         }
         reader.onerror = function () {
             reject(this.error)
@@ -75,11 +75,11 @@ export async function mkdir(path: string): Promise<void> {
     }
 }
 
-export function writeFile(path: string, data: string | Blob): Promise<null> {
+export function writeFile(path: string, data: string | Blob): Promise<void> {
     return new Promise(async (resolve, reject) => {
         await mkdir(dirname(path))
         const root = await getRoot()
-        const fe = await root.getFile(path, { create: true, exclusive: true })
+        const fe = await root.getFile(path, { create: true })
         const writer = await fe.createWriter()
 
         writer.onwriteend = () => resolve()
