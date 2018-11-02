@@ -26,7 +26,6 @@ module.exports = (env, argv) => {
         entry: {
             // polyfill: "@babel/polyfill",
             main: path.join(paths.JS, 'index.tsx'),
-            sw: path.join(paths.JS, 'sw.ts'),
         },
         module: {
             rules: [

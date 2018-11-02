@@ -6,6 +6,7 @@ import { Component, h } from 'preact'
 import Elevation from 'preact-material-components/Elevation'
 import 'preact-material-components/Elevation/style.css'
 import { Link } from 'preact-router'
+import CacheImg from './cache-img'
 
 export interface PageData {
     url: string
@@ -102,7 +103,7 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
         return <Elevation z={2} className={s.book}>
             <Link href={data.link}>
                 {readMark}
-                <img className={s.cover} src={image} />
+                <CacheImg className={s.cover} src={image} />
                 <div className={s.series} title={series}>{series || '\u00A0'}</div>
                 <div className={s.title} title={title}>{title}</div>
             </Link>
