@@ -103,7 +103,7 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
         return <Elevation z={2} className={s.book}>
             <Link href={data.link}>
                 {readMark}
-                <CacheImg className={s.cover} src={image} />
+                <img className={s.cover} src={image} />
                 <div className={s.series} title={series}>{series || '\u00A0'}</div>
                 <div className={s.title} title={title}>{title}</div>
             </Link>

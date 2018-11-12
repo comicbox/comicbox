@@ -5,6 +5,7 @@ comicboxd/web/node_modules/*
 comicboxd/web-old/node_modules/*
 comicboxd/web/dist/*
 .cache/*
+comicboxd/.cache/*
 
 cordova/www/*
 

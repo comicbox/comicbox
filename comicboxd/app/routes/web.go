@@ -20,9 +20,9 @@ func Web(s *server.Server) {
 
 	if auth := s.Router.PathPrefix("/api").Subrouter(); true {
 		auth.Use(middleware.Auth)
-		auth.Use(middleware.Cache)
+		// auth.Use(middleware.Cache)
 
-		auth.HandleFunc("/v1/book/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}/page/{page:[0-9]+}.{ext:(?:jpg|png)}", controller.BookPage).Methods("GET")
+		auth.HandleFunc("/v1/book/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}/page/{page:[0-9]+}.{ext:(?:jpg|png|webp)}", controller.BookPage).Methods("GET")
 	}
 
 	s.Router.Methods("GET").Handler(middleware.HTTPCache(http.FileServer(&assetfs.AssetFS{
