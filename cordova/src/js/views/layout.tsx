@@ -78,7 +78,7 @@ export default class Layout extends Component<Props, State> {
                     <TopAppBar.Section align-end={true} class={s.search}>
                         <form onSubmit={this.search}>
                             <input id='search' type='text' ref={e => this.searchInput = e} />
-                            <label for='search'>
+                            <label for='search' onClick={this.searchClick}>
                                 <Icon>search</Icon>
                             </label>
                         </form>
@@ -121,6 +121,11 @@ export default class Layout extends Component<Props, State> {
     private search(e: Event) {
         e.preventDefault()
         this.searchInput.blur()
-        route(`/search?query=${this.searchInput.value}`)
+        route(`/search/${this.searchInput.value}`)
+    }
+
+    @autobind
+    private searchClick(e: Event) {
+        this.searchInput.select()
     }
 }

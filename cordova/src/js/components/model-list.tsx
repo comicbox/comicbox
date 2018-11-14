@@ -3,28 +3,6 @@ import Card from 'js/components/card'
 import { Model, modelSort } from 'js/model/model'
 import { Component, h } from 'preact'
 
-const BookListTypes = { take: 'Int!', skip: 'Int', series: 'String' }
-const BookListQuery = `
-books(take: $take skip: $skip series: $series) {
-  page_info {
-    total
-    take
-    skip
-  }
-  results {
-    id
-    title
-    volume
-    chapter
-    series
-    cover {
-      url
-    }
-    read
-  }
-}
-`
-
 interface Props<T extends Model> {
     items: AsyncIterableIterator<T> | T[]
 }
@@ -34,25 +12,26 @@ interface State<T extends Model> {
 }
 export default class ModelList<T extends Model> extends Component<Props<T>, State<T>> {
 
-    public async componentDidMount() {
+    public async componentDidMount() {        
+        this.setState({ items: [] })
         if (Array.isArray(this.props.items)) {
             this.setState({ items: this.props.items })
         } else {
-            const books: T[] = []
+            const items: T[] = []
             for await (const book of this.props.items) {
                 let found = false
-                for (let i = 0; i < books.length; i++) {
-                    if (books[i].id === book.id && !books[i].fresh && book.fresh) {
-                        books[i] = book
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].id === book.id && !items[i].fresh && book.fresh) {
+                        items[i] = book
                         found = true
 
-                        this.setState({ items: books })
+                        this.setState({ items: items })
                         break
                     }
                 }
                 if (!found) {
-                    books.push(book)
-                    this.setState({ items: books })
+                    items.push(book)
+                    this.setState({ items: items })
                 }
             }
         }

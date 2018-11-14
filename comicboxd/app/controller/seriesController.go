@@ -164,7 +164,7 @@ var SeriesQueries = graphql.Fields{
 				From("series").
 				Where(sq.Eq{"user_id": c.User.ID})
 
-			query = gql.Args(query, model.BookUserBook{}, p.Args)
+			query = gql.Args(query, model.Series{}, p.Args)
 			query = query.OrderBy("name")
 			sqll, args, err := query.Columns("count(*)").ToSql()
 			errors.Check(err)

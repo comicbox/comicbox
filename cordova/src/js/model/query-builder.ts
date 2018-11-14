@@ -12,6 +12,12 @@ interface Where {
     type: { type: string, jsType: any }
 }
 
+export interface GetOptions {
+    cache?: boolean
+    network?: boolean
+    save?: boolean
+}
+
 const opConv: { [key: string]: string } = {
     '=': '',
     '!=': '_ne',
@@ -55,6 +61,10 @@ export class QueryBuilder<T extends Model> {
                 type: this.TClass.types[field],
             }
         }
+        if (field === 'search') {
+            where.operator = '='
+            where.type = { type: 'String', jsType: undefined }
+        }
         this.wheres.push(where)
         return this
     }
@@ -77,8 +87,13 @@ export class QueryBuilder<T extends Model> {
         return 0
     }
 
-    public async *get(): AsyncIterableIterator<T> {
-
+    public async *get(options: GetOptions = {}): AsyncIterableIterator<T> {
+        const defaults: GetOptions = {
+            cache: true,
+            network: true,
+            save: false,
+        }
+        options = { ...defaults, ...options }
         const types: { [key: string]: string } = {}
         const variables: { [key: string]: string | number | boolean } = {}
 
@@ -118,52 +133,59 @@ export class QueryBuilder<T extends Model> {
 
         variables.skip = this._skip
         types.skip = 'Int'
-
-        const gqlQuery = gql(query, types, variables) // start fetching before checking the local cache
+        let gqlFetch: any
+        if (options.network) {
+            gqlFetch = gql(query, types, variables) // start fetching before checking the local cache
+        }
         // console.log('get', query, types, variables)
         const table: Dexie.Table<T, string> = (db as any)[this.TClass.table]
-        const cacheData = await table.limit(this._take).filter((item: any) => {
-            for (const where of this.wheres) {
-                switch (where.operator) {
-                    case '=':
-                        if (item[where.field] !== where.value) {
-                            return false
-                        }
-                        break
-                    case '!=':
-                        if (item[where.field] === where.value) {
-                            return false
-                        }
-                        break
-                    case '>':
-                        if (item[where.field] < where.value) {
-                            return false
-                        }
-                        break
-                    case '<':
-                        if (item[where.field] > where.value) {
-                            return false
-                        }
-                        break
-                    case '~=':
-                        if (!new RegExp(where.value as string, 'i').test(item[where.field] as string)) {
-                            return false
-                        }
-                        break
+        if (options.cache) {
+            const cacheData = await table.limit(this._take).filter((item: any) => {
+                for (const where of this.wheres) {
+                    switch (where.operator) {
+                        case '=':
+                            if (item[where.field] !== where.value) {
+                                return false
+                            }
+                            break
+                        case '!=':
+                            if (item[where.field] === where.value) {
+                                return false
+                            }
+                            break
+                        case '>':
+                            if (item[where.field] < where.value) {
+                                return false
+                            }
+                            break
+                        case '<':
+                            if (item[where.field] > where.value) {
+                                return false
+                            }
+                            break
+                        case '~=':
+                            if (!new RegExp(where.value as string, 'i').test(item[where.field] as string)) {
+                                return false
+                            }
+                            break
+                    }
                 }
+                return true
+            }).toArray()
+
+            for (const item of cacheData) {
+                yield new this.TClass(item, false)
             }
-            return true
-        }).toArray()
-
-        for (const item of cacheData) {
-            yield new this.TClass(item, false)
         }
+        if (options.network) {
+            const data = await gqlFetch
 
-        const data = await gqlQuery
-
-        for (const result of data.results) {
-            table.put(result)
-            yield new this.TClass(result, true)
+            for (const result of data.results) {
+                if (options.save) {
+                    table.put(result)
+                }
+                yield new this.TClass(result, true)
+            }
         }
     }
 
