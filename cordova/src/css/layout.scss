@@ -20,13 +20,15 @@
             padding-top: 16px;
             padding-bottom: 16px;
 
+
             &:focus {
                 width: calc(100% - 44px);
                 padding-right: 34px;
                 padding-left: 10px;
+                border-bottom: solid var(--mdc-theme-primary, #6200ee) 3px;
             }
         }
-        
+
         input:focus+label {
             color: #444;
             position: fixed;
