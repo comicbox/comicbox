@@ -642,18 +642,21 @@ func BookPage(w http.ResponseWriter, r *http.Request) {
 
 	switch c.Var("ext") {
 	case "jpg":
-		jpeg.Encode(w, img, &jpeg.Options{
+		err = jpeg.Encode(w, img, &jpeg.Options{
 			Quality: int(quality),
 		})
+		errors.Check(err)
 		// w.Header().Set("Content-Type", "image/jpeg")
 	case "png":
-		png.Encode(w, img)
+		err = png.Encode(w, img)
+		errors.Check(err)
 		// w.Header().Set("Content-Type", "image/png")
 	case "webp":
-		webp.Encode(w, img, &webp.Options{
+		err = webp.Encode(w, img, &webp.Options{
 			Lossless: false,
 			Quality:  float32(quality),
 		})
+		errors.Check(err)
 		// w.Header().Set("Content-Type", "image/png")
 	}
 }
