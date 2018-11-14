@@ -12,7 +12,7 @@ interface State<T extends Model> {
 }
 export default class ModelList<T extends Model> extends Component<Props<T>, State<T>> {
 
-    public async componentDidMount() {        
+    public async componentDidMount() {
         this.setState({ items: [] })
         if (Array.isArray(this.props.items)) {
             this.setState({ items: this.props.items })

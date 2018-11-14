@@ -16,7 +16,7 @@ interface Query {
 
 let queries: Query[] = []
 
-export function gql(query: string, types?: { [name: string]: string }, variables?: any): Promise<any> {    
+export function gql(query: string, types?: { [name: string]: string }, variables?: any): Promise<any> {
     return new Promise((resolve, reject) => {
 
         const name = query.trim().split(/[ :(]/, 2)[0]
