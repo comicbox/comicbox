@@ -140,7 +140,19 @@ export class QueryBuilder<T extends Model> {
         // console.log('get', query, types, variables)
         const table: Dexie.Table<T, string> = (db as any)[this.TClass.table]
         if (options.cache) {
+            console.log(this._skip, this._take);
+            
+            let index = 0
             const cacheData = await table.limit(this._take).filter((item: any) => {
+                if (index < this._skip) {
+
+                    return false
+                }
+                // if (index > this._skip + this._take) {
+                //     console.log(index);
+                //     return false
+                // }
+                index++
                 for (const where of this.wheres) {
                     switch (where.operator) {
                         case '=':

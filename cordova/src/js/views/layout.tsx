@@ -29,7 +29,7 @@ export default class Layout extends Component<Props, State> {
             {
                 name: 'Lists',
                 icon: 'view_list',
-                href: '/current',
+                href: '/list',
             },
             {
                 name: 'Series',
@@ -37,9 +37,9 @@ export default class Layout extends Component<Props, State> {
                 href: '/series',
             },
             {
-                name: 'Notifications',
-                icon: 'notifications',
-                href: '/notifications',
+                name: 'Something',
+                icon: 'help',
+                href: '/something',
             },
             {
                 name: 'Settings',

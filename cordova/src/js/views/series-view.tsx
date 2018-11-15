@@ -5,23 +5,6 @@ import Book from 'js/model/book'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 
-const ListTypes = { series: 'String' }
-const ListQuery = `
-books(take: 1 series: $series read: false) {
-  results {
-    id
-    title
-    volume
-    chapter
-    series
-    cover {
-      url
-    }
-    read
-  }
-}
-`
-
 interface Props {
     matches?: { [name: string]: string }
 }
@@ -44,13 +27,19 @@ export default class SeriesView extends Component<Props, State> {
 
     public render() {
         let currentBook = null
+        const series = this.props.matches.name
+
         if (this.state.current !== undefined) {
-            currentBook = <ModelList items={[this.state.current]} />
+            currentBook = <ModelList items={[this.state.current]} key={series + 'current'} />
         }
+
         return <Layout backLink='/series'>
-            <h1>{this.props.matches.name}</h1>
+            <h1>{series}</h1>
             {currentBook}
-            <ModelList items={Book.where('series', this.props.matches.name).take(100).get()} />
+            <ModelList
+                items={Book.where('series', series).take(100).get()}
+                key={series + 'books'}
+            />
         </Layout >
     }
 
