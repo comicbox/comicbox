@@ -1,10 +1,13 @@
 package controller
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/abibby/comicbox/comicboxd/app"
+	"github.com/abibby/comicbox/comicboxd/app/database"
 	"github.com/abibby/comicbox/comicboxd/app/gql"
 	"github.com/abibby/comicbox/comicboxd/app/model"
 	"github.com/abibby/comicbox/comicboxd/errors"
@@ -12,6 +15,11 @@ import (
 	"github.com/graphql-go/graphql"
 	"golang.org/x/crypto/bcrypt"
 )
+
+type UserQuery struct {
+	PageInfo gql.Page      `json:"page_info"`
+	Results  []*model.User `json:"results"`
+}
 
 type user struct{}
 
@@ -85,12 +93,92 @@ var UserType = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 
+var UserQueryType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "UserQuery",
+	Fields: graphql.Fields{
+		"page_info": &graphql.Field{
+			Type: gql.PageInfoType,
+		},
+		"results": &graphql.Field{
+			Type: graphql.NewList(UserType),
+		},
+	},
+})
+
 var UserQueries = graphql.Fields{
 	"me": &graphql.Field{
 		Type: UserType,
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			c := gql.Ctx(p)
 			return c.User, nil
+		},
+	},
+	"users": &graphql.Field{
+		Args: gql.QueryArgs(model.User{}, graphql.FieldConfigArgument{
+			"take": &graphql.ArgumentConfig{
+				Type: graphql.NewNonNull(graphql.Int),
+			},
+			"skip": &graphql.ArgumentConfig{
+				Type: graphql.Int,
+			},
+			"me": &graphql.ArgumentConfig{
+				Type: graphql.Boolean,
+			},
+		}),
+		Type: UserQueryType,
+		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			c := gql.Ctx(p)
+
+			skip, _ := p.Args["skip"].(int)
+			take, _ := p.Args["take"].(int)
+
+			me, _ := p.Args["me"].(bool)
+			delete(p.Args, "me")
+
+			if 0 > take || take > 100 {
+				return nil, fmt.Errorf("you must take between 0 and 100 items")
+			}
+
+			query := sq.Select().From("user") //.Where(sq.Eq{"id": c.User.ID})
+			if me {
+				query = query.Where(sq.Eq{"id": c.User.ID})
+			}
+			query = gql.Args(query, model.User{}, p.Args)
+			query = query.OrderBy("name")
+			sqll, args, err := query.Columns("count(*)").ToSql()
+			errors.Check(err)
+
+			var count int
+			err = database.DB.Get(&count, sqll, args...)
+			if err == sql.ErrNoRows {
+				count = 0
+			} else if err != nil {
+				return nil, err
+			}
+
+			users := []*model.User{}
+			sqll, args, err = query.
+				Columns("*").
+				Offset(uint64(skip)).
+				Limit(uint64(take)).
+				ToSql()
+			errors.Check(err)
+
+			err = database.DB.Select(&users, sqll, args...)
+			if err == sql.ErrNoRows {
+				return nil, nil
+			} else if err != nil {
+				return nil, err
+			}
+
+			return UserQuery{
+				PageInfo: gql.Page{
+					Skip:  skip,
+					Take:  take,
+					Total: count,
+				},
+				Results: users,
+			}, nil
 		},
 	},
 }
@@ -148,12 +236,15 @@ var UserMutations = graphql.Fields{
 			}
 
 			userMap := p.Args["user"].(map[string]interface{})
-			hash, err := HashPassword(userMap["password"].(string))
-			if err != nil {
-				return nil, err
+
+			if password, ok := userMap["password"]; ok {
+				hash, err := HashPassword(password.(string))
+				if err != nil {
+					return nil, err
+				}
+				userMap["password"] = hash
 			}
 
-			userMap["password"] = hash
 			err = gql.InsertOrUpdate(c.DB, "user", model.User{}, userMap, map[string]interface{}{
 				"id": id,
 			})

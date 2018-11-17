@@ -1,3 +1,4 @@
+import { gql } from 'js/graphql'
 import { QueryBuilder } from 'js/model/query-builder'
 
 interface StaticThis<T> { new(...args: any): T }
@@ -5,6 +6,7 @@ interface StaticThis<T> { new(...args: any): T }
 export abstract class Model {
 
     public static types: { [key: string]: { type: string, jsType: any } }
+    public static searchTypes: { [key: string]: { type: string, jsType?: any } } = {}
 
     public static async find<T extends Model>(this: StaticThis<T>, id: string, fresh: boolean = true): Promise<T> {
         const list = await (new QueryBuilder<T>(this)).where('id', id).take(1).get()
@@ -51,10 +53,37 @@ export abstract class Model {
     public fresh: boolean
 
     protected data: any = {}
+    protected updatedData: any = {}
+    protected hasUpdates: boolean = false
 
     constructor(data: any, fresh: boolean) {
         this.data = data
         this.fresh = fresh
+    }
+
+    public async save(): Promise<void> {
+        const tableName = Object.getPrototypeOf(this).constructor.table
+        if (!this.hasUpdates) {
+            return
+        }
+
+        const newData = await gql(`
+            user (id: $id user: $data){
+                id
+                name
+                username
+            }
+        `, {
+                id: 'ID',
+                data: 'UserInput!',
+            }, {
+                id: this.id,
+                data: this.updatedData,
+            }, true)
+
+        this.hasUpdates = false
+        this.data = { ...this.data, ...this.updatedData }
+        this.updatedData = {}
     }
 }
 
@@ -68,17 +97,18 @@ export function prop(type: string, jsType?: any): any {
 
         return {
             set: function (value: any) {
-                this.data[key] = value
+                this.hasUpdates = true
+                this.updatedData[key] = value
             },
             get: function () {
-                return this.data[key]
+                return this.updatedData[key] || this.data[key]
             },
         }
 
     }
 }
 
-export function table(tableName: string): any {
+export function table(tableName: string, mutationName: string, insertType: string, primaryType: string = 'ID'): any {
     return (target: any) => {
         target.prototype.constructor.table = tableName
 

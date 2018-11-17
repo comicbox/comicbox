@@ -51,14 +51,14 @@ export class QueryBuilder<T extends Model> {
                 field: field,
                 operator: '=',
                 value: operator,
-                type: this.TClass.types[field],
+                type: this.TClass.types[field] || this.TClass.searchTypes[field],
             }
         } else {
             where = {
                 field: field,
                 operator: operator,
                 value: value,
-                type: this.TClass.types[field],
+                type: this.TClass.types[field] || this.TClass.searchTypes[field],
             }
         }
         if (field === 'search') {
@@ -89,7 +89,7 @@ export class QueryBuilder<T extends Model> {
 
     public async *get(options: GetOptions = {}): AsyncIterableIterator<T> {
         const defaults: GetOptions = {
-            cache: true,
+            cache: false,
             network: true,
             save: false,
         }
@@ -140,8 +140,7 @@ export class QueryBuilder<T extends Model> {
         // console.log('get', query, types, variables)
         const table: Dexie.Table<T, string> = (db as any)[this.TClass.table]
         if (options.cache) {
-            console.log(this._skip, this._take);
-            
+
             let index = 0
             const cacheData = await table.limit(this._take).filter((item: any) => {
                 if (index < this._skip) {

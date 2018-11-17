@@ -5,10 +5,13 @@
         "moduleResolution": "node",
         "target": "esnext",
         "baseUrl": "./",
-        "jsx": "preserve",
-        "jsxFactory": "h", 
+        // "jsx": "preserve",
+        "jsx": "react",
+        "jsxFactory": "h",
         "paths": {
-            "*": ["types/*"],
+            "*": [
+                "types/*"
+            ],
             "js/*": [
                 "src/js/*"
             ],
@@ -16,7 +19,7 @@
                 "src/css/*"
             ],
             "lodash/*": [
-              "node_modules/@types/lodash-es/*"
+                "node_modules/@types/lodash-es/*"
             ]
         },
         "experimentalDecorators": true,

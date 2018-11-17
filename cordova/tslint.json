@@ -19,6 +19,7 @@
         "jsx-wrap-multiline": false,
         "jsx-alignment": true,
         "jsx-no-multiline-js": false,
+        "jsx-boolean-value": false,
         "arrow-parens": [
             true,
             "ban-single-arg-parens"

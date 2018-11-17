@@ -1,8 +1,7 @@
 import { Model, prop, table } from 'js/model/model'
 import Book from './book'
 
-// tslint:disable-next-line:max-classes-per-file
-@table('series')
+@table('series', 'series', 'SeriesInput!', 'name')
 export default class Series extends Model {
 
     @prop('[Book]', Book)

@@ -22,7 +22,7 @@ module.exports = (env, argv) => {
     const devMode = argv.mode !== 'production'
     return {
         mode: process.env.NODE_ENV,
-        devtool: devMode ? 'source-map' : '',
+        // devtool: devMode ? 'source-map' : '',
         entry: {
             // polyfill: "@babel/polyfill",
             main: path.join(paths.JS, 'index.tsx'),
@@ -31,10 +31,16 @@ module.exports = (env, argv) => {
             rules: [
                 {
                     test: /\.tsx?$/,
-                    loader: ['babel-loader', 'ts-loader', 'tslint-loader'],
+                    exclude: /node_modules/,
+                    loader: [
+                        // 'babel-loader',
+                        'ts-loader',
+                        'tslint-loader',
+                    ],
                 },
                 {
                     test: /\.js$/,
+                    exclude: /node_modules/,
                     loader: 'babel-loader',
                 },
                 {
@@ -62,14 +68,6 @@ module.exports = (env, argv) => {
                 "node_modules",
                 paths.SRC
             ],
-            alias: {
-                'react': 'preact-compat',
-                'react-dom': 'preact-compat',
-                // Not necessary unless you consume a module using `createClass`
-                'create-react-class': 'preact-compat/lib/create-react-class',
-                // Not necessary unless you consume a module requiring `react-dom-factories`
-                'react-dom-factories': 'preact-compat/lib/react-dom-factories'
-            }
         },
         output: {
             path: paths.DIST,
