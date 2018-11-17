@@ -27,7 +27,7 @@ export default class Book extends Model {
     @prop('Float')
     public community_rating: number
 
-    @prop('Page', Page)
+    @prop('Page', { jsType: Page })
     public cover: Page
 
     @prop('DateTime')
@@ -51,7 +51,7 @@ export default class Book extends Model {
     @prop('Int')
     public last_page_read: number
 
-    @prop('[Page]', Page)
+    @prop('[Page]', { jsType: Page })
     public pages: Page[]
 
     @prop('Float')

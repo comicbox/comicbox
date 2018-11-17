@@ -1,5 +1,5 @@
 import autobind from 'autobind-decorator'
-import { login, user } from 'js/auth';
+import { login, logout, user } from 'js/auth'
 import User from 'js/model/user'
 import Options from 'js/options'
 import Layout from 'js/views/layout'
@@ -14,11 +14,12 @@ import 'preact-material-components/TextField/style.css'
 // }
 
 interface State {
-    me: User
     address: string
+
+    me: User
     username: string
     name: string
-    currentPass: string
+
     newPass: string
     repeatNewPass: string
 }
@@ -65,13 +66,15 @@ export default class Settings extends Component<{}, State> {
                 <h2>User</h2>
                 <TextField label='Name' value={name} onKeyUp={this.keyUpName} />
                 <TextField label='Username' value={username} onKeyUp={this.keyUpUsername} />
-                <Btn raised onClick={this.btnUpdate}>Update</Btn>
+                <Btn raised onClick={this.btnUpdateUser}>Update</Btn>
+
+                <Btn raised onClick={this.btnLogout}>Logout</Btn>
 
                 <h3>Change Password</h3>
-                <TextField label='Current Password' type='password' onKeyUp={this.keyUpCurrentPass} />
                 <TextField label='New Password' type='password' onKeyUp={this.keyUpNewPass} />
                 <TextField label='Repeat New Password' type='password' onKeyUp={this.keyUpRepeatNewPass} />
-                <Btn raised>Update</Btn>
+                <Btn raised onClick={this.btnUpdatePassword}>Update</Btn>
+
             </div>
         </Layout >
     }
@@ -98,13 +101,6 @@ export default class Settings extends Component<{}, State> {
     }
 
     @autobind
-    private keyUpCurrentPass(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ currentPass: e.target.value })
-        }
-    }
-
-    @autobind
     private keyUpNewPass(e: Event) {
         if (e.target instanceof HTMLInputElement) {
             this.setState({ newPass: e.target.value })
@@ -127,7 +123,7 @@ export default class Settings extends Component<{}, State> {
     }
 
     @autobind
-    private async btnUpdate() {
+    private async btnUpdateUser() {
         const me = this.state.me
 
         me.name = this.state.name
@@ -140,6 +136,30 @@ export default class Settings extends Component<{}, State> {
             username: me.username,
             name: me.name,
         })
+    }
+
+    @autobind
+    private async btnUpdatePassword() {
+        const me = this.state.me
+
+        if (this.state.newPass !== this.state.repeatNewPass) {
+            alert("your passwords don't match")
+            return
+        }
+
+        me.password = this.state.newPass
+
+        await me.save()
+
+        this.setState({
+            newPass: '',
+            repeatNewPass: '',
+        })
+    }
+
+    @autobind
+    private btnLogout() {
+        logout()
     }
 
 }

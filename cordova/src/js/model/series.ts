@@ -4,7 +4,7 @@ import Book from './book'
 @table('series', 'series', 'SeriesInput!', 'name')
 export default class Series extends Model {
 
-    @prop('[Book]', Book)
+    @prop('[Book]', {jsType: Book})
     public books: Book[]
 
     @prop('List')

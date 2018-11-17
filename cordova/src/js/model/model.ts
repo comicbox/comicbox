@@ -62,48 +62,67 @@ export abstract class Model {
     }
 
     public async save(): Promise<void> {
-        const tableName = Object.getPrototypeOf(this).constructor.table
+        const TClass = Object.getPrototypeOf(this).constructor
+
+        const mutationName = TClass.mutationName
+        const insertType = TClass.insertType
+        const primaryType = TClass.primaryType
+
         if (!this.hasUpdates) {
             return
         }
+        const qb = new QueryBuilder(this)
 
         const newData = await gql(`
-            user (id: $id user: $data){
-                id
-                name
-                username
+            ${mutationName} (id: $id ${mutationName}: $data) {
+                ${qb.generateGQL(TClass).join(', ')}
             }
         `, {
-                id: 'ID',
-                data: 'UserInput!',
+                id: primaryType,
+                data: insertType,
             }, {
                 id: this.id,
                 data: this.updatedData,
             }, true)
 
         this.hasUpdates = false
-        this.data = { ...this.data, ...this.updatedData }
+        this.data = { ...this.data, ...this.updatedData, ...newData }
         this.updatedData = {}
     }
 }
 
-export function prop(type: string, jsType?: any): any {
+interface PropOptions {
+    jsType?: any
+    writeOnly?: boolean
+}
+
+export function prop(type: string, options: PropOptions = {}): any {
     return (target: any, key: string) => {
 
         if (!target.constructor.types) {
             target.constructor.types = {}
         }
-        target.constructor.types[key] = { type: type, jsType: jsType }
 
-        return {
-            set: function (value: any) {
-                this.hasUpdates = true
-                this.updatedData[key] = value
-            },
-            get: function () {
-                return this.updatedData[key] || this.data[key]
-            },
+        target.constructor.types[key] = {
+            type: type,
+            jsType: options.jsType,
+            writeOnly: options.writeOnly,
         }
+
+        const ret: { get?: () => any, set?: (value: any) => void } = {}
+
+        if (!options.writeOnly) {
+            ret.get = function () {
+                return this.updatedData[key] || this.data[key]
+            }
+        }
+
+        ret.set = function (value: any) {
+            this.hasUpdates = true
+            this.updatedData[key] = value
+        }
+
+        return ret
 
     }
 }
@@ -111,6 +130,9 @@ export function prop(type: string, jsType?: any): any {
 export function table(tableName: string, mutationName: string, insertType: string, primaryType: string = 'ID'): any {
     return (target: any) => {
         target.prototype.constructor.table = tableName
+        target.prototype.constructor.mutationName = mutationName
+        target.prototype.constructor.insertType = insertType
+        target.prototype.constructor.primaryType = primaryType
 
         return target
     }

@@ -10,7 +10,8 @@
         ],
         "quotemark": [
             true,
-            "single"
+            "single",
+            "avoid-escape"
         ],
         "interface-name": [
             true,

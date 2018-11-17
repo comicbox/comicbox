@@ -200,9 +200,11 @@ export class QueryBuilder<T extends Model> {
         }
     }
 
-    private generateGQL(jsType: any): string[] {
+    public generateGQL(jsType: any): string[] {
         return map(jsType.types, (type, key) => {
-
+            if (type.writeOnly) {
+                return
+            }
             if (type.jsType === undefined) {
                 return key
             }

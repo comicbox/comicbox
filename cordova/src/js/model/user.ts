@@ -33,6 +33,9 @@ export default class User extends Model {
     @prop('String')
     public username: string
 
+    @prop('String', { writeOnly: true })
+    public password: string
+
     public get link() {
         return `/user/${this.username}`
     }
