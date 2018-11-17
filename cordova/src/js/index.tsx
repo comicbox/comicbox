@@ -4,6 +4,7 @@ import { historyPush } from 'js/history'
 import Error from 'js/views/error'
 import Home from 'js/views/home'
 import List from 'js/views/list'
+import Login from 'js/views/login'
 import SearchIndex from 'js/views/search-index'
 import SeriesIndex from 'js/views/series-index'
 import SeriesView from 'js/views/series-view'
@@ -18,6 +19,8 @@ const jsx = <Router onChange={historyPush} history={createHashHistory()}>
     <SearchIndex path='/search/:query' />
     <Settings path='/settings' />
     <List path='/list' />
+
+    <Login path='/login' />
 
     <Error default={true} />
 </Router>
