@@ -47,7 +47,7 @@ export default class Settings extends Component<{}, State> {
         let name = ''
         let username = ''
 
-        if (location.protocol === 'file:' || true) {
+        if (location.protocol === 'file:') {
             serverSettings = <div>
                 <h2>Server</h2>
                 <TextField label='Address' value={this.state.address} onKeyUp={this.keyUpAddress} readOnly />
