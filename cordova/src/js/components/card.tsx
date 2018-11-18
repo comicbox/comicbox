@@ -1,11 +1,14 @@
+import autobind from 'autobind-decorator'
 import * as s from 'css/book.scss'
 import LazyImg from 'js/components/lazy-img'
 import Book from 'js/model/book'
 import { Model } from 'js/model/model'
 import Series from 'js/model/series'
 import { Component, h } from 'preact'
+import Button from 'preact-material-components/Button'
 import Elevation from 'preact-material-components/Elevation'
-import 'preact-material-components/Elevation/style.css'
+import Icon from 'preact-material-components/Icon'
+import Menu from 'preact-material-components/Menu'
 import { Link } from 'preact-router'
 
 export interface PageData {
@@ -18,29 +21,8 @@ interface Props<T extends Model> {
 }
 
 export default class Card<T extends Model> extends Component<Props<T>, null> {
-    // private observer: IntersectionObserver
 
-    // public componentDidMount() {
-    //     const options = {
-    //         root: null as HTMLElement,
-    //         rootMargin: '0px',
-    //         threshold: 0.1,
-    //     }
-    //     this.observer = new IntersectionObserver(elements => {
-    //         for (const element of elements) {
-    //             if (this.props.onIntersection) {
-    //                 this.props.onIntersection(element)
-    //             }
-    //         }
-    //     }, options)
-    //     this.observer.observe(this.base)
-    // }
-
-    // public componentWillUnmount() {
-    //     if (this.observer) {
-    //         this.observer.disconnect()
-    //     }
-    // }
+    private menu: Menu
 
     public render() {
         const data = this.props.data
@@ -105,10 +87,26 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
                 {readMark}
                 <LazyImg className={s.cover} src={image} />
                 <div className={s.series} title={series}>{series || '\u00A0'}</div>
+
                 <div className={s.title} title={title}>{title}</div>
             </Link>
+            <Menu.Anchor>
+                <Button onClick={this.openMenu} >
+                    <Icon>more_vert</Icon>
+                </Button>
+                <Menu ref={menu => this.menu = menu} >
+                    <Menu.Item>Hello1</Menu.Item>
+                    <Menu.Item>Hello2</Menu.Item>
+                    <Menu.Item>Hello3</Menu.Item>
+                </Menu>
+            </Menu.Anchor>
         </Elevation>
 
+    }
+
+    @autobind
+    private openMenu(e: Event) {
+        this.menu.MDComponent.open = true
     }
 
 }

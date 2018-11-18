@@ -4,7 +4,6 @@ import { historyPop, historyPrevious } from 'js/history'
 import { Component, h } from 'preact'
 import Icon from 'preact-material-components/Icon'
 import TopAppBar from 'preact-material-components/TopAppBar'
-import 'preact-material-components/TopAppBar/style.css'
 import { Link, route } from 'preact-router'
 
 interface Props {

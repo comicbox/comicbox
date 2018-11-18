@@ -1,5 +1,5 @@
 import User from 'js/model/user'
-import { route } from 'preact-router';
+import { route } from 'preact-router'
 
 let _user: User = null
 

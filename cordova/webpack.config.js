@@ -18,6 +18,43 @@ const paths = {
     CSS: path.resolve(__dirname, 'src/css'),
 };
 
+class SassResolver {
+
+    apply(resolver) {
+        resolver.plugin('resolve', (request, callback) => {
+            console.log('request', request.request);
+
+            callback()
+            return
+
+            // if (this.include && !request.path.startsWith(this.include)) {
+            //     callback()
+            //     return
+            // }
+            // const rfs = resolver.fileSystem;
+            // const filename = `${path.basename(request.path)}.js`
+            // const filePath = resolver.join(request.path, filename)
+            // rfs.stat(filePath, (err, stats) => {
+            //     if (err || !stats.isFile()) {
+            //         callback()
+            //         return
+            //     }
+            //     const indexPath = resolver.join(request.path, 'index.js');
+            //     rfs.stat(indexPath, (indexErr, indexStats) => {
+            //         if (!indexErr && indexStats.isFile()) {
+            //             callback()
+            //             return
+            //         }
+            //         const relativePath = request.relativePath && resolver.join(request.relativePath, filename)
+            //         const nextRequest = Object.assign({}, request, { path: filePath, relativePath })
+            //         resolver.doResolve(target, nextRequest, `using path: ${filePath}`, callback)
+            //     })
+            // })
+        })
+
+    }
+}
+
 module.exports = (env, argv) => {
     const devMode = argv.mode !== 'production'
     return {
@@ -44,11 +81,47 @@ module.exports = (env, argv) => {
                     loader: 'babel-loader',
                 },
                 {
-                    test: /\.scss$/,
+                    test: /(?<!app)\.scss$/,
                     use: [
                         MiniCssExtractPlugin.loader,
-                        'typings-for-css-modules-loader?modules&namedExport&camelCase&sass&localIdentName=[name]__[local]___[hash:base64:5]',
+                        {
+                            loader: 'typings-for-css-modules-loader',
+                            options: {
+                                modules: true,
+                                namedExport: true,
+                                camelCase: true,
+                                localIdentName: '[name]__[local]___[hash:base64:5]',
+                            }
+                        },
                         "sass-loader",
+                        {
+                            loader: 'sass-resources-loader',
+                            options: {
+                                resources: path.join(paths.CSS, '_variables.scss'),
+                            },
+                        },
+                    ]
+                },
+                {
+                    test: /app\.scss$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        'css-loader',
+                        {
+                            loader: "sass-loader",
+                            options: {
+                                sourceMap: true,
+                                includePaths: [
+                                    'node_modules', 'src', '.'
+                                ]
+                            }
+                        },
+                        {
+                            loader: 'sass-resources-loader',
+                            options: {
+                                resources: path.join(paths.CSS, '_variables.scss'),
+                            },
+                        },
                     ]
                 },
                 {
@@ -63,11 +136,14 @@ module.exports = (env, argv) => {
 
         },
         resolve: {
-            extensions: ['.tsx', '.ts', '.js'],
+            extensions: ['.tsx', '.ts', '.js', '.scss', '.css'],
             modules: [
                 "node_modules",
                 paths.SRC
             ],
+            plugins: [
+                // new SassResolver(),
+            ]
         },
         output: {
             path: paths.DIST,

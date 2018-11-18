@@ -5,9 +5,7 @@ import Options from 'js/options'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 import Btn from 'preact-material-components/Button'
-import 'preact-material-components/Button/style.css'
 import TextField from 'preact-material-components/TextField'
-import 'preact-material-components/TextField/style.css'
 
 // interface Props {
 

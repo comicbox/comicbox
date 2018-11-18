@@ -1,16 +1,12 @@
-:global {
-    a {
-        color: inherit;
-        text-decoration: inherit;
-    }
 
-    :root {
-        --mdc-theme-primary: #2196f3;
-        --mdc-theme-secondary: hsl(45, 100%, 51%);
-    }
+@import "preact-material-components/material-components-web";
 
-    html * {
-        font-family: Roboto, sans-serif;
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
 
-    }
+html * {
+    font-family: Roboto, sans-serif;
+    // color: $mdc-theme-text-primary-on-background;
 }

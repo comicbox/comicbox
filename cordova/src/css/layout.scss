@@ -4,7 +4,7 @@
     left: 0;
     width: 100%;
     min-height: calc(100% - 56px);
-    background: #f5f5f5;
+    background: $mdc-theme-background;
     margin-bottom: -56px;
     padding-bottom: 56px;
 
@@ -27,7 +27,7 @@
                 width: calc(100% - 44px);
                 padding-right: 34px;
                 padding-left: 10px;
-                border-bottom: solid var(--mdc-theme-primary, #6200ee) 3px;
+                border-bottom: solid $mdc-theme-primary 3px;
             }
         }
 

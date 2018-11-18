@@ -71,10 +71,10 @@
                 right: 0;
                 width: 20%;
 
-                fill: var(--mdc-theme-secondary);
+                fill: $mdc-theme-secondary;
 
                 text {
-                    fill: white;
+                    fill: $mdc-theme-on-secondary;
                     font-size: 1.3em;
                     font-weight: bold;
                 }
