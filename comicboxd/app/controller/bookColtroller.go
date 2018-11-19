@@ -352,7 +352,7 @@ var BookQueries = graphql.Fields{
 }
 
 var BookInput = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name: "book_input",
+	Name: "BookInput",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"series": &graphql.InputObjectFieldConfig{
 			Type: graphql.String,

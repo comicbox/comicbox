@@ -99,7 +99,21 @@ func Args(query sq.SelectBuilder, m interface{}, args map[string]interface{}) sq
 		switch name {
 		case "skip", "take":
 		case "sort":
-			query = query.OrderBy(val.(string))
+			allCols := model.GetTags(m, "db")
+			for _, col := range strings.Split(val.(string), ",") {
+				col = strings.TrimSpace(col)
+				desc := ""
+				if col[0] == '!' {
+					desc = " desc"
+					col = col[1:]
+				}
+				for _, modelCol := range allCols {
+					if modelCol == col {
+						query = query.OrderBy(fmt.Sprintf("%s%s", col, desc))
+						break
+					}
+				}
+			}
 		case "search":
 			exprs := []sq.Sqlizer{}
 			// for _, tag := range model.GetTags(m, "db") {

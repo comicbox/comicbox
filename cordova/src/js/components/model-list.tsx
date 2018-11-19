@@ -43,7 +43,7 @@ export default class ModelList<T extends Model> extends Component<Props<T>, Stat
         const items: T[] = this.state.items || []
 
         return (<div className={s.bookList} >
-            {items.sort(modelSort).map((item, i) => {
+            {items.map((item, i) => {
 
                 let options: Dictionary<(model: Model) => void>
                 if (item instanceof Book) {
@@ -82,7 +82,12 @@ const seriesOptions: Dictionary<(model: Series) => void> = {
 }
 
 const bookOptions: Dictionary<(model: Book) => void> = {
-    // 'Add to list': book => {
-
-    // },
+    'Mark as read': book => {
+        book.current_page = book.pages.length
+        book.save()
+    },
+    'Mark as unread': book => {
+        book.current_page = 0
+        book.save()
+    },
 }

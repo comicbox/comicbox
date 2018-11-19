@@ -47,6 +47,10 @@ export abstract class Model {
         return (new QueryBuilder<T>(this)).select(...args)
     }
 
+    public static sort<T extends Model>(this: StaticThis<T>, ...columns: string[]): QueryBuilder<T> {
+        return (new QueryBuilder<T>(this)).sort(...columns)
+    }
+
     public abstract get id(): string
     public abstract get link(): string
     public abstract get sortIndex(): string
@@ -77,7 +81,7 @@ export abstract class Model {
         // ${qb.generateGQL(TClass).join(', ')}
         const newData = await gql(`
             ${mutationName} (${primaryName}: $id ${mutationName}: $data) {
-                name
+                ${primaryName}
             }
             `, {
                 id: primaryType,

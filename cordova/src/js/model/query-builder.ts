@@ -33,6 +33,7 @@ export class QueryBuilder<T extends Model> {
 
     private _skip: number = 0
     private _take: number = 100
+    private _sort: string[] = []
 
     constructor(TClass: any) {
         this.TClass = TClass
@@ -83,6 +84,11 @@ export class QueryBuilder<T extends Model> {
         return this
     }
 
+    public sort(...column: string[]): QueryBuilder<T> {
+        this._sort = this._sort.concat(column)
+        return this
+    }
+
     public async count(): Promise<number> {
         return 0
     }
@@ -94,13 +100,18 @@ export class QueryBuilder<T extends Model> {
             save: false,
         }
         options = { ...defaults, ...options }
-        const types: { [key: string]: string } = {}
-        const variables: { [key: string]: string | number | boolean } = {}
+        const types: Dictionary<string> = {}
+        const variables: Dictionary<string | number | boolean> = {}
 
         for (const where of this.wheres) {
             const field = where.field + opConv[where.operator]
             types[field] = where.type.type
             variables[field] = where.value
+        }
+
+        if (this._sort.length > 0) {
+            types.sort = 'String'
+            variables.sort = this._sort.join(',')
         }
 
         if (this.selects.length === 0) {
