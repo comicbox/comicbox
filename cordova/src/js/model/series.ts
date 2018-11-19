@@ -1,14 +1,16 @@
 import { Model, prop, table } from 'js/model/model'
 import Book from './book'
 
-@table('series', 'series', 'SeriesInput!', 'name')
+export type List = 'PLANNING' | 'READING' | 'COMPLETED' | 'PAUSED' | 'DROPPED'
+
+@table('series', 'series', 'SeriesInput!', 'name', 'String!')
 export default class Series extends Model {
 
-    @prop('[Book]', {jsType: Book})
+    @prop('[Book]', { jsType: Book })
     public books: Book[]
 
     @prop('List')
-    public list: number
+    public list: List
 
     @prop('String')
     public name: string

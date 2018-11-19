@@ -67,17 +67,19 @@ export abstract class Model {
         const mutationName = TClass.mutationName
         const insertType = TClass.insertType
         const primaryType = TClass.primaryType
+        const primaryName = TClass.primaryName
 
         if (!this.hasUpdates) {
             return
         }
         const qb = new QueryBuilder(this)
 
+        // ${qb.generateGQL(TClass).join(', ')}
         const newData = await gql(`
-            ${mutationName} (id: $id ${mutationName}: $data) {
-                ${qb.generateGQL(TClass).join(', ')}
+            ${mutationName} (${primaryName}: $id ${mutationName}: $data) {
+                name
             }
-        `, {
+            `, {
                 id: primaryType,
                 data: insertType,
             }, {
@@ -127,11 +129,18 @@ export function prop(type: string, options: PropOptions = {}): any {
     }
 }
 
-export function table(tableName: string, mutationName: string, insertType: string, primaryType: string = 'ID'): any {
+export function table(
+    tableName: string,
+    mutationName: string,
+    insertType: string,
+    primaryName: string = 'id',
+    primaryType: string = 'ID'): any {
+
     return (target: any) => {
         target.prototype.constructor.table = tableName
         target.prototype.constructor.mutationName = mutationName
         target.prototype.constructor.insertType = insertType
+        target.prototype.constructor.primaryName = primaryName
         target.prototype.constructor.primaryType = primaryType
 
         return target

@@ -4,3 +4,6 @@ export const cover: string;
 export const series: string;
 export const title: string;
 export const unread: string;
+export const menu: string;
+export const button: string;
+export const options: string;

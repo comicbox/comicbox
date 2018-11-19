@@ -4,6 +4,7 @@ import LazyImg from 'js/components/lazy-img'
 import Book from 'js/model/book'
 import { Model } from 'js/model/model'
 import Series from 'js/model/series'
+import map from 'lodash/map'
 import { Component, h } from 'preact'
 import Button from 'preact-material-components/Button'
 import Elevation from 'preact-material-components/Elevation'
@@ -17,6 +18,7 @@ export interface PageData {
 
 interface Props<T extends Model> {
     data: T
+    options: Dictionary<(model: T) => void>
     // onIntersection?: (element: IntersectionObserverEntry) => void
 }
 
@@ -25,57 +27,55 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
     private menu: Menu
 
     public render() {
-        const data = this.props.data
+        const model = this.props.data
         let image = ''
         let series = ''
         let title = ''
         let readMark = null
 
-        if (data === null) {
+        if (model === null) {
             return <Elevation z={2} className={s.book} />
         }
 
-        if (data instanceof Book) {
-            const book = data as Book
-            image = book.cover.url + '?height=200&quality=30'
+        if (model instanceof Book) {
+            image = model.cover.url + '?height=200&quality=30'
 
-            series = book.series
+            series = model.series
 
-            if (book.volume !== null) {
-                title += `V${book.volume}`
+            if (model.volume !== null) {
+                title += `V${model.volume}`
             }
-            if (book.chapter !== null) {
+            if (model.chapter !== null) {
                 if (title !== '') {
                     title += ' '
                 }
-                title += `#${book.chapter}`
+                title += `#${model.chapter}`
             }
-            if (book.title !== null && book.title !== '') {
+            if (model.title !== null && model.title !== '') {
                 if (title !== '') {
                     title += ' - '
                 }
-                title += book.title
+                title += model.title
             }
 
-            if (book.read === false) {
+            if (model.read === false) {
                 readMark = <div class={s.unread}>
                     <svg viewBox='0 0 40 40'>
                         <polygon points='0 0,40 0,40,40' />
                     </svg>
                 </div>
             }
-        } else if (data instanceof Series) {
-            const serie = data as Series
+        } else if (model instanceof Series) {
 
-            image = serie.books[0].cover.url + '?height=200&quality=30'
+            image = model.books[0].cover.url + '?height=200&quality=30'
 
-            series = serie.name
-            if (serie.read !== serie.total) {
+            series = model.name
+            if (model.read !== model.total) {
                 readMark = <div class={s.unread}>
                     <svg viewBox='0 0 40 40'>
                         <rect width='300' height='40' />
                         <text x='50%' y='50%' alignment-baseline='middle' text-anchor='middle'>
-                            {serie.total - serie.read}
+                            {model.total - model.read}
                         </text>
                     </svg>
                 </div>
@@ -83,21 +83,23 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
         }
 
         return <Elevation z={2} className={s.book}>
-            <Link href={data.link}>
+            <Link href={model.link}>
                 {readMark}
                 <LazyImg className={s.cover} src={image} />
                 <div className={s.series} title={series}>{series || '\u00A0'}</div>
 
                 <div className={s.title} title={title}>{title}</div>
             </Link>
-            <Menu.Anchor>
-                <Button onClick={this.openMenu} >
+
+            <Menu.Anchor class={s.menu}>
+                <Button class={s.button} onClick={this.openMenu}>
                     <Icon>more_vert</Icon>
                 </Button>
-                <Menu ref={menu => this.menu = menu} >
-                    <Menu.Item>Hello1</Menu.Item>
-                    <Menu.Item>Hello2</Menu.Item>
-                    <Menu.Item>Hello3</Menu.Item>
+                <Menu ref={menu => this.menu = menu} class={s.options}>
+                    {map(this.props.options, (func, name) => (
+                        <Menu.Item onClick={func.bind(this, model)} key={name}>{name}</Menu.Item>
+                    ))}
+
                 </Menu>
             </Menu.Anchor>
         </Elevation>

@@ -1,4 +1,6 @@
 .book-list {
+    $menu-bubble-size: 36px;
+
     display: grid;
     grid-template-columns: repeat( auto-fill, minmax(150px, 1fr));
 
@@ -48,6 +50,8 @@
             text-overflow: ellipsis; // width: 100%;
             margin-left: $title-padding;
             margin-right: $title-padding;
+
+            width: calc(100% - #{$menu-bubble-size});
         }
 
         .series {
@@ -78,6 +82,29 @@
                     font-size: 1.3em;
                     font-weight: bold;
                 }
+            }
+        }
+
+        .menu {
+            $offset: 200px;
+
+            height: 0;
+            position: relative;
+            bottom: $menu-bubble-size;
+            left: calc(100% - #{$menu-bubble-size + $offset});
+
+            .button {
+                height: $menu-bubble-size;
+                width: $menu-bubble-size;
+                min-width: 0;
+                padding: 0;
+                border-radius: 50%;
+                margin-left: $offset;
+            }
+
+            .options {
+                right: calc(100% - #{$menu-bubble-size + $offset}) !important;
+                left: initial !important;
             }
         }
 
