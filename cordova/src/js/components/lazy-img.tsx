@@ -22,6 +22,7 @@ export default class LazyImg extends Component<JSX.HTMLAttributes, State> {
     private img: HTMLImageElement
 
     public componentDidMount() {
+        this.img.src = ''
         this.img.dataset.src = this.props.src
         lazyImageObserver.observe(this.img)
     }

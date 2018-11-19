@@ -14,7 +14,7 @@ export default class Home extends Component {
             <h1>Paused</h1>
             <ModelList items={firstBook(Series.where('list', 'PAUSED').get())} />
             <h1>New Chapters</h1>
-            <ModelList items={firstBook(Series.where('list', 'READING').get())} />
+            <ModelList items={Series.where('list', 'READING').get()} />
         </Layout >
     }
 }
