@@ -2,6 +2,7 @@ import autobind from 'autobind-decorator'
 import { login, logout, user } from 'js/auth'
 import User from 'js/model/user'
 import Options from 'js/options'
+import url from 'js/url'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 import Btn from 'preact-material-components/Button'
@@ -60,6 +61,9 @@ export default class Settings extends Component<{}, State> {
         return <Layout backLink='/'>
             <h1>Settings</h1>
             {serverSettings}
+            <div>
+                <Btn raised onClick={this.btnScan}>Start Scan</Btn>
+            </div>
             <div>
                 <h2>User</h2>
                 <TextField label='Name' value={name} onKeyUp={this.keyUpName} />
@@ -158,6 +162,14 @@ export default class Settings extends Component<{}, State> {
     @autobind
     private btnLogout() {
         logout()
+    }
+
+    @autobind
+    private async btnScan() {
+        const response = await fetch(await url('/scan'))
+        if (!response.ok) {
+            // TODO: something here
+        }
     }
 
 }
