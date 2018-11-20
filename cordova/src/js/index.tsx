@@ -12,6 +12,7 @@ import Settings from 'js/views/settings'
 import { h, render } from 'preact'
 import Snackbar from 'preact-material-components/Snackbar'
 import Router from 'preact-router'
+import url from './url';
 
 let bar: Snackbar
 
@@ -32,15 +33,16 @@ const jsx = <div>
 </div>
 
 render(jsx, document.getElementById('app'))
+url('/push').then(uri => {
+    const ws = new WebSocket(uri.replace(/^http/, 'ws'))
+    ws.onmessage = e => {
+        const data = JSON.parse(e.data)
 
-const ws = new WebSocket('ws://localhost:8080/push')
-ws.onmessage = e => {
-    const data = JSON.parse(e.data)
+        if ('message' in data) {
+            bar.MDComponent.show({
+                message: data.message,
+            })
+        }
 
-    if ('message' in data) {
-        bar.MDComponent.show({
-            message: data.message,
-        })
     }
-
-}
+})

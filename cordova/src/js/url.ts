@@ -10,5 +10,5 @@ export default async function url(path: string): Promise<string> {
         return origin + path
     }
 
-    return path
+    return location.origin + path
 }

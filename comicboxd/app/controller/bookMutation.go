@@ -1,9 +1,13 @@
 package controller
 
 import (
+	"archive/zip"
 	"database/sql"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/abibby/comicbox/comicboxd/app/database"
@@ -112,11 +116,16 @@ var BookMutations = graphql.Fields{
 				return nil, fmt.Errorf("you must be logged in to mutate books")
 			}
 			book := &model.BookUserBook{}
+			bookMap := p.Args["book"].(map[string]interface{})
 
 			id, old := p.Args["id"]
 
 			if !old {
 				id, err = uuid.NewRandom()
+				if err != nil {
+					return nil, err
+				}
+				bookMap, err = loadNewBookData(bookMap)
 				if err != nil {
 					return nil, err
 				}
@@ -128,7 +137,6 @@ var BookMutations = graphql.Fields{
 
 				cols := []string{}
 				values := []interface{}{}
-				bookMap := p.Args["book"].(map[string]interface{})
 
 				for _, col := range modelCols {
 					value, ok := bookMap[col]
@@ -217,4 +225,95 @@ var BookMutations = graphql.Fields{
 			return book, nil
 		},
 	},
+}
+
+func loadNewBookData(bookMap map[string]interface{}) (map[string]interface{}, error) {
+
+	iFile, ok := bookMap["file"]
+	file := iFile.(string)
+	if !ok {
+		return nil, fmt.Errorf("you must have a file in new books")
+	}
+	imgs, err := ZippedImages(file)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, ok := bookMap["pages"]; !ok {
+		numPages := len(imgs)
+		tmpPages := make([]interface{}, numPages)
+		for i := 0; i < numPages; i++ {
+			typ := Story
+			if i == 0 {
+				typ = Cover
+			}
+			tmpPages[i] = &model.Page{
+				FileNumber: i,
+				Type:       typ,
+			}
+		}
+		bookMap["pages"] = tmpPages
+	}
+
+	reader, err := zip.OpenReader(file)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range reader.File {
+		name := f.FileInfo().Name()
+		if name == "book.json" {
+			b, err := fileBytes(f)
+			if err != nil {
+				return nil, err
+			}
+			fmt.Printf("%s\n", b)
+
+			err = json.Unmarshal(b, &bookMap)
+			if err != nil {
+				return nil, err
+			}
+
+			if author, ok := bookMap["author"]; ok {
+				bookMap["authors"] = []interface{}{author}
+			}
+			if number, ok := bookMap["number"]; ok {
+				bookMap["chapter"] = number
+			}
+			bookMap["file"] = file
+			break
+		} else if name == "ComicInfo.xml" {
+			b, err := fileBytes(f)
+			if err != nil {
+				return nil, err
+			}
+
+			fmt.Printf("%s\n", b)
+
+			crBook := ComicRackBook{}
+			err = xml.Unmarshal(b, &crBook)
+			if err != nil {
+				return nil, err
+			}
+			fmt.Printf("%#v\n", crBook)
+			os.Exit(1)
+		}
+	}
+	// fmt.Printf("%#v\n", bookMap)
+	// os.Exit(1)
+	return bookMap, nil
+}
+
+func fileBytes(f *zip.File) ([]byte, error) {
+	reader, err := f.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+
+	b, err := ioutil.ReadAll(reader)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }

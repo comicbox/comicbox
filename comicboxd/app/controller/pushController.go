@@ -17,6 +17,12 @@ var Push = &push{
 	PubSub: pubsub.New(),
 }
 
+func (p *push) Message(msg string) {
+	p.PubSub.Publish(map[string]string{
+		"message": msg,
+	})
+}
+
 func (p *push) Sub(w http.ResponseWriter, r *http.Request) {
 	conn, err := websocket.Upgrade(w, r, nil, 1024, 1024)
 	errors.Check(err)

@@ -12,7 +12,6 @@ import (
 	"os"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/abibby/comicbox/comicboxd/app"
 	"github.com/abibby/comicbox/comicboxd/app/gql"
@@ -52,28 +51,8 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Open a zip archive for reading.
-	reader, err := zip.OpenReader(book.File)
-	if err != nil {
-		c.Response = fmt.Errorf("error opening zip: %v", err)
-		return
-	}
-
-	sort.Slice(reader.File, func(i, j int) bool {
-		return strings.Compare(reader.File[i].Name, reader.File[j].Name) < 0
-	})
-
-	imageFiles := reader.File[:0]
-	for _, x := range reader.File {
-		lowerName := strings.ToLower(x.Name)
-		if strings.HasSuffix(lowerName, ".jpg") ||
-			strings.HasSuffix(lowerName, ".jpeg") ||
-			strings.HasSuffix(lowerName, ".png") ||
-			strings.HasSuffix(lowerName, ".bmp") ||
-			strings.HasSuffix(lowerName, ".tiff") {
-			imageFiles = append(imageFiles, x)
-		}
-	}
+	imageFiles, err := ZippedImages(book.File)
+	errors.Check(err)
 
 	page := book.Pages[pageNum]
 
@@ -130,18 +109,37 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ZippedImages(file string) ([]*zip.File, error) {
+	// Open a zip archive for reading.
+	reader, err := zip.OpenReader(file)
+	if err != nil {
+		return nil, fmt.Errorf("error opening zip: %v", err)
+	}
+
+	sort.Slice(reader.File, func(i, j int) bool {
+		return strings.Compare(reader.File[i].Name, reader.File[j].Name) < 0
+	})
+
+	imageFiles := reader.File[:0]
+	for _, x := range reader.File {
+		lowerName := strings.ToLower(x.Name)
+		if strings.HasSuffix(lowerName, ".jpg") ||
+			strings.HasSuffix(lowerName, ".jpeg") ||
+			strings.HasSuffix(lowerName, ".png") ||
+			strings.HasSuffix(lowerName, ".bmp") ||
+			strings.HasSuffix(lowerName, ".tiff") {
+			imageFiles = append(imageFiles, x)
+		}
+	}
+	return imageFiles, nil
+}
+
 func (b *book) Scan(w http.ResponseWriter, r *http.Request) {
 	go scan()
 }
 
 func scan() {
-	Push.PubSub.Publish(map[string]string{
-		"message": "Starting book scan",
-	})
+	Push.Message("Starting book scan")
 
-	time.Sleep(time.Second * 5)
-
-	Push.PubSub.Publish(map[string]string{
-		"message": "Finished book scan",
-	})
+	Push.Message("Finished book scan")
 }
