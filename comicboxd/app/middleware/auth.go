@@ -26,26 +26,23 @@ func Auth(next http.Handler) http.Handler {
 		}
 
 		if ctx.User == nil {
-			user, pass, ok := r.BasicAuth()
+			if user, pass, ok := r.BasicAuth(); ok {
+				ctx.User = &model.User{}
+				err := ctx.DB.Get(ctx.User, `select * from user where username=? limit 1`, user)
+				if err != nil {
+					panic(err)
+				}
 
-			if !ok {
-				http.Error(w, "authorization failed", http.StatusUnauthorized)
-				return
+				if !controller.CheckPasswordHash(pass, ctx.User.Password) {
+					ctx.User = nil
+				}
 			}
 
-			ctx.User = &model.User{}
-			err := ctx.DB.Get(ctx.User, `select * from user where username=? limit 1`, user)
-			if err != nil {
-				panic(err)
-			}
-
-			if !controller.CheckPasswordHash(pass, ctx.User.Password) {
-				http.Error(w, "authorization failed", http.StatusUnauthorized)
-				return
-			}
 		}
 
 		if ctx.User == nil {
+			// http.Error(w, "authorization failed", http.StatusUnauthorized)
+			// return
 			ctx.User = &model.User{
 				Name:     "Guest",
 				Username: "guest",
