@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/abibby/comicbox/comicboxd/app"
+	"github.com/abibby/comicbox/comicboxd/app/controller"
 	"github.com/abibby/comicbox/comicboxd/app/model"
 )
 
@@ -24,25 +25,25 @@ func Auth(next http.Handler) http.Handler {
 			}
 		}
 
-		// if ctx.User == nil {
-		// 	user, pass, ok := r.BasicAuth()
+		if ctx.User == nil {
+			user, pass, ok := r.BasicAuth()
 
-		// 	if !ok {
-		// 		http.Error(w, "authorization failed", http.StatusUnauthorized)
-		// 		return
-		// 	}
+			if !ok {
+				http.Error(w, "authorization failed", http.StatusUnauthorized)
+				return
+			}
 
-		// 	ctx.User = &model.User{}
-		// 	err := ctx.DB.Get(ctx.User, `select * from user where username=? limit 1`, user)
-		// 	if err != nil {
-		// 		panic(err)
-		// 	}
+			ctx.User = &model.User{}
+			err := ctx.DB.Get(ctx.User, `select * from user where username=? limit 1`, user)
+			if err != nil {
+				panic(err)
+			}
 
-		// 	if !controller.CheckPasswordHash(pass, ctx.User.Password) {
-		// 		http.Error(w, "authorization failed", http.StatusUnauthorized)
-		// 		return
-		// 	}
-		// }
+			if !controller.CheckPasswordHash(pass, ctx.User.Password) {
+				http.Error(w, "authorization failed", http.StatusUnauthorized)
+				return
+			}
+		}
 
 		if ctx.User == nil {
 			ctx.User = &model.User{
