@@ -40,8 +40,13 @@ func Auth(next http.Handler) http.Handler {
 			}
 
 			if !controller.CheckPasswordHash(pass, ctx.User.Password) {
-				http.Error(w, "authorization failed", http.StatusUnauthorized)
-				return
+				// http.Error(w, "authorization failed", http.StatusUnauthorized)
+				// return
+
+				ctx.User = &model.User{
+					Name:     "Guest",
+					Username: "guest",
+				}
 			}
 		}
 
