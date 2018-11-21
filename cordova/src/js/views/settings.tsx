@@ -166,7 +166,7 @@ export default class Settings extends Component<{}, State> {
 
     @autobind
     private async btnScan() {
-        const response = await fetch(await url('/scan'))
+        const response = await fetch(await url('/api/scan'))
         if (!response.ok) {
             // TODO: something here
         }

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"bitbucket.org/zwzn/comicbox/comicboxd/errors"
@@ -17,9 +18,16 @@ var Push = &push{
 	PubSub: pubsub.New(),
 }
 
-func (p *push) Message(msg string) {
+func (p *push) Message(format string, a ...interface{}) {
 	p.PubSub.Publish(map[string]string{
-		"message": msg,
+		"message": fmt.Sprintf(format, a...),
+	})
+}
+
+func (p *push) Error(format string, a ...interface{}) {
+	p.PubSub.Publish(map[string]string{
+		"message": fmt.Sprintf(format, a...),
+		"error":   fmt.Sprintf(format, a...),
 	})
 }
 

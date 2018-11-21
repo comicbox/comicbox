@@ -10,10 +10,15 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
+	"github.com/abibby/comicbox/comicboxd/j"
+
+	sq "github.com/Masterminds/squirrel"
 	"github.com/abibby/comicbox/comicboxd/app"
+	"github.com/abibby/comicbox/comicboxd/app/database"
 	"github.com/abibby/comicbox/comicboxd/app/gql"
 	"github.com/abibby/comicbox/comicboxd/app/model"
 	"github.com/abibby/comicbox/comicboxd/errors"
@@ -135,11 +140,124 @@ func ZippedImages(file string) ([]*zip.File, error) {
 }
 
 func (b *book) Scan(w http.ResponseWriter, r *http.Request) {
-	go scan()
+	go scan(r)
 }
 
-func scan() {
+func scan(r *http.Request) {
+	defer (func() {
+		if err := recover(); err != nil {
+			j.Errorf("error scanning books: %s", err)
+			Push.Error("error scanning books: %s", err)
+		}
+	})()
+
 	Push.Message("Starting book scan")
+	dbFiles := []string{}
+	// addFiles := []string{}
+	// removeFiles := []string{}
+	sql, args, err := sq.Select("file").From("book").OrderBy("file").ToSql()
+	errors.Check(err)
+
+	err = database.DB.Select(&dbFiles, sql, args...)
+	errors.Check(err)
+
+	realFiles := []string{}
+	// err = filepath.Walk("/home/adam/manga", func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk("/mnt/public/old_comics", func(path string, info os.FileInfo, err error) error {
+		ext := filepath.Ext(path)
+		if info.IsDir() || (ext != ".cbz" && ext != ".zip") {
+			return nil
+		}
+		realFiles = append(realFiles, path)
+		return nil
+	})
+	errors.Check(err)
+
+	addFiles, removeFiles := DiffSlice(realFiles, dbFiles)
+
+	Push.Message("Started Add")
+
+	addFilesLen := len(addFiles)
+	for i, path := range addFiles {
+		if i%100 == 0 {
+			Push.Message("Done %.0f%%", float64(i)/float64(addFilesLen)*100.0)
+		}
+		err = gql.Query(r, `mutation addBook($file: String) {
+				book(book: { file: $file }) {
+				  	id
+				}
+			}`, map[string]interface{}{
+			"file": path,
+		}, nil)
+		if err != nil {
+			j.Warningf("error adding file '%s': %v", path, err)
+		}
+	}
+
+	for _, path := range removeFiles {
+		fmt.Printf("%#v\n", path)
+	}
+
+	// err = filepath.Walk("/mnt/public/old_comics", func(path string, info os.FileInfo, err error) error {
+	// 	ext := filepath.Ext(path)
+	// 	if info.IsDir() || (ext != ".cbz" && ext != ".zip") {
+	// 		return nil
+	// 	}
+	// 	addFile := true
+	// 	// fmt.Printf("%d %d\n%s\n%s\n\n", i, dbFilesLen, path, dbFiles[i])
+	// 	for i < dbFilesLen && path < dbFiles[i] {
+	// 		fmt.Printf("remove %s\n", path)
+	// 		// removeFiles = append(removeFiles, dbFiles[i])
+	// 		i++
+	// 	}
+	// 	for i < dbFilesLen && path == dbFiles[i] {
+	// 		addFile = false
+	// 		i++
+	// 	}
+	// 	if addFile {
+	// 		// addFiles = append(addFiles, path)
+	// 		fmt.Printf("%#v\n", path)
+	// 		err = gql.Query(r, `mutation addBook($file: String) {
+	// 			book(book: { file: $file }) {
+	// 			  	id
+	// 			}
+	// 		}`, map[string]interface{}{
+	// 			"file": path,
+	// 		}, nil)
+	// 		if err != nil {
+	// 			j.Warningf("error adding file '%s': %v", path, err)
+	// 		}
+	// 		os.Exit(1)
+	// 	}
+
+	// 	return nil
+	// })
+	// errors.Check(err)
 
 	Push.Message("Finished book scan")
+}
+
+func DiffSlice(a, b []string) ([]string, []string) {
+	aMap := map[string]struct{}{}
+
+	onlyA := []string{}
+	onlyB := []string{}
+
+	for _, str := range a {
+		aMap[str] = struct{}{}
+	}
+
+	for _, str := range b {
+		if _, ok := aMap[str]; ok {
+			delete(aMap, str)
+		} else {
+			onlyB = append(onlyB, str)
+		}
+	}
+
+	for str := range aMap {
+		onlyA = append(onlyA, str)
+	}
+
+	return onlyA, onlyB
 }

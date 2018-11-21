@@ -33,7 +33,7 @@ const jsx = <div>
 </div>
 
 render(jsx, document.getElementById('app'))
-url('/push').then(uri => {
+url('/api/push').then(uri => {
     const ws = new WebSocket(uri.replace(/^http/, 'ws'))
     ws.onmessage = e => {
         const data = JSON.parse(e.data)

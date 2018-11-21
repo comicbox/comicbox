@@ -115,7 +115,7 @@ var BookMutations = graphql.Fields{
 			var query string
 			c := gql.Ctx(p)
 
-			if (c.User.ID == uuid.UUID{}) {
+			if (c.User == nil || c.User.ID == uuid.UUID{}) {
 				return nil, fmt.Errorf("you must be logged in to mutate books")
 			}
 			book := &model.BookUserBook{}
@@ -323,21 +323,29 @@ func parseFileName(path string) (map[string]interface{}, error) {
 	if strings.HasPrefix(name, dir) {
 		name = name[len(dir):]
 	}
+	hasInfo := false
 
 	matches := regexp.
 		MustCompile(`^(?P<volume>[vV][\d]+(\.[\d]+)?)? *(#?(?P<chapter>[\d]+(\.[\d]+)?))? *(-)? *(?P<title>.*)$`).
-		FindStringSubmatch(name)
+		FindStringSubmatch(strings.Replace(name, "_", " ", -1))
 
 	chapter, err := strconv.ParseFloat(matches[4], 64)
 	if err == nil {
+		hasInfo = true
 		bookMap["chapter"] = chapter
 	}
 	volume, err := strconv.ParseFloat(matches[1], 64)
 	if err == nil {
+		hasInfo = true
 		bookMap["volume"] = volume
 	}
 	if matches[6] != "" {
+		hasInfo = true
 		bookMap["volume"] = matches[7]
+	}
+
+	if !hasInfo {
+		bookMap["title"] = name
 	}
 
 	return bookMap, nil
@@ -349,7 +357,6 @@ func parseBookJSON(f *zip.File) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("%s\n", b)
 
 	err = json.Unmarshal(b, &bookMap)
 	if err != nil {
@@ -385,8 +392,6 @@ func parseComicInfoXML(f *zip.File) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("%s\n", b)
 
 	crBook := ComicRackBook{}
 	err = xml.Unmarshal(b, &crBook)

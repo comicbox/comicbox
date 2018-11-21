@@ -16,16 +16,14 @@ func Web(s *server.Server) {
 
 	s.Router.HandleFunc("/login", controller.User.Login).Methods("POST")
 
-	s.Router.HandleFunc("/push", controller.Push.Sub)
-
-	s.Router.HandleFunc("/scan", controller.Book.Scan)
-
 	GraphQL(s.Router)
 
 	if auth := s.Router.PathPrefix("/api").Subrouter(); true {
 		auth.Use(middleware.Auth)
 		// auth.Use(middleware.Cache)
 
+		auth.HandleFunc("/push", controller.Push.Sub)
+		auth.HandleFunc("/scan", controller.Book.Scan)
 		auth.HandleFunc("/v1/book/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}/page/{page:[0-9]+}.{ext:(?:jpg|png|webp)}", controller.Book.Page).Methods("GET")
 	}
 

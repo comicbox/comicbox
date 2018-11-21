@@ -23,6 +23,10 @@ func (cb *CloserBuffer) Close() error {
 }
 
 func Query(r *http.Request, query string, vars map[string]interface{}, response interface{}) error {
+	c := app.Ctx(r)
+	if c.User == nil {
+		return fmt.Errorf("you must be on a page with the auth middleware to use run queries")
+	}
 	request := map[string]interface{}{
 		// "operationName": "getBook",
 		"query":     query,
@@ -45,9 +49,8 @@ func Query(r *http.Request, query string, vars map[string]interface{}, response 
 
 	json.NewDecoder(resp.Body).Decode(&qr)
 	// resp.Body.Close()
-
 	for _, err := range qr.Errors {
-		return err
+		return fmt.Errorf("graphql error: %v", err)
 	}
 
 	data, ok := qr.Data.(map[string]interface{})
@@ -63,9 +66,11 @@ func Query(r *http.Request, query string, vars map[string]interface{}, response 
 		if err != nil {
 			return err
 		}
-		err = json.Unmarshal(jData, response)
-		if err != nil {
-			return err
+		if response != nil {
+			err = json.Unmarshal(jData, response)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	// err = mapstructure.Decode(qr.Data, response)
