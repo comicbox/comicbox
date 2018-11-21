@@ -7,6 +7,10 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"path/filepath"
+	"reflect"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/abibby/comicbox/comicboxd/app/database"
@@ -261,83 +265,31 @@ func loadNewBookData(bookMap map[string]interface{}) (map[string]interface{}, er
 		return nil, err
 	}
 
+	fNameBookMap, err := parseFileName(file)
+	if err != nil {
+		return nil, err
+	}
+	for key, val := range fNameBookMap {
+		newBookMap[key] = val
+	}
 	for _, f := range reader.File {
 		name := f.FileInfo().Name()
 		if name == "book.json" {
-			b, err := fileBytes(f)
+			ciBookMap, err := parseBookJSON(f)
 			if err != nil {
 				return nil, err
 			}
-			fmt.Printf("%s\n", b)
-
-			err = json.Unmarshal(b, &newBookMap)
-			if err != nil {
-				return nil, err
+			for key, val := range ciBookMap {
+				newBookMap[key] = val
 			}
-
-			if author, ok := newBookMap["author"]; ok {
-				newBookMap["authors"] = []interface{}{author}
-			}
-			if number, ok := newBookMap["number"]; ok {
-				newBookMap["chapter"] = number
-			}
-			newBookMap["file"] = file
-			break
 		} else if name == "ComicInfo.xml" {
-			b, err := fileBytes(f)
+			ciBookMap, err := parseComicInfoXML(f)
 			if err != nil {
 				return nil, err
 			}
-
-			fmt.Printf("%s\n", b)
-
-			crBook := ComicRackBook{}
-			err = xml.Unmarshal(b, &crBook)
-			if err != nil {
-				return nil, err
+			for key, val := range ciBookMap {
+				newBookMap[key] = val
 			}
-			if crBook.Number != 0 {
-				newBookMap["chapter"] = crBook.Number
-			}
-			if crBook.Volume != 0 {
-				newBookMap["volume"] = crBook.Volume
-			}
-			if crBook.Series != "" {
-				newBookMap["series"] = crBook.Series
-			}
-			if crBook.Writer != "" {
-				newBookMap["authors"] = strings.Split(crBook.Writer, ", ")
-			}
-			if crBook.Genres != "" {
-				newBookMap["genres"] = strings.Split(crBook.Genres, ", ")
-			}
-			if crBook.Summary != "" {
-				newBookMap["summary"] = crBook.Summary
-			}
-			if crBook.Title != "" {
-				newBookMap["title"] = crBook.Title
-			}
-
-			numPages := len(crBook.Pages)
-			tmpPages := make([]interface{}, numPages)
-			for i := 0; i < numPages; i++ {
-				var typ string
-				switch crBook.Pages[i].Type {
-				case "FrontCover":
-					typ = Cover
-				case "Story":
-					typ = Story
-				case "Deleted":
-					typ = Deleted
-				default:
-					typ = Story
-				}
-				tmpPages[i] = &model.Page{
-					FileNumber: crBook.Pages[i].Image,
-					Type:       typ,
-				}
-			}
-			newBookMap["pages"] = tmpPages
 		}
 	}
 	for key, val := range bookMap {
@@ -358,4 +310,131 @@ func fileBytes(f *zip.File) ([]byte, error) {
 		return nil, err
 	}
 	return b, nil
+}
+
+func parseFileName(path string) (map[string]interface{}, error) {
+	bookMap := map[string]interface{}{}
+	extension := filepath.Ext(path)
+	name := filepath.Base(path[:len(path)-len(extension)])
+	dir := filepath.Base(filepath.Dir(path))
+
+	bookMap["series"] = dir
+
+	if strings.HasPrefix(name, dir) {
+		name = name[len(dir):]
+	}
+
+	matches := regexp.
+		MustCompile(`^(?P<volume>[vV][\d]+(\.[\d]+)?)? *(#?(?P<chapter>[\d]+(\.[\d]+)?))? *(-)? *(?P<title>.*)$`).
+		FindStringSubmatch(name)
+
+	chapter, err := strconv.ParseFloat(matches[4], 64)
+	if err == nil {
+		bookMap["chapter"] = chapter
+	}
+	volume, err := strconv.ParseFloat(matches[1], 64)
+	if err == nil {
+		bookMap["volume"] = volume
+	}
+	if matches[6] != "" {
+		bookMap["volume"] = matches[7]
+	}
+
+	return bookMap, nil
+}
+
+func parseBookJSON(f *zip.File) (map[string]interface{}, error) {
+	bookMap := map[string]interface{}{}
+	b, err := fileBytes(f)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Printf("%s\n", b)
+
+	err = json.Unmarshal(b, &bookMap)
+	if err != nil {
+		return nil, err
+	}
+
+	if author, ok := bookMap["author"]; ok {
+		bookMap["authors"] = []interface{}{author}
+	}
+	if number, ok := bookMap["number"]; ok {
+		bookMap["chapter"] = number
+	}
+	for key, value := range bookMap {
+		if IsZero(value) {
+			delete(bookMap, key)
+		}
+	}
+	return bookMap, nil
+}
+
+// from https://stackoverflow.com/a/33116479
+func IsZero(v interface{}) bool {
+	t := reflect.TypeOf(v)
+	if !t.Comparable() {
+		return false
+	}
+	return v == reflect.Zero(t).Interface()
+}
+
+func parseComicInfoXML(f *zip.File) (map[string]interface{}, error) {
+	bookMap := map[string]interface{}{}
+	b, err := fileBytes(f)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Printf("%s\n", b)
+
+	crBook := ComicRackBook{}
+	err = xml.Unmarshal(b, &crBook)
+	if err != nil {
+		return nil, err
+	}
+	if crBook.Number != 0 {
+		bookMap["chapter"] = crBook.Number
+	}
+	if crBook.Volume != 0 {
+		bookMap["volume"] = crBook.Volume
+	}
+	if crBook.Series != "" {
+		bookMap["series"] = crBook.Series
+	}
+	if crBook.Writer != "" {
+		bookMap["authors"] = strings.Split(crBook.Writer, ", ")
+	}
+	if crBook.Genres != "" {
+		bookMap["genres"] = strings.Split(crBook.Genres, ", ")
+	}
+	if crBook.Summary != "" {
+		bookMap["summary"] = crBook.Summary
+	}
+	if crBook.Title != "" {
+		bookMap["title"] = crBook.Title
+	}
+
+	numPages := len(crBook.Pages)
+	tmpPages := make([]interface{}, numPages)
+	for i := 0; i < numPages; i++ {
+		var typ string
+		switch crBook.Pages[i].Type {
+		case "FrontCover":
+			typ = Cover
+		case "Story":
+			typ = Story
+		case "Deleted":
+			typ = Deleted
+		default:
+			typ = Story
+		}
+		tmpPages[i] = &model.Page{
+			FileNumber: crBook.Pages[i].Image,
+			Type:       typ,
+		}
+	}
+	bookMap["pages"] = tmpPages
+
+	return bookMap, nil
 }
