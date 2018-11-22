@@ -9,20 +9,8 @@ export abstract class Model {
     public static searchTypes: { [key: string]: { type: string, jsType?: any } } = {}
 
     public static async find<T extends Model>(this: StaticThis<T>, id: string, fresh: boolean = true): Promise<T> {
-        const list = await (new QueryBuilder<T>(this)).where('id', id).take(1).get()
-        const result = await list.next()
-
-        if (result.done) {
-            return null
-        }
-
-        if (!result.value.fresh && fresh) {
-            const newResult = await list.next()
-            if (!newResult.done) {
-                return newResult.value
-            }
-        }
-        return result.value
+        const models = await (new QueryBuilder<T>(this)).where('id', id).take(1).get()
+        return models[0] || null
     }
 
     public static where<T extends Model>(
@@ -153,4 +141,28 @@ export function table(
 
 export function modelSort(a: Model, b: Model): number {
     return a.sortIndex.localeCompare(b.sortIndex)
+}
+
+export interface PageInfo {
+    total: number
+    skip: number
+    take: number
+}
+
+// tslint:disable-next-line:max-classes-per-file
+export class ModelArray<T> extends Array<T> {
+    get total() {
+        return this.page_info.total
+    }
+    get skip() {
+        return this.page_info.skip
+    }
+    get take() {
+        return this.page_info.take
+    }
+    private page_info: PageInfo
+    constructor(results: T[], page_info: PageInfo) {
+        super(...[].concat(results))
+        this.page_info = page_info
+    }
 }

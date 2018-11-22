@@ -1,9 +1,6 @@
-import { Dexie, IndexableType } from 'dexie'
-import db from 'js/database'
 import { gql } from 'js/graphql'
-import { Model } from 'js/model/model'
+import { Model, ModelArray } from 'js/model/model'
 import map from 'lodash/map'
-import Book from './book'
 
 interface Where {
     field: string
@@ -30,6 +27,7 @@ export class QueryBuilder<T extends Model> {
     private TClass: any
     private wheres: Where[] = []
     private selects: string[] = []
+    private withs: Array<QueryBuilder<any>> = []
 
     private _skip: number = 0
     private _take: number = 100
@@ -89,19 +87,20 @@ export class QueryBuilder<T extends Model> {
         return this
     }
 
-    public async count(): Promise<number> {
-        return 0
+    public with(...qb: Array<QueryBuilder<any>>): QueryBuilder<T> {
+        this.withs = this.withs.concat(qb)
+        return this
     }
 
-    public async *get(options: GetOptions = {}): AsyncIterableIterator<T> {
-        const defaults: GetOptions = {
-            cache: false,
-            network: true,
-            save: false,
-        }
-        options = { ...defaults, ...options }
+    // public async count(): Promise<number> {
+    //     return 0
+    // }
+
+    public getQuery(prefix?: string): [string, Dictionary<string>, Dictionary<string | number | boolean>] {
         const types: Dictionary<string> = {}
         const variables: Dictionary<string | number | boolean> = {}
+        let withTypes: Dictionary<string> = {}
+        let withVariables: Dictionary<string | number | boolean> = {}
 
         for (const where of this.wheres) {
             const field = where.field + opConv[where.operator]
@@ -117,38 +116,111 @@ export class QueryBuilder<T extends Model> {
         if (this.selects.length === 0) {
             this.selects = this.generateGQL(this.TClass)
         }
-        //  else {
-        //     const newSelects: any = {}
-        //     for (const select of this.selects) {
-        //         const parts = select.split('.')
-        //         let currentSelect: any = newSelects
 
-        //         for (const part of parts) {
-        //             currentSelect[part] = currentSelect[part] || {}
-        //             currentSelect = currentSelect[part]
-        //         }
-        //     }
-        //     console.log(newSelects)
-
-        // }
-
-        // tslint:disable-next-line:max-line-length
-        const query = `${this.TClass.table}(take: $take skip: $skip ${map(types, (type, key) => `${key}: $${key}`).join(', ')}) {
-            results {
-                ${this.selects.join(', ')}
-            }
-        }`
+        const withSelects: string[] = []
+        for (const qb of this.withs) {
+            const [q, t, v] = qb.getQuery('test')
+            withSelects.push(q)
+            withTypes = { ...withTypes, ...t }
+            withVariables = { ...withVariables, ...v }
+        }
 
         variables.take = this._take
         types.take = 'Int!'
 
         variables.skip = this._skip
         types.skip = 'Int'
-        let gqlFetch: any
-        if (options.network) {
-            gqlFetch = gql(query, types, variables) // start fetching before checking the local cache
+
+        if (prefix) {
+            for (const name in types) {
+                if (types.hasOwnProperty(name)) {
+                    types[`${prefix}_${name}`] = types[name]
+                    delete types[name]
+                }
+            }
+            for (const name in variables) {
+                if (variables.hasOwnProperty(name)) {
+                    variables[`${prefix}_${name}`] = variables[name]
+                    delete variables[name]
+                }
+            }
         }
+
+        // tslint:disable-next-line:max-line-length
+        const query = `${this.TClass.table}(${map(types, (_, key) => `${key.replace(prefix + '_', '')}: $${key}`).join(', ')}) {
+            page_info {
+                total
+                skip
+                take
+            }
+            results {
+                ${this.selects.concat(withSelects).join('\n                ')}
+            }
+        }`
+
+        return [
+            query,
+            { ...types, ...withTypes },
+            { ...variables, ...withVariables },
+        ]
+    }
+
+    public async get(options: GetOptions = {}): Promise<ModelArray<T>> {
+        const defaults: GetOptions = {
+            cache: false,
+            network: true,
+            save: false,
+        }
+        options = { ...defaults, ...options }
+
+        const [query, types, variables] = this.getQuery()
+
+        const gqlFetch = gql(query, types, variables) // start fetching before checking the local cache
+
         // console.log('get', query, types, variables)
+        const data = await gqlFetch
+
+        return this.buildResult(this.TClass, data)
+
+    }
+
+    public generateGQL(jsType: any): string[] {
+        return map(jsType.types, (type, key) => {
+            if (type.writeOnly) {
+                return
+            }
+            if (type.jsType === undefined) {
+                return key
+            }
+            if (type.jsType.prototype instanceof Model) {
+                return
+                // return `${key} (take: 1) {${this.generateGQL(type.jsType).join(', ')}}`
+            }
+            return `${key} {${this.generateGQL(type.jsType).join(', ')}}`
+        })
+
+    }
+
+    private buildResult(jsType: any, data: any): ModelArray<T> {
+        const elements: T[] = []
+
+        for (const element of [].concat(data.results)) {
+
+            map(jsType.types, (type, key) => {
+                if (type.jsType && type.jsType.prototype instanceof Model) {
+                    element[key] = this.buildResult(type.jsType, element[key])
+                }
+            })
+
+            elements.push(new jsType(element, true))
+        }
+
+        return new ModelArray(elements, data.page_info)
+    }
+}
+
+/*
+
         const table: Dexie.Table<T, string> = (db as any)[this.TClass.table]
         if (options.cache) {
 
@@ -199,31 +271,4 @@ export class QueryBuilder<T extends Model> {
                 yield new this.TClass(item, false)
             }
         }
-        if (options.network) {
-            const data = await gqlFetch
-
-            for (const result of data.results) {
-                if (options.save) {
-                    table.put(result)
-                }
-                yield new this.TClass(result, true)
-            }
-        }
-    }
-
-    public generateGQL(jsType: any): string[] {
-        return map(jsType.types, (type, key) => {
-            if (type.writeOnly) {
-                return
-            }
-            if (type.jsType === undefined) {
-                return key
-            }
-            if (type.jsType === Book) {
-                return `${key} (take: 1) {${this.generateGQL(type.jsType).join(', ')}}`
-            }
-            return `${key} {${this.generateGQL(type.jsType).join(', ')}}`
-        })
-
-    }
-}
+        */

@@ -16,9 +16,9 @@ interface State {
 export default class SeriesView extends Component<Props, State> {
 
     public async componentDidMount() {
-        const books = Book.where('series', this.props.matches.name).where('read', false).take(1).get()
+        const books = await Book.where('series', this.props.matches.name).where('read', false).take(1).get()
 
-        for await (const book of books) {
+        for (const book of books) {
             if (this.state.current === undefined || !this.state.current.fresh) {
                 this.setState({ current: book })
             }

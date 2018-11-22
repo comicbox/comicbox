@@ -1,12 +1,12 @@
 import * as s from 'css/book.scss'
 import Card from 'js/components/card'
 import Book from 'js/model/book'
-import { Model, modelSort } from 'js/model/model'
+import { Model, ModelArray } from 'js/model/model'
 import Series from 'js/model/series'
 import { Component, h } from 'preact'
 
 interface Props<T extends Model> {
-    items: AsyncIterableIterator<T> | T[]
+    items: T[] | Promise<T[]> | ModelArray<T> | Promise<ModelArray<T>>
 }
 
 interface State<T extends Model> {
@@ -19,23 +19,7 @@ export default class ModelList<T extends Model> extends Component<Props<T>, Stat
         if (Array.isArray(this.props.items)) {
             this.setState({ items: this.props.items })
         } else {
-            const items: T[] = []
-            for await (const book of this.props.items) {
-                let found = false
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].id === book.id && !items[i].fresh && book.fresh) {
-                        items[i] = book
-                        found = true
-
-                        this.setState({ items: items })
-                        break
-                    }
-                }
-                if (!found) {
-                    items.push(book)
-                    this.setState({ items: items })
-                }
-            }
+            this.setState({ items: await this.props.items })
         }
     }
 

@@ -12,7 +12,7 @@ import Settings from 'js/views/settings'
 import { h, render } from 'preact'
 import Snackbar from 'preact-material-components/Snackbar'
 import Router from 'preact-router'
-import url from './url';
+import url from './url'
 
 let bar: Snackbar
 
