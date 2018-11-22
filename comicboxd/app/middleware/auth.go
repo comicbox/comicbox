@@ -6,6 +6,7 @@ import (
 
 	"github.com/abibby/comicbox/comicboxd/app"
 	"github.com/abibby/comicbox/comicboxd/app/controller"
+	"github.com/abibby/comicbox/comicboxd/app/database"
 	"github.com/abibby/comicbox/comicboxd/app/model"
 )
 
@@ -16,7 +17,7 @@ func Auth(next http.Handler) http.Handler {
 		if uid, ok := ctx.SGet("user_id"); ok {
 
 			ctx.User = &model.User{}
-			err := ctx.DB.Get(ctx.User, `select * from user where id=? limit 1`, uid)
+			err := database.Get(ctx.User, `select * from user where id=? limit 1`, uid)
 			if err == sql.ErrNoRows {
 				ctx.SClear("user_id")
 				ctx.User = nil
@@ -28,7 +29,7 @@ func Auth(next http.Handler) http.Handler {
 		if ctx.User == nil {
 			if user, pass, ok := r.BasicAuth(); ok {
 				ctx.User = &model.User{}
-				err := ctx.DB.Get(ctx.User, `select * from user where username=? limit 1`, user)
+				err := database.Get(ctx.User, `select * from user where username=? limit 1`, user)
 				if err != nil {
 					panic(err)
 				}

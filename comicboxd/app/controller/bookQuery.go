@@ -261,7 +261,7 @@ var BookQueries = graphql.Fields{
 		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 			c := gql.Ctx(p)
 			book := &model.BookUserBook{}
-			err := database.DB.Get(book, `SELECT * FROM "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, p.Args["id"])
+			err := database.Get(book, `SELECT * FROM "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, p.Args["id"])
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {
@@ -302,7 +302,7 @@ var BookQueries = graphql.Fields{
 			errors.Check(err)
 
 			var count int
-			err = database.DB.Get(&count, sqll, args...)
+			err = database.Get(&count, sqll, args...)
 			if err == sql.ErrNoRows {
 				count = 0
 			} else if err != nil {
@@ -316,7 +316,7 @@ var BookQueries = graphql.Fields{
 				ToSql()
 			errors.Check(err)
 
-			err = database.DB.Select(&books, sqll, args...)
+			err = database.Select(&books, sqll, args...)
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {

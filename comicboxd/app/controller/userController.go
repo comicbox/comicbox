@@ -39,7 +39,7 @@ func (a *user) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := model.User{}
-	err = c.DB.Get(&user, `select * from user where username=?`, body.Username)
+	err = database.Get(&user, `select * from user where username=?`, body.Username)
 	if err != nil {
 		c.Response = err
 		return
@@ -149,7 +149,7 @@ var UserQueries = graphql.Fields{
 			errors.Check(err)
 
 			var count int
-			err = database.DB.Get(&count, sqll, args...)
+			err = database.Get(&count, sqll, args...)
 			if err == sql.ErrNoRows {
 				count = 0
 			} else if err != nil {
@@ -164,7 +164,7 @@ var UserQueries = graphql.Fields{
 				ToSql()
 			errors.Check(err)
 
-			err = database.DB.Select(&users, sqll, args...)
+			err = database.Select(&users, sqll, args...)
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {
@@ -221,7 +221,7 @@ var UserMutations = graphql.Fields{
 
 			if ok {
 				numRows := 0
-				err := c.DB.Get(&numRows, "select count(*) from user where id=?", id)
+				err := database.Get(&numRows, "select count(*) from user where id=?", id)
 				if err != nil {
 					return nil, err
 				}
@@ -245,7 +245,7 @@ var UserMutations = graphql.Fields{
 				userMap["password"] = hash
 			}
 
-			err = gql.InsertOrUpdate(c.DB, "user", model.User{}, userMap, map[string]interface{}{
+			err = gql.InsertOrUpdate("user", model.User{}, userMap, map[string]interface{}{
 				"id": id,
 			})
 			if err != nil {
@@ -253,7 +253,7 @@ var UserMutations = graphql.Fields{
 			}
 
 			user := &model.User{}
-			err = c.DB.Get(user, "select * from user where id=?", id)
+			err = database.Get(user, "select * from user where id=?", id)
 			if err != nil {
 				return nil, err
 			}

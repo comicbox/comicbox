@@ -18,6 +18,7 @@ type SeriesQuery struct {
 	Results  []*model.Series `json:"results"`
 }
 
+var i = 0
 var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Series",
 	Fields: graphql.Fields{
@@ -70,8 +71,8 @@ var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 				sqll, args, err := query.ToSql()
 				errors.Check(err)
 
-				err = database.DB.Select(&books, sqll, args...)
-				// err := database.DB.Select(&books, `SELECT * FROM "book_user_book" where user_id=? and series=? order by chapter limit ? offset ?;`, c.User.ID, series.Name, take, skip)
+				err = database.Select(&books, sqll, args...)
+				// err := database.Select(&books, `SELECT * FROM "book_user_book" where user_id=? and series=? order by chapter limit ? offset ?;`, c.User.ID, series.Name, take, skip)
 				if err == sql.ErrNoRows {
 					return nil, nil
 				} else if err != nil {
@@ -129,7 +130,7 @@ var SeriesQueries = graphql.Fields{
 			c := gql.Ctx(p)
 			series := &model.Series{}
 			user := c.User
-			err := database.DB.Get(series, `SELECT * FROM "series" where user_id=? and name=? limit 1;`, user.ID, p.Args["name"])
+			err := database.Get(series, `SELECT * FROM "series" where user_id=? and name=? limit 1;`, user.ID, p.Args["name"])
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {
@@ -170,7 +171,7 @@ var SeriesQueries = graphql.Fields{
 			errors.Check(err)
 
 			var count int
-			err = database.DB.Get(&count, sqll, args...)
+			err = database.Get(&count, sqll, args...)
 			if err == sql.ErrNoRows {
 				count = 0
 			} else if err != nil {
@@ -185,7 +186,7 @@ var SeriesQueries = graphql.Fields{
 				ToSql()
 			errors.Check(err)
 
-			err = database.DB.Select(&series, sqll, args...)
+			err = database.Select(&series, sqll, args...)
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {
@@ -235,7 +236,7 @@ var SeriesMutations = graphql.Fields{
 			name := p.Args["name"]
 
 			numRows := 0
-			err := c.DB.Get(&numRows, "select count(*) from series where name=?", name)
+			err := database.Get(&numRows, "select count(*) from series where name=?", name)
 			if err != nil {
 				return nil, err
 			}
@@ -243,7 +244,7 @@ var SeriesMutations = graphql.Fields{
 				return nil, fmt.Errorf("no series %s", name)
 			}
 
-			err = gql.InsertOrUpdate(c.DB, "user_series", model.Series{}, p.Args["series"], map[string]interface{}{
+			err = gql.InsertOrUpdate("user_series", model.Series{}, p.Args["series"], map[string]interface{}{
 				"user_id": c.User.ID,
 				"series":  name,
 			})
@@ -252,7 +253,7 @@ var SeriesMutations = graphql.Fields{
 			}
 
 			series := &model.Series{}
-			err = c.DB.Get(series, "select * from series where name=?", name)
+			err = database.Get(series, "select * from series where name=?", name)
 			if err != nil {
 				return nil, err
 			}

@@ -158,7 +158,7 @@ func scan(r *http.Request) {
 	sql, args, err := sq.Select("file").From("book").OrderBy("file").ToSql()
 	errors.Check(err)
 
-	err = database.DB.Select(&dbFiles, sql, args...)
+	err = database.Select(&dbFiles, sql, args...)
 	errors.Check(err)
 
 	realFiles := []string{}
@@ -198,50 +198,14 @@ func scan(r *http.Request) {
 		fmt.Printf("%#v\n", path)
 	}
 
-	// err = filepath.Walk("/mnt/public/old_comics", func(path string, info os.FileInfo, err error) error {
-	// 	ext := filepath.Ext(path)
-	// 	if info.IsDir() || (ext != ".cbz" && ext != ".zip") {
-	// 		return nil
-	// 	}
-	// 	addFile := true
-	// 	// fmt.Printf("%d %d\n%s\n%s\n\n", i, dbFilesLen, path, dbFiles[i])
-	// 	for i < dbFilesLen && path < dbFiles[i] {
-	// 		fmt.Printf("remove %s\n", path)
-	// 		// removeFiles = append(removeFiles, dbFiles[i])
-	// 		i++
-	// 	}
-	// 	for i < dbFilesLen && path == dbFiles[i] {
-	// 		addFile = false
-	// 		i++
-	// 	}
-	// 	if addFile {
-	// 		// addFiles = append(addFiles, path)
-	// 		fmt.Printf("%#v\n", path)
-	// 		err = gql.Query(r, `mutation addBook($file: String) {
-	// 			book(book: { file: $file }) {
-	// 			  	id
-	// 			}
-	// 		}`, map[string]interface{}{
-	// 			"file": path,
-	// 		}, nil)
-	// 		if err != nil {
-	// 			j.Warningf("error adding file '%s': %v", path, err)
-	// 		}
-	// 		os.Exit(1)
-	// 	}
-
-	// 	return nil
-	// })
-	// errors.Check(err)
-
 	Push.Message("Finished book scan")
 }
 
 func DiffSlice(a, b []string) ([]string, []string) {
 	aMap := map[string]struct{}{}
 
-	onlyA := []string{}
-	onlyB := []string{}
+	onlyA := make([]string, 0, len(a))
+	onlyB := make([]string, 0, len(b))
 
 	for _, str := range a {
 		aMap[str] = struct{}{}

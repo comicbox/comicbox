@@ -169,7 +169,7 @@ var BookMutations = graphql.Fields{
 				}
 				numRows := 1
 				if table == "user_book" {
-					err = database.DB.Get(&numRows, `select count(*) from "user_book" where user_id=? and book_id=?;`, c.User.ID, id)
+					err = database.Get(&numRows, `select count(*) from "user_book" where user_id=? and book_id=?;`, c.User.ID, id)
 					if err != nil {
 						return nil, err
 					}
@@ -212,13 +212,14 @@ var BookMutations = graphql.Fields{
 					query = fmt.Sprintf(`insert into "%s" (%s) values (%s);`, table, strings.Join(cols, ", "), strings.Join(questions, ", "))
 
 				}
-				_, err = c.DB.Exec(query, values...)
+
+				_, err = database.Exec(query, values...)
 				if err != nil {
 					return nil, err
 				}
 			}
 
-			err = database.DB.Get(book, `select * from "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, id)
+			err = database.Get(book, `select * from "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, id)
 			if err == sql.ErrNoRows {
 				return nil, nil
 			} else if err != nil {

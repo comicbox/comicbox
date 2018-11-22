@@ -13,11 +13,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var DB *sqlx.DB
+var db *sqlx.DB
 
 func init() {
 	var err error
-	DB, err = sqlx.Connect("sqlite3", "test.sqlite")
+	db, err = sqlx.Connect("sqlite3", "test.sqlite")
 	if err != nil {
 		j.Error(err)
 		os.Exit(1)
@@ -51,7 +51,7 @@ func getMigrate() (*migrate.Migrate, error) {
 		return nil, fmt.Errorf("source driver error: %v", err)
 	}
 
-	dbDriver, err := sqlite3.WithInstance(DB.DB, &sqlite3.Config{})
+	dbDriver, err := sqlite3.WithInstance(db.DB, &sqlite3.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("db driver error: %v", err)
 	}

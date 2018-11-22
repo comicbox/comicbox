@@ -11,13 +11,12 @@ import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"github.com/jmoiron/sqlx"
 )
 
 type Context struct {
-	vars     map[string]string
-	request  *http.Request
-	DB       *sqlx.DB
+	vars    map[string]string
+	request *http.Request
+	// DB       *sqlx.DB
 	User     *model.User
 	Session  *sessions.Session
 	Response interface{}

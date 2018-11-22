@@ -9,11 +9,11 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/abibby/comicbox/comicboxd/app"
+	"github.com/abibby/comicbox/comicboxd/app/database"
 	"github.com/abibby/comicbox/comicboxd/app/model"
 	"github.com/fatih/structs"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
-	"github.com/jmoiron/sqlx"
 )
 
 type Page struct {
@@ -252,7 +252,7 @@ func QueryArgs(model interface{}, args graphql.FieldConfigArgument) graphql.Fiel
 	return fields
 }
 
-func Update(db *sqlx.DB, table string, m, arg interface{}, primaryCols map[string]interface{}) (sql.Result, error) {
+func Update(table string, m, arg interface{}, primaryCols map[string]interface{}) (sql.Result, error) {
 	modelMap, ok := arg.(map[string]interface{})
 	if !ok {
 		return nil, fmt.Errorf("The arg parameter must be a map[string]interface{}")
@@ -280,10 +280,10 @@ func Update(db *sqlx.DB, table string, m, arg interface{}, primaryCols map[strin
 
 	query := fmt.Sprintf("update %s set %s where %s", table, strings.Join(updates, ", "), strings.Join(wheres, " and "))
 
-	return db.Exec(query, data...)
+	return database.Exec(query, data...)
 }
 
-func Insert(db *sqlx.DB, table string, m, arg interface{}, primaryCols map[string]interface{}) (sql.Result, error) {
+func Insert(table string, m, arg interface{}, primaryCols map[string]interface{}) (sql.Result, error) {
 	modelMap, ok := arg.(map[string]interface{})
 	if !ok {
 		return nil, fmt.Errorf("The arg parameter must be a map[string]interface{}")
@@ -313,12 +313,12 @@ func Insert(db *sqlx.DB, table string, m, arg interface{}, primaryCols map[strin
 
 	query := fmt.Sprintf("insert into %s (%s) values (%s)", table, strings.Join(changedCols, ", "), strings.Join(questions, ", "))
 
-	return db.Exec(query, data...)
+	return database.Exec(query, data...)
 }
 
-func InsertOrUpdate(db *sqlx.DB, table string, m, arg interface{}, primaryCols map[string]interface{}) error {
+func InsertOrUpdate(table string, m, arg interface{}, primaryCols map[string]interface{}) error {
 
-	r, err := Update(db, table, m, arg, primaryCols)
+	r, err := Update(table, m, arg, primaryCols)
 	if err != nil {
 		return err
 	}
@@ -329,7 +329,7 @@ func InsertOrUpdate(db *sqlx.DB, table string, m, arg interface{}, primaryCols m
 	}
 
 	if rows == 0 {
-		_, err := Insert(db, table, m, arg, primaryCols)
+		_, err := Insert(table, m, arg, primaryCols)
 		if err != nil {
 			return err
 		}
