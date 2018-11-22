@@ -37,8 +37,20 @@ export class QueryBuilder<T extends Model> {
         this.TClass = TClass
     }
 
-    public query(): string {
-        return ''
+    public clone(): QueryBuilder<T> {
+        const qb = new QueryBuilder<T>(this.TClass)
+
+        qb.TClass = this.TClass
+
+        qb.wheres = this.wheres.slice(0)
+        qb.selects = this.selects.slice(0)
+        qb.withs = this.withs.slice(0)
+
+        qb._skip = this._skip
+        qb._take = this._take
+        qb._sort = this._sort
+
+        return qb
     }
 
     public where(field: string, value: string | number | boolean): QueryBuilder<T>
@@ -65,31 +77,31 @@ export class QueryBuilder<T extends Model> {
             where.type = { type: 'String', jsType: undefined }
         }
         this.wheres.push(where)
-        return this
+        return this.clone()
     }
 
     public select(...selects: string[]): QueryBuilder<T> {
         this.selects = this.selects.concat(selects)
-        return this
+        return this.clone()
     }
 
     public skip(skip: number): QueryBuilder<T> {
         this._skip = skip
-        return this
+        return this.clone()
     }
     public take(take: number): QueryBuilder<T> {
         this._take = take
-        return this
+        return this.clone()
     }
 
     public sort(...column: string[]): QueryBuilder<T> {
         this._sort = this._sort.concat(column)
-        return this
+        return this.clone()
     }
 
     public with(...qb: Array<QueryBuilder<any>>): QueryBuilder<T> {
         this.withs = this.withs.concat(qb)
-        return this
+        return this.clone()
     }
 
     // public async count(): Promise<number> {

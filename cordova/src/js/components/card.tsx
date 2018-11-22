@@ -3,6 +3,7 @@ import * as s from 'css/book.scss'
 import LazyImg from 'js/components/lazy-img'
 import Book from 'js/model/book'
 import { Model } from 'js/model/model'
+import { QueryBuilder } from 'js/model/query-builder'
 import Series from 'js/model/series'
 import map from 'lodash/map'
 import { Component, h } from 'preact'
@@ -18,22 +19,56 @@ export interface PageData {
 
 interface Props<T extends Model> {
     data: T
-    options: Dictionary<(model: T) => void>
-    // onIntersection?: (element: IntersectionObserverEntry) => void
+    options?: Dictionary<(model: T) => void>
+    loadQuery?: QueryBuilder<T>
+}
+interface State<T extends Model> {
+    data: T
 }
 
-export default class Card<T extends Model> extends Component<Props<T>, null> {
+export default class Card<T extends Model> extends Component<Props<T>, State<T>> {
 
     private menu: Menu
+    private observer: IntersectionObserver
+
+    public componentDidMount() {
+        if (this.props.loadQuery) {
+            const options = {
+                root: null as HTMLElement,
+                rootMargin: '0px',
+                threshold: 0.1,
+            }
+            this.observer = new IntersectionObserver(elements => {
+                for (const element of elements) {
+                    if (element.isIntersecting) {
+                        if (!this.props.data && !this.state.data) {
+                            this.props.loadQuery.first().then(model => {
+                                this.setState({ data: model })
+                                this.observer.disconnect()
+                            })
+                        }
+                    }
+                }
+            }, options)
+            this.observer.observe(this.base)
+        }
+    }
+
+    public componentWillUnmount() {
+        if (this.observer) {
+            this.observer.disconnect()
+        }
+    }
 
     public render() {
-        const model = this.props.data
+        const model = this.state.data || this.props.data
         let image = ''
         let series = ''
         let title = ''
         let readMark = null
+        let options: Dictionary<(model: any) => void> = {}
 
-        if (model === null) {
+        if (!model) {
             return <Elevation z={2} className={s.book} />
         }
 
@@ -65,6 +100,8 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
                     </svg>
                 </div>
             }
+
+            options = bookOptions
         } else if (model instanceof Series) {
 
             image = model.books[0].cover.url + '?height=200&quality=30'
@@ -80,6 +117,7 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
                     </svg>
                 </div>
             }
+            options = seriesOptions
         }
 
         return <Elevation z={2} className={s.book}>
@@ -96,7 +134,7 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
                     <Icon>more_vert</Icon>
                 </Button>
                 <Menu ref={menu => this.menu = menu} class={s.options}>
-                    {map(this.props.options, (func, name) => (
+                    {map(this.props.options || options, (func, name) => (
                         <Menu.Item onClick={func.bind(this, model)} key={name}>{name}</Menu.Item>
                     ))}
 
@@ -111,4 +149,38 @@ export default class Card<T extends Model> extends Component<Props<T>, null> {
         this.menu.MDComponent.open = true
     }
 
+}
+
+const seriesOptions: Dictionary<(model: Series) => void> = {
+    'Add to Reading': series => {
+        series.list = 'READING'
+        series.save()
+    },
+    'Add to Paused': series => {
+        series.list = 'PAUSED'
+        series.save()
+    },
+    'Add to Complected': series => {
+        series.list = 'COMPLETED'
+        series.save()
+    },
+    'Add to Dropped': series => {
+        series.list = 'DROPPED'
+        series.save()
+    },
+    'Add to Planning': series => {
+        series.list = 'PLANNING'
+        series.save()
+    },
+}
+
+const bookOptions: Dictionary<(model: Book) => void> = {
+    'Mark as read': book => {
+        book.current_page = book.pages.length
+        book.save()
+    },
+    'Mark as unread': book => {
+        book.current_page = 0
+        book.save()
+    },
 }

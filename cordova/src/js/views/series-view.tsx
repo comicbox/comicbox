@@ -12,27 +12,19 @@ interface Props {
 
 interface State {
     current: Book
-    books: ModelArray<Book>
 }
 
 export default class SeriesView extends Component<Props, State> {
 
     public async componentDidMount() {
         const series = this.props.matches.name
-        const [book, books] = await Promise.all([
-            Book.where('series', series)
-                .where('read', false)
-                .select('series', 'cover', 'chapter', 'volume', 'title', 'summary')
-                .first(),
-            Book.where('series', series)
-                .select('series', 'cover', 'chapter', 'volume', 'title')
-                .take(100)
-                .get(),
-        ])
+        const book = await Book.where('series', series)
+            .where('read', false)
+            .select('series', 'cover', 'chapter', 'volume', 'title', 'summary')
+            .first()
 
         this.setState({
             current: book,
-            books: books,
         })
     }
 
@@ -55,8 +47,8 @@ export default class SeriesView extends Component<Props, State> {
             <h1>{series}</h1>
             {currentBook}
             <ModelList
-                items={this.state.books}
-                key={series + 'books' + this.state.books}
+                items={Book.where('series', series)}
+                key={series + 'books'}
             />
         </Layout >
     }

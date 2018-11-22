@@ -1,12 +1,11 @@
 import * as s from 'css/book.scss'
 import Card from 'js/components/card'
-import Book from 'js/model/book'
 import { Model, ModelArray } from 'js/model/model'
-import Series from 'js/model/series'
+import { QueryBuilder } from 'js/model/query-builder'
 import { Component, h } from 'preact'
 
 interface Props<T extends Model> {
-    items: T[] | Promise<T[]> | ModelArray<T> | Promise<ModelArray<T>>
+    items: T[] | Promise<T[]> | ModelArray<T> | Promise<ModelArray<T>> | QueryBuilder<T>
 }
 
 interface State<T extends Model> {
@@ -14,14 +13,23 @@ interface State<T extends Model> {
 }
 export default class ModelList<T extends Model> extends Component<Props<T>, State<T>> {
 
-    public async componentDidMount() {
+    public async componentWillMount() {
+        const items = this.props.items
         this.setState({ items: [] })
-        if (Array.isArray(this.props.items)) {
-            this.setState({ items: this.props.items })
-        } else {
-            const books = await this.props.items
+        if (Array.isArray(items)) {
+            this.setState({ items: items })
+        } else if (items instanceof Promise) {
+            const books = await items
 
             this.setState({ items: books })
+        } else if (items instanceof QueryBuilder) {
+            const books = await items.skip(0).take(2).get()
+            const newBooks = []
+
+            for (let i = 0; i < books.total; i++) {
+                newBooks.push(books[i] || null)
+            }
+            this.setState({ items: newBooks })
         }
     }
 
@@ -30,50 +38,16 @@ export default class ModelList<T extends Model> extends Component<Props<T>, Stat
 
         return (<div className={s.bookList} >
             {items.map((item, i) => {
+                if (item) {
+                    return <Card key={i} data={item} />
 
-                let options: Dictionary<(model: Model) => void>
-                if (item instanceof Book) {
-                    options = bookOptions
-                } else if (item instanceof Series) {
-                    options = seriesOptions
+                } else if (this.props.items instanceof QueryBuilder) {
+                    return <Card key={i + 'unset'} data={null} loadQuery={this.props.items.skip(i)} />
+
+                } else {
+                    return <Card key={i + 'undefined'} data={null} />
                 }
-                return <Card key={i} data={item} options={options} />
             })}
         </div>)
     }
-
-}
-
-const seriesOptions: Dictionary<(model: Series) => void> = {
-    'Add to Reading': series => {
-        series.list = 'READING'
-        series.save()
-    },
-    'Add to Paused': series => {
-        series.list = 'PAUSED'
-        series.save()
-    },
-    'Add to Complected': series => {
-        series.list = 'COMPLETED'
-        series.save()
-    },
-    'Add to Dropped': series => {
-        series.list = 'DROPPED'
-        series.save()
-    },
-    'Add to Planning': series => {
-        series.list = 'PLANNING'
-        series.save()
-    },
-}
-
-const bookOptions: Dictionary<(model: Book) => void> = {
-    'Mark as read': book => {
-        book.current_page = book.pages.length
-        book.save()
-    },
-    'Mark as unread': book => {
-        book.current_page = 0
-        book.save()
-    },
 }
