@@ -1,29 +1,39 @@
 import { gql } from 'js/graphql'
 import { QueryBuilder } from 'js/model/query-builder'
 
-interface StaticThis<T> { new(...args: any): T }
+export interface Type {
+    type: string
+    jsType?: StaticModel<any>
+}
+export interface StaticModel<T> {
+    types: Dictionary<Type>
+    searchTypes: Dictionary<Type>
+    table: string
+    new(data: any, fresh: boolean): T
+}
 
 export abstract class Model {
 
-    public static types: { [key: string]: { type: string, jsType: any } }
-    public static searchTypes: { [key: string]: { type: string, jsType?: any } } = {}
+    public static readonly types: Dictionary<Type>
+    public static readonly searchTypes: Dictionary<Type> = {}
+    public static readonly table: string
 
-    public static async find<T extends Model>(this: StaticThis<T>, id: string, fresh: boolean = true): Promise<T> {
+    public static async find<T extends Model>(this: StaticModel<T>, id: string, fresh: boolean = true): Promise<T> {
         const models = await (new QueryBuilder<T>(this)).where('id', id).take(1).get()
         return models[0] || null
     }
 
     public static where<T extends Model>(
-        this: StaticThis<T>,
+        this: StaticModel<T>,
         field: string,
         value: string | number | boolean): QueryBuilder<T>
     public static where<T extends Model>(
-        this: StaticThis<T>,
+        this: StaticModel<T>,
         field: string,
         operator: string,
         value?: string | number | boolean): QueryBuilder<T>
     public static where<T extends Model>(
-        this: StaticThis<T>,
+        this: StaticModel<T>,
         field: string,
         operator: string,
         value?: string | number | boolean): QueryBuilder<T> {
@@ -31,19 +41,19 @@ export abstract class Model {
         return (new QueryBuilder<T>(this)).where(field, operator, value)
     }
 
-    public static select<T extends Model>(this: StaticThis<T>, ...args: string[]): QueryBuilder<T> {
+    public static select<T extends Model>(this: StaticModel<T>, ...args: string[]): QueryBuilder<T> {
         return (new QueryBuilder<T>(this)).select(...args)
     }
 
-    public static sort<T extends Model>(this: StaticThis<T>, ...columns: string[]): QueryBuilder<T> {
+    public static sort<T extends Model>(this: StaticModel<T>, ...columns: string[]): QueryBuilder<T> {
         return (new QueryBuilder<T>(this)).sort(...columns)
     }
 
-    public static take<T extends Model>(this: StaticThis<T>, num: number): QueryBuilder<T> {
+    public static take<T extends Model>(this: StaticModel<T>, num: number): QueryBuilder<T> {
         return (new QueryBuilder<T>(this)).take(num)
     }
 
-    public static skip<T extends Model>(this: StaticThis<T>, num: number): QueryBuilder<T> {
+    public static skip<T extends Model>(this: StaticModel<T>, num: number): QueryBuilder<T> {
         return (new QueryBuilder<T>(this)).skip(num)
     }
 
@@ -72,7 +82,7 @@ export abstract class Model {
         if (!this.hasUpdates) {
             return
         }
-        const qb = new QueryBuilder(this)
+        // const qb = new QueryBuilder(this)
 
         // ${qb.generateGQL(TClass).join(', ')}
         const newData = await gql(`

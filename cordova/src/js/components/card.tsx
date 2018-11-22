@@ -43,6 +43,8 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
                     if (element.isIntersecting) {
                         if (!this.props.data && !this.state.data) {
                             this.props.loadQuery.first().then(model => {
+                                console.log(model);
+                                
                                 this.setState({ data: model })
                                 this.observer.disconnect()
                             })

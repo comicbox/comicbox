@@ -17,6 +17,8 @@ export default class Home extends Component {
             .with(Book.where('read', false).take(1))
             .get()
 
+        // Book.take(1).with(Series.select('name')).first().then(console.log)
+
         return <Layout backLink='/'>
             <h1>Current</h1>
             <ModelList items={firstBook(reading)} />

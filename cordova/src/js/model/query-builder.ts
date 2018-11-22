@@ -1,12 +1,13 @@
 import { gql } from 'js/graphql'
-import { Model, ModelArray } from 'js/model/model'
+import { Model, ModelArray, StaticModel, Type } from 'js/model/model'
+import { str_random } from 'js/util'
 import map from 'lodash/map'
 
 interface Where {
     field: string
     operator: string
     value: string | number | boolean
-    type: { type: string, jsType: any }
+    type: Type
 }
 
 export interface GetOptions {
@@ -24,7 +25,7 @@ const opConv: { [key: string]: string } = {
 }
 
 export class QueryBuilder<T extends Model> {
-    private TClass: any
+    private TClass: StaticModel<T>
     private wheres: Where[] = []
     private selects: string[] = []
     private withs: Array<QueryBuilder<any>> = []
@@ -33,7 +34,7 @@ export class QueryBuilder<T extends Model> {
     private _take: number = 100
     private _sort: string[] = []
 
-    constructor(TClass: any) {
+    constructor(TClass: StaticModel<T>) {
         this.TClass = TClass
     }
 
@@ -104,10 +105,6 @@ export class QueryBuilder<T extends Model> {
         return this.clone()
     }
 
-    // public async count(): Promise<number> {
-    //     return 0
-    // }
-
     public getQuery(prefix?: string): [string, Dictionary<string>, Dictionary<string | number | boolean>] {
         const types: Dictionary<string> = {}
         const variables: Dictionary<string | number | boolean> = {}
@@ -141,7 +138,7 @@ export class QueryBuilder<T extends Model> {
 
         const withSelects: string[] = []
         for (const qb of this.withs) {
-            const [q, t, v] = qb.getQuery('test')
+            const [q, t, v] = qb.getQuery(str_random(5))
             withSelects.push(q)
             withTypes = { ...withTypes, ...t }
             withVariables = { ...withVariables, ...v }
@@ -168,8 +165,8 @@ export class QueryBuilder<T extends Model> {
             }
         }
 
-        // tslint:disable-next-line:max-line-length
-        const query = `${this.TClass.table}(${map(types, (_, key) => `${key.replace(prefix + '_', '')}: $${key}`).join(', ')}) {
+        const vars = map(types, (_, key) => `${key.replace(prefix + '_', '')}: $${key}`).join(', ')
+        const query = `${this.TClass.table} (${vars}) {
             page_info {
                 total
                 skip
@@ -179,6 +176,7 @@ export class QueryBuilder<T extends Model> {
                 ${selects.concat(withSelects).join('\n                ')}
             }
         }`
+        // console.log(query);
 
         return [
             query,
@@ -229,7 +227,7 @@ export class QueryBuilder<T extends Model> {
 
     }
 
-    private buildResult(jsType: any, data: any): ModelArray<T> {
+    private buildResult(jsType: StaticModel<any>, data: any): ModelArray<T> {
         const elements: T[] = []
 
         for (const element of [].concat(data.results)) {

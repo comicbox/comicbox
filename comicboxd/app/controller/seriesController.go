@@ -35,45 +35,12 @@ var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 			Type: ListEnum,
 		},
 		"books": &graphql.Field{
-			Type: BookQueries["books"].Type,
-			Args: BookQueries["books"].Args,
+			Type: booksField.Type,
+			Args: booksField.Args,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				series := p.Source.(*model.Series)
 				p.Args["series"] = series.Name
-				return BookQueries["books"].Resolve(p)
-
-				// c := gql.Ctx(p)
-				// books := []*model.BookUserBook{}
-				// series := p.Source.(*model.Series)
-				// skip, _ := p.Args["skip"].(int)
-				// take, _ := p.Args["take"].(int)
-				// read, readOk := p.Args["read"].(bool)
-
-				// query := sq.Select("*").
-				// 	From("book_user_book").
-				// 	OrderBy("chapter").
-				// 	OrderBy("volume").
-				// 	Offset(uint64(skip)).
-				// 	Limit(uint64(take)).
-				// 	Where(sq.Eq{"series": series.Name}).
-				// 	Where(sq.Eq{"user_id": c.User.ID})
-
-				// if readOk {
-				// 	query = query.Where(sq.Eq{"read": read})
-				// }
-
-				// sqll, args, err := query.ToSql()
-				// errors.Check(err)
-
-				// err = database.Select(&books, sqll, args...)
-				// // err := database.Select(&books, `SELECT * FROM "book_user_book" where user_id=? and series=? order by chapter limit ? offset ?;`, c.User.ID, series.Name, take, skip)
-				// if err == sql.ErrNoRows {
-				// 	return nil, nil
-				// } else if err != nil {
-				// 	return nil, err
-				// }
-				// return books, nil
-
+				return booksField.Resolve(p)
 			},
 		},
 	},
@@ -111,28 +78,29 @@ var SeriesQueryType = graphql.NewObject(graphql.ObjectConfig{
 		},
 	},
 })
-
-var SeriesQueries = graphql.Fields{
-	"serie": &graphql.Field{
-		Type: SeriesType,
-		Args: graphql.FieldConfigArgument{
-			"name": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.String),
-			},
-		},
-		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-			c := gql.Ctx(p)
-			series := &model.Series{}
-			user := c.User
-			err := database.Get(series, `SELECT * FROM "series" where user_id=? and name=? limit 1;`, user.ID, p.Args["name"])
-			if err == sql.ErrNoRows {
-				return nil, nil
-			} else if err != nil {
-				return nil, err
-			}
-			return series, nil
+var serieField = &graphql.Field{
+	Type: SeriesType,
+	Args: graphql.FieldConfigArgument{
+		"name": &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(graphql.String),
 		},
 	},
+	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		c := gql.Ctx(p)
+		series := &model.Series{}
+		user := c.User
+		err := database.Get(series, `SELECT * FROM "series" where user_id=? and name=? limit 1;`, user.ID, p.Args["name"])
+		if err == sql.ErrNoRows {
+			return nil, nil
+		} else if err != nil {
+			return nil, err
+		}
+		return series, nil
+	},
+}
+
+var SeriesQueries = graphql.Fields{
+	"serie": serieField,
 	"series": &graphql.Field{
 		Args: gql.QueryArgs(model.Series{}, graphql.FieldConfigArgument{
 			"take": &graphql.ArgumentConfig{

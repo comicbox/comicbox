@@ -371,9 +371,9 @@ func parseFileName(path string) (map[string]interface{}, error) {
 		hasInfo = true
 		bookMap["volume"] = volume
 	}
-	if matches[6] != "" {
+	if matches[7] != "" {
 		hasInfo = true
-		bookMap["volume"] = matches[7]
+		bookMap["title"] = matches[7]
 	}
 
 	if !hasInfo {

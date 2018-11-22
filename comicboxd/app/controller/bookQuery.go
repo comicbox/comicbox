@@ -26,6 +26,18 @@ const (
 	Story   = "Story"
 )
 
+func init() {
+	BookType.AddFieldConfig("series_query", &graphql.Field{
+		Type: serieField.Type,
+		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			serie := p.Source.(*model.BookUserBook)
+			p.Args["name"] = serie.Series
+			return serieField.Resolve(p)
+			return nil, nil
+		},
+	})
+}
+
 var BookType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Book",
 	Fields: graphql.Fields{
@@ -47,6 +59,15 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Type:    graphql.String,
 			Resolve: gql.ResolveVal("Series"),
 		},
+		// "series_query": &graphql.Field{
+		// 	Type: serieField.Type,
+		// 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		// 		serie := p.Source.(*model.BookUserBook)
+		// 		p.Args["name"] = serie.Series
+		// 		return serieField.Resolve(p)
+		// 		return nil, nil
+		// 	},
+		// },
 		"summary": &graphql.Field{
 			Type:    graphql.String,
 			Resolve: gql.ResolveVal("Summary"),
@@ -250,88 +271,92 @@ var BookQueryType = graphql.NewObject(graphql.ObjectConfig{
 		},
 	},
 })
+var booksField = &graphql.Field{
+	Args: gql.QueryArgs(model.BookUserBook{}, graphql.FieldConfigArgument{
+		"take": &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(graphql.Int),
+		},
+		"skip": &graphql.ArgumentConfig{
+			Type: graphql.Int,
+		},
+	}),
+	Type: BookQueryType,
+	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		c := gql.Ctx(p)
+
+		skip, _ := p.Args["skip"].(int)
+		take, _ := p.Args["take"].(int)
+		if 0 > take || take > 100 {
+			return nil, fmt.Errorf("you must take between 0 and 100 items")
+		}
+
+		query := sq.Select().
+			From("book_user_book").
+			Where(sq.Eq{"user_id": c.User.ID})
+
+		query = gql.Args(query, model.BookUserBook{}, p.Args)
+		query = query.
+			OrderBy("series").
+			OrderBy("chapter").
+			OrderBy("volume")
+		sqll, args, err := query.Columns("count(*)").ToSql()
+		errors.Check(err)
+
+		var count int
+		err = database.Get(&count, sqll, args...)
+		if err == sql.ErrNoRows {
+			count = 0
+		} else if err != nil {
+			return nil, err
+		}
+		books := []*model.BookUserBook{}
+		sqll, args, err = query.
+			Columns("*").
+			Offset(uint64(skip)).
+			Limit(uint64(take)).
+			ToSql()
+		errors.Check(err)
+
+		err = database.Select(&books, sqll, args...)
+		if err == sql.ErrNoRows {
+			return nil, nil
+		} else if err != nil {
+			return nil, err
+		}
+
+		bq := BookQuery{
+			PageInfo: gql.Page{
+				Skip:  skip,
+				Take:  take,
+				Total: count,
+			},
+			Results: books,
+		}
+		return bq, nil
+	},
+}
+
+var bookField = &graphql.Field{
+	Type: BookType,
+	Args: graphql.FieldConfigArgument{
+		"id": &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(graphql.ID),
+		},
+	},
+	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		c := gql.Ctx(p)
+		book := &model.BookUserBook{}
+		err := database.Get(book, `SELECT * FROM "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, p.Args["id"])
+		if err == sql.ErrNoRows {
+			return nil, nil
+		} else if err != nil {
+			return nil, err
+		}
+		return book, nil
+	},
+}
+
 var BookQueries = graphql.Fields{
-	"book": &graphql.Field{
-		Type: BookType,
-		Args: graphql.FieldConfigArgument{
-			"id": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.ID),
-			},
-		},
-		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-			c := gql.Ctx(p)
-			book := &model.BookUserBook{}
-			err := database.Get(book, `SELECT * FROM "book_user_book" where  user_id=? and id=? limit 1;`, c.User.ID, p.Args["id"])
-			if err == sql.ErrNoRows {
-				return nil, nil
-			} else if err != nil {
-				return nil, err
-			}
-			return book, nil
-		},
-	},
-	"books": &graphql.Field{
-		Args: gql.QueryArgs(model.BookUserBook{}, graphql.FieldConfigArgument{
-			"take": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.Int),
-			},
-			"skip": &graphql.ArgumentConfig{
-				Type: graphql.Int,
-			},
-		}),
-		Type: BookQueryType,
-		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-			c := gql.Ctx(p)
-
-			skip, _ := p.Args["skip"].(int)
-			take, _ := p.Args["take"].(int)
-			if 0 > take || take > 100 {
-				return nil, fmt.Errorf("you must take between 0 and 100 items")
-			}
-
-			query := sq.Select().
-				From("book_user_book").
-				Where(sq.Eq{"user_id": c.User.ID})
-
-			query = gql.Args(query, model.BookUserBook{}, p.Args)
-			query = query.
-				OrderBy("series").
-				OrderBy("chapter").
-				OrderBy("volume")
-			sqll, args, err := query.Columns("count(*)").ToSql()
-			errors.Check(err)
-
-			var count int
-			err = database.Get(&count, sqll, args...)
-			if err == sql.ErrNoRows {
-				count = 0
-			} else if err != nil {
-				return nil, err
-			}
-			books := []*model.BookUserBook{}
-			sqll, args, err = query.
-				Columns("*").
-				Offset(uint64(skip)).
-				Limit(uint64(take)).
-				ToSql()
-			errors.Check(err)
-
-			err = database.Select(&books, sqll, args...)
-			if err == sql.ErrNoRows {
-				return nil, nil
-			} else if err != nil {
-				return nil, err
-			}
-
-			bq := BookQuery{
-				PageInfo: gql.Page{
-					Skip:  skip,
-					Take:  take,
-					Total: count,
-				},
-				Results: books,
-			}
-			return bq, nil
-		},
-	},
+	"book":  bookField,
+	"books": booksField,
 }
