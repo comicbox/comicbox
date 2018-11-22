@@ -195,7 +195,26 @@ func scan(r *http.Request) {
 	}
 
 	for _, path := range removeFiles {
-		fmt.Printf("%#v\n", path)
+		ids := []string{}
+
+		sql, args, err := sq.Select("id").From("book").Where(sq.Eq{"file": path}).ToSql()
+		errors.Check(err)
+
+		err = database.Select(&ids, sql, args...)
+		errors.Check(err)
+
+		for _, id := range ids {
+			err = gql.Query(r, `mutation deleteBook($id: ID!) {
+				deleteBook(id: $id) {
+				  	id
+				}
+			}`, map[string]interface{}{
+				"id": id,
+			}, nil)
+			if err != nil {
+				j.Warningf("error adding file '%s': %v", path, err)
+			}
+		}
 	}
 
 	Push.Message("Finished book scan")

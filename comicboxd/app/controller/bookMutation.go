@@ -13,9 +13,11 @@ import (
 	"strconv"
 	"strings"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/abibby/comicbox/comicboxd/app/database"
 	"github.com/abibby/comicbox/comicboxd/app/gql"
 	"github.com/abibby/comicbox/comicboxd/app/model"
+	"github.com/abibby/comicbox/comicboxd/errors"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 )
@@ -227,6 +229,35 @@ var BookMutations = graphql.Fields{
 			}
 
 			return book, nil
+		},
+	},
+	"deleteBook": &graphql.Field{
+		Type: BookType,
+		Args: graphql.FieldConfigArgument{
+			"id": &graphql.ArgumentConfig{
+				Type: graphql.NewNonNull(graphql.ID),
+			},
+		},
+		Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			c := gql.Ctx(p)
+
+			if (c.User == nil || c.User.ID == uuid.UUID{}) {
+				return nil, fmt.Errorf("you must be logged in to mutate books")
+			}
+
+			id := p.Args["id"]
+
+			sql, args, err := sq.Delete("book").Where(sq.Eq{"id": id}).ToSql()
+			errors.Check(err)
+			_, err = database.Exec(sql, args...)
+			errors.Check(err)
+
+			sql, args, err = sq.Delete("user_book").Where(sq.Eq{"book_id": id}).ToSql()
+			errors.Check(err)
+			_, err = database.Exec(sql, args...)
+			errors.Check(err)
+
+			return nil, nil
 		},
 	},
 }
