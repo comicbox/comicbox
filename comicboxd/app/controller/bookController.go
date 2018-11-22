@@ -162,8 +162,8 @@ func scan(r *http.Request) {
 	errors.Check(err)
 
 	realFiles := []string{}
-	// err = filepath.Walk("/home/adam/manga", func(path string, info os.FileInfo, err error) error {
-	err = filepath.Walk("/mnt/public/old_comics", func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk("/home/adam/manga", func(path string, info os.FileInfo, err error) error {
+		// err = filepath.Walk("/mnt/public/old_comics", func(path string, info os.FileInfo, err error) error {
 		ext := filepath.Ext(path)
 		if info.IsDir() || (ext != ".cbz" && ext != ".zip") {
 			return nil
@@ -178,9 +178,10 @@ func scan(r *http.Request) {
 	Push.Message("Started Add")
 
 	addFilesLen := len(addFiles)
+	removeFilesLen := len(removeFiles)
 	for i, path := range addFiles {
 		if i%100 == 0 {
-			Push.Message("Done %.0f%%", float64(i)/float64(addFilesLen)*100.0)
+			Push.Message("Done %.0f%%", float64(i)/float64(addFilesLen+removeFilesLen)*100.0)
 		}
 		err = gql.Query(r, `mutation addBook($file: String) {
 				book(book: { file: $file }) {
@@ -195,6 +196,10 @@ func scan(r *http.Request) {
 	}
 
 	for _, path := range removeFiles {
+		i++
+		if i%100 == 0 {
+			Push.Message("Done %.0f%%", float64(i)/float64(addFilesLen+removeFilesLen)*100.0)
+		}
 		ids := []string{}
 
 		sql, args, err := sq.Select("id").From("book").Where(sq.Eq{"file": path}).ToSql()

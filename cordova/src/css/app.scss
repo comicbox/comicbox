@@ -1,4 +1,3 @@
-
 @import "preact-material-components/material-components-web";
 
 a {
@@ -7,6 +6,9 @@ a {
 }
 
 html * {
-    font-family: Roboto, sans-serif;
-    // color: $mdc-theme-text-primary-on-background;
+    font-family: Roboto, sans-serif; // color: $mdc-theme-text-primary-on-background;
+}
+
+.mdc-snackbar {
+    bottom: 56px !important;
 }
