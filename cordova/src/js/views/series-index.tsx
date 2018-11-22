@@ -1,4 +1,5 @@
 import ModelList from 'js/components/model-list'
+import Book from 'js/model/book'
 import Series from 'js/model/series'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
@@ -6,9 +7,10 @@ import { Component, h } from 'preact'
 export default class SeriesIndex extends Component {
 
     public render() {
-        const series = Series.
-            // select('name', 'books.cover.url', 'books.volume').
-            where('name', '!=', '').get()
+        const series = Series
+            .where('name', '!=', '')
+            .with(Book.take(1))
+            .get()
         return <Layout backLink='/'>
             <h1>Series</h1>
             <ModelList items={series} />

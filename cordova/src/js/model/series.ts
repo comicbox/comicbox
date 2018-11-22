@@ -1,4 +1,4 @@
-import { Model, prop, table } from 'js/model/model'
+import { Model, ModelArray, prop, table } from 'js/model/model'
 import Book from './book'
 
 export type List = 'PLANNING' | 'READING' | 'COMPLETED' | 'PAUSED' | 'DROPPED'
@@ -7,7 +7,7 @@ export type List = 'PLANNING' | 'READING' | 'COMPLETED' | 'PAUSED' | 'DROPPED'
 export default class Series extends Model {
 
     @prop('[Book]', { jsType: Book })
-    public books: Book[]
+    public books: ModelArray<Book>
 
     @prop('List')
     public list: List

@@ -1,0 +1,14 @@
+.current {
+    margin-bottom: 10px;
+
+    .cover {
+        float: left;
+        width: 50%;
+    }
+
+    &::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+}

@@ -19,7 +19,9 @@ export default class ModelList<T extends Model> extends Component<Props<T>, Stat
         if (Array.isArray(this.props.items)) {
             this.setState({ items: this.props.items })
         } else {
-            this.setState({ items: await this.props.items })
+            const books = await this.props.items
+
+            this.setState({ items: books })
         }
     }
 

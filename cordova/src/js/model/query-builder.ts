@@ -101,6 +101,7 @@ export class QueryBuilder<T extends Model> {
         const variables: Dictionary<string | number | boolean> = {}
         let withTypes: Dictionary<string> = {}
         let withVariables: Dictionary<string | number | boolean> = {}
+        let selects: string[] = []
 
         for (const where of this.wheres) {
             const field = where.field + opConv[where.operator]
@@ -114,7 +115,16 @@ export class QueryBuilder<T extends Model> {
         }
 
         if (this.selects.length === 0) {
-            this.selects = this.generateGQL(this.TClass)
+            selects = this.generateGQL(this.TClass)
+        } else {
+            for (const select of this.selects) {
+                const type = this.TClass.types[select]
+                if (type.jsType !== undefined) {
+                    selects.push(`${select} {${this.generateGQL(type.jsType).join(', ')}}`)
+                } else {
+                    selects.push(select)
+                }
+            }
         }
 
         const withSelects: string[] = []
@@ -154,7 +164,7 @@ export class QueryBuilder<T extends Model> {
                 take
             }
             results {
-                ${this.selects.concat(withSelects).join('\n                ')}
+                ${selects.concat(withSelects).join('\n                ')}
             }
         }`
 
@@ -184,6 +194,12 @@ export class QueryBuilder<T extends Model> {
 
     }
 
+    public async first(options: GetOptions = {}): Promise<T> {
+        this.take(1)
+        const models = await this.get(options)
+        return models[0] || null
+    }
+
     public generateGQL(jsType: any): string[] {
         return map(jsType.types, (type, key) => {
             if (type.writeOnly) {
@@ -205,13 +221,11 @@ export class QueryBuilder<T extends Model> {
         const elements: T[] = []
 
         for (const element of [].concat(data.results)) {
-
             map(jsType.types, (type, key) => {
-                if (type.jsType && type.jsType.prototype instanceof Model) {
+                if (element[key] && type.jsType && type.jsType.prototype instanceof Model) {
                     element[key] = this.buildResult(type.jsType, element[key])
                 }
             })
-
             elements.push(new jsType(element, true))
         }
 

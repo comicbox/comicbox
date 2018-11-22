@@ -8,8 +8,7 @@ export default class User extends Model {
     }
 
     public static async me(): Promise<User> {
-        const users = await User.where('me', true).get()
-        return users[0] || null
+        return await User.where('me', true).first()
     }
 
     @prop('String')

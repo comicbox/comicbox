@@ -39,6 +39,14 @@ export abstract class Model {
         return (new QueryBuilder<T>(this)).sort(...columns)
     }
 
+    public static take<T extends Model>(this: StaticThis<T>, num: number): QueryBuilder<T> {
+        return (new QueryBuilder<T>(this)).take(num)
+    }
+
+    public static skip<T extends Model>(this: StaticThis<T>, num: number): QueryBuilder<T> {
+        return (new QueryBuilder<T>(this)).skip(num)
+    }
+
     public abstract get id(): string
     public abstract get link(): string
     public abstract get sortIndex(): string

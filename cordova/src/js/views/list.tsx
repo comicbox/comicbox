@@ -1,4 +1,5 @@
 import ModelList from 'js/components/model-list'
+import Book from 'js/model/book'
 import Series from 'js/model/series'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
@@ -6,11 +7,27 @@ import { Component, h } from 'preact'
 export default class List extends Component {
 
     public render() {
-        const reading = Series.where('list', 'READING').get()
-        const completed = Series.where('list', 'COMPLETED').get()
-        const dropped = Series.where('list', 'DROPPED').get()
-        const paused = Series.where('list', 'PAUSED').get()
-        const planning = Series.where('list', 'PLANNING').get()
+        const firstBook = Book.take(1)
+        const reading = Series
+            .where('list', 'READING')
+            .with(firstBook)
+            .get()
+        const completed = Series
+            .where('list', 'COMPLETED')
+            .with(firstBook)
+            .get()
+        const dropped = Series
+            .where('list', 'DROPPED')
+            .with(firstBook)
+            .get()
+        const paused = Series
+            .where('list', 'PAUSED')
+            .with(firstBook)
+            .get()
+        const planning = Series
+            .where('list', 'PLANNING')
+            .with(firstBook)
+            .get()
 
         return <Layout backLink='/'>
             <h1>Reading</h1>
