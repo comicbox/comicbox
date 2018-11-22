@@ -6,13 +6,18 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/abibby/comicbox/comicboxd/app/routes"
 	"github.com/abibby/comicbox/comicboxd/j"
 	"github.com/abibby/comicbox/comicboxd/server"
 	"github.com/kardianos/service"
+	homedir "github.com/mitchellh/go-homedir"
+	"github.com/spf13/viper"
 )
 
 var logger service.Logger
@@ -28,7 +33,6 @@ func (p *program) Start(s service.Service) error {
 }
 func (p *program) run() {
 	p.server = server.New()
-	j.Info("Starting server")
 
 	routes.Web(p.server)
 
@@ -42,7 +46,43 @@ func (p *program) Stop(s service.Service) error {
 	return p.server.Stop()
 }
 
+// initConfig reads in config file and ENV variables if set.
+func init() {
+	var cfgFile string
+
+	flag.StringVar(&cfgFile, "config", "", "config file (default is $HOME/.comicbox.yml)")
+
+	flag.Parse()
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+	} else {
+		viper.AddConfigPath(filepath.Join(home(), ".comicbox"))
+		viper.AddConfigPath("/etc/comicbox/")
+		viper.AddConfigPath(".")
+		viper.SetConfigName("config")
+	}
+
+	viper.SetDefault("port", 8080)
+	viper.SetDefault("dir", filepath.Join(home(), "comics"))
+
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+}
+
+func home() string {
+
+	// Find home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		j.Error(err)
+		os.Exit(1)
+	}
+	return home
+}
+
 func main() {
+
 	svcConfig := &service.Config{
 		Name:        "comicboxd",
 		DisplayName: "ComicBox",

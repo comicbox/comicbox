@@ -2,8 +2,12 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/abibby/comicbox/comicboxd/j"
+	"github.com/spf13/viper"
 
 	_ "github.com/golang-migrate/migrate/source/file"
 	"github.com/gorilla/mux"
@@ -24,7 +28,7 @@ func New() *Server {
 	s.Router = mux.NewRouter()
 
 	s.srv = &http.Server{
-		Addr:    ":8080",
+		Addr:    fmt.Sprintf(":%d", viper.GetInt("port")),
 		Handler: s.Router,
 
 		WriteTimeout: 30 * time.Second,
@@ -35,6 +39,7 @@ func New() *Server {
 }
 
 func (s *Server) Start() error {
+	j.Infof("Starting server at http://localhost:%d", viper.GetInt("port"))
 	return s.srv.ListenAndServe()
 }
 

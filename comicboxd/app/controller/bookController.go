@@ -14,6 +14,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/spf13/viper"
+
 	"github.com/abibby/comicbox/comicboxd/j"
 
 	sq "github.com/Masterminds/squirrel"
@@ -162,7 +164,7 @@ func scan(r *http.Request) {
 	errors.Check(err)
 
 	realFiles := []string{}
-	err = filepath.Walk("/home/adam/manga", func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(viper.GetString("dir"), func(path string, info os.FileInfo, err error) error {
 		// err = filepath.Walk("/mnt/public/old_comics", func(path string, info os.FileInfo, err error) error {
 		ext := filepath.Ext(path)
 		if info.IsDir() || (ext != ".cbz" && ext != ".zip") {
