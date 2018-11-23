@@ -80,11 +80,14 @@ export default class SeriesView extends Component<Props, State> {
 
             }
         }
-
+        let img: JSX.Element = null
+        if (this.state.current && this.state.first && this.state.current.id !== this.state.first.id) {
+            img = <img src={thumbImg} alt='cover' class={s.cover + ' mdc-elevation--z4'} />
+        }
         return <Layout backLink='/series'>
             <div class={s.background} style={{ backgroundImage: `url(${backgroundImg})` }} />
             <div class={s.header}>
-                <img src={thumbImg} alt='cover' class={s.cover + ' mdc-elevation--z4'} />
+                {img}
                 <Link class={s.readFab} href={readLink}>
                     <Fab><Fab.Icon>play_arrow</Fab.Icon></Fab>
                 </Link>
