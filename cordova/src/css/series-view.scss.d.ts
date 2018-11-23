@@ -6,4 +6,4 @@ export const title: string;
 export const readFab: string;
 export const summary: string;
 export const books: string;
-export const background: string;
+export const parallax: string;

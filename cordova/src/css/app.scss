@@ -9,6 +9,9 @@ html * {
     font-family: Roboto, sans-serif; // color: $mdc-theme-text-primary-on-background;
 }
 
+body {
+    overflow: hidden;
+}
 .mdc-snackbar {
     bottom: 56px !important;
 }

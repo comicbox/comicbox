@@ -1,9 +1,7 @@
 .header {
     $height-offset: 75px;
 
-    position: relative;
-
-    margin-top: calc(100vh - 230px);
+    position: relative; // margin-top: calc(100vh - 230px);
     padding-top: 10px;
     padding-left: 15px;
     padding-right: 15px;
@@ -60,13 +58,15 @@
     padding: 15px;
 }
 
-.background {
-    position: fixed;
-    height: calc(100vh - 150px);
+.parallax {
     width: 100vw;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position-x: center;
-    top: 0;
-    left: 0;
+    height: calc(100vh - 150px);
+
+    margin-left: -15px;
+    margin-top: -80px;
+
+    background: #333;
+    img {
+        opacity: calc(1 - var(--scroll-per) * 1.5);
+    }
 }

@@ -85,7 +85,7 @@ export default class Layout extends Component<Props, State> {
                 </TopAppBar.Row>
             </TopAppBar>
 
-            <main class={s.main}>
+            <main class={s.main + ' ' + s.parallaxWrap}>
                 {this.props.children}
             </main>
 
