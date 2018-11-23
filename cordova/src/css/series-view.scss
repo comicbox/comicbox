@@ -1,14 +1,72 @@
-.current {
-    margin-bottom: 10px;
+.header {
+    $height-offset: 75px;
 
-    .cover {
-        float: left;
-        width: 50%;
-    }
+    position: relative;
+
+    margin-top: calc(100vh - 230px);
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-bottom: 10px;
+    background: #ddd;
 
     &::after {
         content: "";
         clear: both;
         display: table;
     }
+
+    .cover {
+        position: relative;
+        top: -$height-offset;
+        height: 150px;
+        float: left;
+        margin-right: 10px;
+        margin-bottom: -$height-offset;
+    }
+
+    .rating {
+        color: rgba(#000, 0.6)
+    }
+
+    .series {
+        padding-top: 5px;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+    .title {
+        padding-top: 5px;
+        color: rgba(#000, 0.6)
+    }
+
+    .read-fab {
+        float: right;
+        position: relative;
+        top: -30px;
+        margin-bottom: -30px;
+    }
+    .summary {
+        padding-top: 5px;
+    }
+}
+
+.books {
+    position: relative;
+    background-color: $mdc-theme-background;
+    margin: -15px;
+    padding: 15px;
+}
+
+.background {
+    position: fixed;
+    height: calc(100vh - 150px);
+    width: 100vw;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-x: center;
+    top: 0;
+    left: 0;
 }

@@ -295,10 +295,12 @@ var booksField = &graphql.Field{
 			Where(sq.Eq{"user_id": c.User.ID})
 
 		query = gql.Args(query, model.BookUserBook{}, p.Args)
-		query = query.
-			OrderBy("series").
-			OrderBy("chapter").
-			OrderBy("volume")
+		if _, ok := p.Args["sort"]; !ok {
+			query = query.
+				OrderBy("series").
+				OrderBy("chapter").
+				OrderBy("volume")
+		}
 		sqll, args, err := query.Columns("count(*)").ToSql()
 		errors.Check(err)
 
