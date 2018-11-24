@@ -74,7 +74,7 @@ export default class SeriesView extends Component<Props, State> {
         if (this.state.current && this.state.first && this.state.current.id !== this.state.first.id) {
             img = <img src={thumbImg} alt='cover' class={s.cover + ' mdc-elevation--z4'} />
         }
-        return <Layout backLink='/series'>
+        return <Layout backLink='/series' hideTopBar={575}>
             {/* <div class={s.background} style={{ backgroundImage: `url(${backgroundImg})` }} /> */}
             <Parallax class={s.parallax} src={backgroundImg} />
             <div class={s.header}>

@@ -19,3 +19,14 @@ export default class Parallax extends Component<JSX.HTMLAttributes> {
     }
 
 }
+
+// tslint:disable-next-line:max-classes-per-file
+export class ParallaxWrap extends Component<JSX.HTMLAttributes> {
+
+    public render() {
+        return <div {...this.props} class={s.parallaxWrap + ' ' + this.props.class}>
+            {this.props.children}
+        </div>
+    }
+
+}

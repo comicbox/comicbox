@@ -1,0 +1,61 @@
+.top-bar {
+    position: fixed;
+    width: 100%;
+    height: 56px;
+    background-color: $mdc-theme-primary;
+    z-index: 4;
+
+    display: flex;
+    justify-content: space-between;
+    font-size: 24;
+
+    color: $mdc-theme-on-primary;
+
+    transition: background-color 500ms;
+    // transition: background-image 500ms;
+
+    section {
+        padding: 4px;
+        :global(.mdc-icon) {
+            padding: 12px;
+        }
+    }
+    .left {
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .right {
+        align-items: center;
+        justify-content: flex-end;
+
+        input {
+            width: 0px;
+            transition: width 0.15s;
+            position: fixed;
+            top: 0;
+            right: 0;
+            border: none;
+            outline: none;
+
+            font-size: 1.12em;
+            padding-top: 16px;
+            padding-bottom: 16px;
+
+
+            &:focus {
+                width: calc(100% - 44px);
+                padding-right: 34px;
+                padding-left: 10px;
+                border-bottom: solid $mdc-theme-primary 3px;
+            }
+        }
+
+        input:focus+label {
+            color: #444;
+            position: fixed;
+            right: 4px;
+            pointer-events: none;
+        }
+
+    }
+}

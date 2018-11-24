@@ -8,11 +8,7 @@
     padding-bottom: 56px; // height: calc(100% - 56px);
     // overflow-y: scroll;
     // perspective: 1px;
-    .parallax-wrap {
-        height: calc(100vh - 56px);
-        overflow-y: scroll;
-        perspective: 1px;
-    }
+    
 
     .search {
         input {

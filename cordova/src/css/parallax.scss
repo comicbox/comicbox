@@ -8,6 +8,12 @@
     }
 }
 
+.parallax-wrap {
+    height: calc(100vh - 56px);
+    overflow-y: scroll;
+    perspective: 1px;
+}
+
 // .parallax {
 //     perspective: 1px;
 //     height: 100vh;

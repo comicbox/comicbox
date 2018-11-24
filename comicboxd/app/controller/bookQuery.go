@@ -185,7 +185,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 					return nil, nil
 				}
 				for i, page := range allPages {
-					page.URL = c.URL("/api/v1/book/%s/page/%d.webp", book.ID, i)
+					page.URL = c.URL("/api/v1/book/%s/page/%d.jpg", book.ID, i)
 					if page.Type == Cover {
 						return page, nil
 					}
@@ -219,7 +219,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 
 				for i, page := range allPages {
 					if page.Type == t || !typeOk {
-						page.URL = c.URL("/api/v1/book/%s/page/%d.webp", book.ID, i)
+						page.URL = c.URL("/api/v1/book/%s/page/%d.jpg", book.ID, i)
 						pages = append(pages, page)
 					}
 				}
