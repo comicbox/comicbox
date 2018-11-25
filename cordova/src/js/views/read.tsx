@@ -2,6 +2,7 @@ import autobind from 'autobind-decorator'
 import * as s from 'css/read.scss'
 import ReadOverlay from 'js/components/read-overlay'
 import Book from 'js/model/book'
+import User from 'js/model/user'
 import { debounce } from 'js/util'
 import { Component, h } from 'preact'
 
@@ -11,6 +12,7 @@ interface Props {
 
 interface State {
     book: Book
+    current: number
     width: number
     height: number
     modalOpen: boolean
@@ -18,11 +20,15 @@ interface State {
 
 export default class Read extends Component<Props, State> {
     private img: HTMLImageElement
+    private user: User = null
 
     public constructor() {
         super()
+        User.me().then(me => this.user = me)
+
         this.state = {
             book: null,
+            current: 0,
             width: 0,
             height: 0,
             modalOpen: false,
@@ -51,14 +57,19 @@ export default class Read extends Component<Props, State> {
 
         const bk = await bookQuery
         console.log(bk)
-        bk.current_page = bk.current_page || 0
+        let pageNum = 0
+
         const pageMatch = this.props.matches.page
         if (pageMatch !== '') {
-            bk.current_page = Number(pageMatch)
+            pageNum = Number(pageMatch)
         }
-        bk.save()
+
+        const update = bk.current_page || pageNum
+        bk.current_page = update
+        this.save()
 
         this.setState({
+                current: update,
                 book: bk,
         })
     }
@@ -73,7 +84,8 @@ export default class Read extends Component<Props, State> {
             return
         }
 
-        const page = this.state.book.pages[this.state.book.current_page]
+        console.log(this.state)
+        const page = this.state.book.pages[this.state.current]
 
         const width = this.state.width
         const height = this.state.height
@@ -100,7 +112,7 @@ export default class Read extends Component<Props, State> {
             <ReadOverlay
                 show={this.state.modalOpen}
 
-                currentPage={this.state.book.current_page}
+                currentPage={this.state.current}
                 maxPage={this.state.book.pages.length}
 
                 onClose={this.toggleModal}
@@ -151,8 +163,10 @@ export default class Read extends Component<Props, State> {
                 const bk = state.book
                 bk.last_page_read = bk.current_page
                 bk.current_page = dst
-                bk.save()
+                this.save()
+
                 return {
+                    current: dst,
                     book: bk,
                     width: 0,
                     height: 0,
@@ -175,9 +189,10 @@ export default class Read extends Component<Props, State> {
                 const bk = state.book
                 bk.last_page_read = bk.current_page
                 bk.current_page = dst
-                bk.save()
+                this.save()
 
                 return {
+                    current: dst,
                     book: bk,
                     width: 0,
                     height: 0,
@@ -186,5 +201,13 @@ export default class Read extends Component<Props, State> {
             }
             return state
         })
+    }
+
+    @autobind
+    private save() {
+        if (this.user !== null && this.user.id != '00000000-0000-0000-0000-000000000000') {
+            console.log(this.user)
+            this.state.book.save()
+        }
     }
 }
