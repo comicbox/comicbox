@@ -128,10 +128,10 @@ export class QueryBuilder<T extends Model> {
         } else {
             for (const select of this.selects) {
                 const type = this.TClass.types[select]
-                if (type.jsType !== undefined) {
-                    selects.push(`${select} {${this.generateGQL(type.jsType).join(', ')}}`)
-                } else {
+                if (type.jsType === undefined) {
                     selects.push(select)
+                } else {
+                    selects.push(`${select} {${this.generateGQL(type.jsType).join(', ')}}`)
                 }
             }
         }
@@ -215,6 +215,7 @@ export class QueryBuilder<T extends Model> {
             if (type.writeOnly) {
                 return
             }
+
             if (type.jsType === undefined) {
                 return key
             }
@@ -222,6 +223,7 @@ export class QueryBuilder<T extends Model> {
                 return
                 // return `${key} (take: 1) {${this.generateGQL(type.jsType).join(', ')}}`
             }
+
             return `${key} {${this.generateGQL(type.jsType).join(', ')}}`
         })
 
@@ -232,9 +234,13 @@ export class QueryBuilder<T extends Model> {
 
         for (const element of [].concat(data.results)) {
             map(jsType.types, (type, key) => {
-                if (element[key] && type.jsType && type.jsType.prototype instanceof Model) {
+                if (!element[key]) { return }
+                if (type.jsType && type.jsType.prototype instanceof Model) {
                     element[key] = this.buildResult(type.jsType, element[key])
+                } else if (type.type === 'DateTime') {
+                    element[key] = new Date(element[key])
                 }
+
             })
             elements.push(new jsType(element, true))
         }

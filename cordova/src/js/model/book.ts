@@ -31,13 +31,13 @@ export default class Book extends Model {
     public cover: Page
 
     @prop('DateTime')
-    public created_at: string
+    public created_at: Date
 
     @prop('Int')
     public current_page: number
 
     @prop('DateTime')
-    public date_released: string
+    public date_released: Date
 
     @prop('String')
     public file: string
@@ -79,7 +79,7 @@ export default class Book extends Model {
     public type: string
 
     @prop('DateTime')
-    public updated_at: string
+    public updated_at: Date
 
     @prop('Int')
     public volume: number

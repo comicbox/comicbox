@@ -1,14 +1,74 @@
-.current {
-    margin-bottom: 10px;
+.header {
+    $height-offset: 75px;
 
-    .cover {
-        float: left;
-        width: 50%;
-    }
+    position: relative; // margin-top: calc(100vh - 230px);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
 
     &::after {
         content: "";
         clear: both;
         display: table;
+    }
+
+    .cover {
+        position: relative;
+        top: -$height-offset;
+        height: 150px;
+        float: left;
+        margin-right: 10px;
+        margin-bottom: -$height-offset;
+    }
+
+    .rating {
+        color: rgba(#000, 0.6)
+    }
+
+    .series {
+        padding-top: 5px;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+    .title {
+        padding-top: 5px;
+        color: rgba(#000, 0.6)
+    }
+    .buttons {
+        text-align: center;
+
+        button {
+            @include backgroundNormal;
+            
+        }
+
+        .menu {
+            display: inline;
+        }
+
+    }
+
+    .read-fab {
+        $offset: -#{10 + (56/2)}px;
+        float: right;
+        position: relative;
+        top: $offset;
+        margin-bottom: $offset;
+    }
+    .summary {
+        padding-top: 5px;
+    }
+}
+
+.parallax {
+    width: 100vw;
+    height: calc(100vh - 116px);
+
+    margin-left: -15px;
+    margin-top: -112px;
+
+    background: #333;
+    img {
+        opacity: calc(1 - var(--scroll-per) * 1.5);
     }
 }

@@ -185,7 +185,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 					return nil, nil
 				}
 				for i, page := range allPages {
-					page.URL = c.URL("/api/v1/book/%s/page/%d.webp", book.ID, i)
+					page.URL = c.URL("/api/v1/book/%s/page/%d.jpg", book.ID, i)
 					if page.Type == Cover {
 						return page, nil
 					}
@@ -219,7 +219,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 
 				for i, page := range allPages {
 					if page.Type == t || !typeOk {
-						page.URL = c.URL("/api/v1/book/%s/page/%d.webp", book.ID, i)
+						page.URL = c.URL("/api/v1/book/%s/page/%d.jpg", book.ID, i)
 						pages = append(pages, page)
 					}
 				}
@@ -295,10 +295,12 @@ var booksField = &graphql.Field{
 			Where(sq.Eq{"user_id": c.User.ID})
 
 		query = gql.Args(query, model.BookUserBook{}, p.Args)
-		query = query.
-			OrderBy("series").
-			OrderBy("chapter").
-			OrderBy("volume")
+		if _, ok := p.Args["sort"]; !ok {
+			query = query.
+				OrderBy("series").
+				OrderBy("chapter").
+				OrderBy("volume")
+		}
 		sqll, args, err := query.Columns("count(*)").ToSql()
 		errors.Check(err)
 

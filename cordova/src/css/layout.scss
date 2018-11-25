@@ -2,11 +2,13 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    min-height: calc(100% - 56px);
+    width: 100%; // min-height: calc(100% - 56px);
     background: $mdc-theme-background;
     margin-bottom: -56px;
-    padding-bottom: 56px;
+    padding-bottom: 56px; // height: calc(100% - 56px);
+    // overflow-y: scroll;
+    // perspective: 1px;
+    
 
     .search {
         input {
@@ -41,7 +43,7 @@
     }
 
     .main {
-        margin-top: 64px;
+        margin-top: 56px;
         padding: 15px;
     }
 
@@ -57,7 +59,7 @@
         border-top: solid #ddd 2px;
 
         z-index: 1;
-        
+
         .link {
             display: inline-block;
             width: 20%;

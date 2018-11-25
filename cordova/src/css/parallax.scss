@@ -1,0 +1,14 @@
+.parallax-wrap {
+    height: calc(100vh - 56px);
+    overflow-y: scroll;
+    perspective: 1px;
+
+    .parallax {
+        overflow: hidden;
+        img {
+            position: relative;
+            width: 100%; // top: calc(var(--scroll-px) / 2);
+            transform: translateZ(-1px) scale(2);
+        }
+    }
+}
