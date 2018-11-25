@@ -9,7 +9,6 @@ import { debounce } from 'js/util'
 interface Props {
     show: boolean
 
-    id: string
     maxPage: number
     currentPage: number
 

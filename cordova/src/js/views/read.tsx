@@ -104,7 +104,6 @@ export default class Read extends Component<Props, State> {
             <ReadOverlay
                 show={this.state.modalOpen}
 
-                id={this.props.matches.id}
                 currentPage={this.state.book.current_page}
                 maxPage={this.state.book.pages.length}
 
