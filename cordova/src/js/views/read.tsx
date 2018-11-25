@@ -1,29 +1,34 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/read.scss'
 import Book from 'js/model/book'
+import Modal from 'js/views/read-modal'
 import { Component, h } from 'preact'
+
 
 interface Props {
     matches?: { [id: string]: string }
 }
 
 interface State {
+
     pages: string[]
     current: number
     width: number
     height: number
+    modalOpen: boolean
 }
 
 export default class Read extends Component<Props, State> {
     private img: HTMLImageElement
 
-    constructor() {
+    public constructor() {
         super()
         this.state = {
             pages: [],
             current: 0,
             width: 0,
             height: 0,
+            modalOpen: false,
         }
     }
 
@@ -48,13 +53,14 @@ export default class Read extends Component<Props, State> {
                 current: pageNum,
                 width: 0,
                 height: 0,
+                modalOpen: false,
             }
         })
     }
 
     public componentDidMount() {
-        window.addEventListener('resize', this.debounce(this.resize, 250))
-        this.resize()
+        window.addEventListener('resize', this.debounce(this.adjustAreaRegions, 250))
+        this.adjustAreaRegions()
     }
 
     public render() {
@@ -73,14 +79,26 @@ export default class Read extends Component<Props, State> {
                 className={s.imgResponsive}
                 useMap={`#image-map`}
                 ref={e => this.img = e}
-                onLoad={this.handleImageLoaded}
+                onLoad={this.adjustAreaRegions}
             />
 
             <map name='image-map'>
                 <area target='' onClick={this.stepPage(-1)} alt='left' coords={leftBox} shape='rect' />
-                <area target='' onClick={this.displayNav} alt='center' coords={centerBox}  shape='rect' />
+                <area target='' onClick={this.toggleModal} alt='center' coords={centerBox}  shape='rect' />
                 <area target='' onClick={this.stepPage(1)} alt='right' coords={rightBox}  shape='rect' />
             </map>
+
+            <Modal
+                show={this.state.modalOpen}
+
+                id={this.props.matches.id}
+                currentPage={this.state.current}
+                maxPage={this.state.pages.length}
+
+                onClose={this.toggleModal}
+                onUpdateCurrent={this.changePage}
+            >
+            </Modal>
         </div >
     }
 
@@ -97,12 +115,20 @@ export default class Read extends Component<Props, State> {
       }
 
     @autobind
-    private resize() {
-        this.handleImageLoaded()
-    }
+    private toggleModal()  {
+        this.setState((state: State, props: Props) => {
+            return {
+                pages: state.pages,
+                current: state.current,
+                width: state.width,
+                height: state.height,
+                modalOpen: !state.modalOpen,
+            }
+        })
+      }
 
     @autobind
-    private handleImageLoaded() {
+    private adjustAreaRegions() {
         const width = this.img.width
         const height = this.img.height
 
@@ -112,6 +138,7 @@ export default class Read extends Component<Props, State> {
                 current: state.current,
                 width: width,
                 height: height,
+                modalOpen: state.modalOpen,
             }
         })
     }
@@ -126,6 +153,7 @@ export default class Read extends Component<Props, State> {
                     current: dst,
                     width: 0,
                     height: 0,
+                    modalOpen: state.modalOpen,
                 }
             }
             return state
@@ -143,14 +171,10 @@ export default class Read extends Component<Props, State> {
                     current: dst,
                     width: 0,
                     height: 0,
+                    modalOpen: state.modalOpen,
                 }
             }
             return state
         })
-    }
-
-    @autobind
-    private displayNav() {
-        console.log('center')
     }
 }
