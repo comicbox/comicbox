@@ -59,15 +59,6 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Type:    graphql.String,
 			Resolve: gql.ResolveVal("Series"),
 		},
-		// "series_query": &graphql.Field{
-		// 	Type: serieField.Type,
-		// 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		// 		serie := p.Source.(*model.BookUserBook)
-		// 		p.Args["name"] = serie.Series
-		// 		return serieField.Resolve(p)
-		// 		return nil, nil
-		// 	},
-		// },
 		"summary": &graphql.Field{
 			Type:    graphql.String,
 			Resolve: gql.ResolveVal("Summary"),

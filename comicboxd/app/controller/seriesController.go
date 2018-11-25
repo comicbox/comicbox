@@ -2,6 +2,7 @@ package controller
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
@@ -33,6 +34,22 @@ var SeriesType = graphql.NewObject(graphql.ObjectConfig{
 		},
 		"list": &graphql.Field{
 			Type: ListEnum,
+		},
+		"tags": &graphql.Field{
+			Type: graphql.NewList(graphql.String),
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				series := p.Source.(*model.Series)
+				tags := []string{}
+
+				if len(series.TagsJSON) == 0 {
+					return tags, nil
+				}
+				err := json.Unmarshal(series.TagsJSON, &tags)
+				if err != nil {
+					return nil, err
+				}
+				return tags, nil
+			},
 		},
 		"books": &graphql.Field{
 			Type: booksField.Type,
@@ -174,6 +191,9 @@ var SeriesInput = graphql.NewInputObject(graphql.InputObjectConfig{
 		"list": &graphql.InputObjectFieldConfig{
 			Type: ListEnum,
 		},
+		"tags": &graphql.InputObjectFieldConfig{
+			Type: graphql.NewList(graphql.String),
+		},
 	},
 })
 
@@ -215,7 +235,7 @@ var SeriesMutations = graphql.Fields{
 			}
 
 			series := &model.Series{}
-			err = database.Get(series, "select * from series where name=?", name)
+			err = database.Get(series, "select * from series where name=? and user_id=?", name, c.User.ID)
 			if err != nil {
 				return nil, err
 			}

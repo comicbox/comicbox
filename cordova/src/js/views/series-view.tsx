@@ -30,8 +30,6 @@ interface State {
 
 export default class SeriesView extends Component<Props, State> {
 
-    private listMenu: Menu
-
     public async componentDidMount() {
         const series = this.props.matches.name
 
@@ -123,11 +121,6 @@ export default class SeriesView extends Component<Props, State> {
     }
 
     @autobind
-    private openMenu(e: Event) {
-        this.listMenu.MDComponent.open = true
-    }
-
-    @autobind
     private btnRead() {
         const series = this.state.series
 
@@ -138,7 +131,6 @@ export default class SeriesView extends Component<Props, State> {
     private btnDownload() {
         alert('Downloading is not yet implemented')
     }
-
 
     @autobind
     private btnEdit() {
