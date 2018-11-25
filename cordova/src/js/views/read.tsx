@@ -1,18 +1,16 @@
-import * as s from 'css/layout.scss'
-import ModelList from 'js/components/model-list'
+import * as s from 'css/read.scss'
+import autobind from 'autobind-decorator'
 import Book from 'js/model/book'
-import Series from 'js/model/series'
-import Layout from 'js/views/layout'
+
 import { Component, h } from 'preact'
-import { debug } from 'util';
-import { ModelArray } from 'js/model/model';
+
 
 interface Props {
     matches?: { [id: string]: string }
 }
 
 interface State {
-    pages: Array<string>
+    pages: string[]
     current: number
     width: number
     height: number
@@ -20,7 +18,6 @@ interface State {
 
 export default class Read extends Component<Props, State> {
     private img: HTMLImageElement
-    private map: HTMLMapElement
 
     constructor() {
         super()
@@ -57,6 +54,50 @@ export default class Read extends Component<Props, State> {
         })
     }
 
+    componentDidMount() {
+        window.addEventListener("resize", this.debounce(this.resize, 250));
+        this.resize();
+    }
+    
+
+    public render() {
+        const page = this.state.pages[this.state.current]
+
+        const width = this.state.width
+        const height = this.state.height
+
+        const leftBox = "0,0,"+Math.floor(width/3)+","+height
+        const rightBox = 2*Math.floor(width/3)+",0,"+width+","+height
+        const centerBox = Math.floor(width/3)+",0,"+2*Math.floor(width/3)+","+height
+
+        return <div className={s.reader}>
+            <img src={page} className={s.imgResponsive} useMap={`#image-map`} ref={e => this.img = e} onLoad={this.handleImageLoaded}/>
+                <map name="image-map">
+                
+                <area target="" onClick={this.stepPage(-1)} alt="left" title="left"  coords={leftBox} shape="rect" />
+                <area target="" onClick={this.displayNav} alt="center"  title="center" coords={centerBox}  shape="rect" />
+                <area target="" onClick={this.stepPage(1)} alt="right" title="right" coords={rightBox}  shape="rect" />
+            </map>
+        </div >
+    }
+
+    debounce(fn: any, delay: number) {
+        var timer: any = null;
+        return function () {
+          var context = this, args = arguments;
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            fn.apply(context, args);
+          }, delay);
+        };
+      }
+
+    @autobind
+    resize() {
+        this.handleImageLoaded()
+    }
+
+    @autobind
     handleImageLoaded() {
         const width = this.img.width
         const height = this.img.height
@@ -71,45 +112,41 @@ export default class Read extends Component<Props, State> {
         })
     }
 
-
-    public render() {
-        this.state.pages
-        const page = this.state.pages[this.state.current]
-        const change = (step: number) => {
-            return () => this.setState((state: State, props: Props) => {
-                const dst = state.current+step
-                if (dst < state.pages.length && dst > -1) {
-                    //TODO update progress to dst
-                    return {
-                        pages: state.pages,
-                        current: dst,
-                        width: 0,
-                        height: 0,
-                    }
+    @autobind
+    changePage(dst: number) {
+        this.setState((state: State, props: Props) => {
+            if (dst < state.pages.length && dst > -1) {
+                //TODO update progress to dst
+                return {
+                    pages: state.pages,
+                    current: dst,
+                    width: 0,
+                    height: 0,
                 }
-                return state
-            })  
-        }
-        const left = change(-1)
-        const right = change(1)
-
-        const width = this.state.width
-        const height = this.state.height
-
-        const leftBox = "0,0,"+Math.floor(width/3)+","+height
-        const rightBox = 2*Math.floor(width/3)+",0,"+width+","+height
-        const centerBox = Math.floor(width/3)+",0,"+2*Math.floor(width/3)+","+height
-
-        return <Layout backLink='/'>
-            <h1>Read</h1>
-            <img src={page} className="img-responsive" useMap={`#image-map`} ref={e => this.img = e} onLoad={this.handleImageLoaded.bind(this)}/>
-                <map name="image-map" ref={e => this.map = e}>
-                
-                <area target="" onClick={left.bind(this)} alt="left" title="left"  coords={leftBox} shape="rect" />
-                <area target="" onClick={() => console.log("center")} alt="center"  title="center" coords={centerBox}  shape="rect" />
-                <area target="" onClick={right.bind(this)} alt="right" title="right" coords={rightBox}  shape="rect" />
-            </map>
-        </Layout >
+            }
+            return state
+        })  
     }
 
+    @autobind
+    stepPage(step: number): () => void  {
+        return () => this.setState((state: State, props: Props) => {
+            const dst = state.current+step
+            if (dst < state.pages.length && dst > -1) {
+                //TODO update progress to dst
+                return {
+                    pages: state.pages,
+                    current: dst,
+                    width: 0,
+                    height: 0,
+                }
+            }
+            return state
+        })  
+    }
+
+    @autobind
+    displayNav() {
+        console.log("center")
+    }
 }
