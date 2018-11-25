@@ -1,6 +1,4 @@
 // @import "preact-material-components/material-components-web";
-
-
 @import "@material/button/mdc-button";
 @import "@material/card/mdc-card";
 @import "@material/checkbox/mdc-checkbox";
@@ -45,13 +43,18 @@ a {
     text-decoration: inherit;
 }
 
-html * {
-    font-family: Roboto, sans-serif; // color: $mdc-theme-text-primary-on-background;
+body {
+    @include backgroundNormal;
+    font-family: Roboto, sans-serif;
 }
 
-body {
-    // overflow: hidden;
-}
 .mdc-snackbar {
     bottom: 56px !important;
+}
+
+.mdc-select__native-controll {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
 }

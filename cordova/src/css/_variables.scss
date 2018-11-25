@@ -1,12 +1,14 @@
-$mdc-theme-primary: #1565c0;
+$mdc-theme-primary: #2196f3;
 $mdc-theme-on-primary: #ffffff;
 
-$mdc-theme-secondary: #212121;
+$mdc-theme-secondary: #ffc107;
 $mdc-theme-on-secondary: #ffffff;
 
 $mdc-theme-background: #f5f5f5;
+$mdc-theme-on-background: #212121;
 
 $mdc-theme-surface: #ffffff;
+$mdc-theme-on-surface: #212121;
 
 @mixin colorPrimary {
     color: $mdc-theme-primary;
@@ -30,4 +32,18 @@ $mdc-theme-surface: #ffffff;
     background-color: var(--mdc-theme-secondary, $mdc-theme-secondary);
     color: $mdc-theme-on-secondary;
     color: var(--mdc-theme-on-secondary, $mdc-theme-on-secondary);
+}
+
+@mixin backgroundNormal {
+    background-color: $mdc-theme-background;
+    background-color: var(--mdc-theme-background, $mdc-theme-background);
+    color: $mdc-theme-on-background;
+    color: var(--mdc-theme-on-background, $mdc-theme-on-background);
+}
+
+@mixin backgroundSurface {
+    background-color: $mdc-theme-surface;
+    background-color: var(--mdc-theme-surface, $mdc-theme-surface);
+    color: $mdc-theme-on-surface;
+    color: var(--mdc-theme-on-surface, $mdc-theme-on-background);
 }

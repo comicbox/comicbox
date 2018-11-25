@@ -1,18 +1,31 @@
 import { MDCDialog } from '@material/dialog'
+import autobind from 'autobind-decorator'
 import { Component, h } from 'preact'
 
 let dialog: MDCDialog & { open: () => void }
 let modal: Modal
 
-interface State {
-    content: JSX.Element
+interface SurfaceProps {
+    formSubmit?: (e: Event) => void
 }
-
-class ModalSurface extends Component<JSX.HTMLAttributes> {
+class ModalSurface extends Component<SurfaceProps & JSX.HTMLAttributes> {
     public render() {
+        if (this.props.formSubmit) {
+            return <div {...this.props} class='mdc-dialog__surface'>
+                <form onSubmit={this.formSubmit}>
+                    {this.props.children}
+                </form>
+            </div>
+        }
         return <div {...this.props} class='mdc-dialog__surface'>
             {this.props.children}
         </div>
+    }
+
+    @autobind
+    private formSubmit(e: Event) {
+        e.preventDefault()
+        this.props.formSubmit(e)
     }
 }
 
@@ -46,13 +59,14 @@ class ModalActions extends Component<JSX.HTMLAttributes> {
 interface ButtonProps {
     action: 'yes' | 'no' | 'accept' | 'close'
     default?: boolean
+    submit?: boolean
 }
 // tslint:disable-next-line:max-classes-per-file
 class ModalButton extends Component<ButtonProps & JSX.HTMLAttributes> {
     public render() {
         return <button
             {...this.props}
-            type='button'
+            type={this.props.submit ? 'submit' : 'button'}
             class={'mdc-button mdc-dialog__button' + (this.props.default ? ' mdc-dialog__button--default' : '')}
             data-mdc-dialog-action={this.props.action}
         >
@@ -61,6 +75,9 @@ class ModalButton extends Component<ButtonProps & JSX.HTMLAttributes> {
     }
 }
 
+interface State {
+    content: JSX.Element
+}
 // tslint:disable-next-line:max-classes-per-file
 export default class Modal extends Component<{}, State> {
     public static Surface = ModalSurface

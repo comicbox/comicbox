@@ -1,4 +1,5 @@
 import autobind from 'autobind-decorator'
+import * as editS from 'css/edit.scss'
 import * as s from 'css/series-view.scss'
 import Modal, { OpenModal, OpenYesNo } from 'js/components/modal'
 import ModelList from 'js/components/model-list'
@@ -13,8 +14,9 @@ import Button from 'preact-material-components/Button'
 import Fab from 'preact-material-components/Fab'
 import Icon from 'preact-material-components/Icon'
 import Menu from 'preact-material-components/Menu'
+import Select from 'preact-material-components/Select'
+import TextField from 'preact-material-components/TextField'
 import { Link } from 'preact-router'
-import TextField from 'preact-material-components/TextField';
 
 interface Props {
     matches?: { [name: string]: string }
@@ -95,30 +97,17 @@ export default class SeriesView extends Component<Props, State> {
                     {/* <Fab><Fab.Icon>play_arrow</Fab.Icon></Fab> */}
                     <Fab><Fab.Icon>book</Fab.Icon></Fab>
                 </Link>
-                <div class={s.rating}><Stars rating={rating}/></div>
+                <div class={s.rating}><Stars rating={rating} /></div>
                 <div class={s.series}>{series}</div>
                 <div class={s.title}>{title}</div>
                 <div class={s.summary}>{summary}</div>
                 <div class={s.buttons}>
-                    {/* <Button onClick={this.btnRead}>
-                        <Icon>visibility</Icon>
-                    </Button> */}
                     <Button onClick={this.btnDownload}>
                         <Icon>file_download</Icon>
                     </Button>
-
-                    <Menu.Anchor class={s.menu}>
-                        <Button onClick={this.openMenu}>
-                            <Icon>view_list</Icon>
-                        </Button>
-                        <Menu ref={menu => this.listMenu = menu} >
-                            <Menu.Item onClick={this.btnListReading}>Reading</Menu.Item>
-                            <Menu.Item onClick={this.btnListCompleted}>Completed</Menu.Item>
-                            <Menu.Item onClick={this.btnListDropped}>Dropped</Menu.Item>
-                            <Menu.Item onClick={this.btnListPaused}>Paused</Menu.Item>
-                            <Menu.Item onClick={this.btnListPlanning}>Planning</Menu.Item>
-                        </Menu>
-                    </Menu.Anchor>
+                    <Button onClick={this.btnRead}>
+                        <Icon>visibility</Icon>
+                    </Button>
 
                     <Button onClick={this.btnEdit}>
                         <Icon>edit</Icon>
@@ -127,7 +116,6 @@ export default class SeriesView extends Component<Props, State> {
 
             </div>
             <ModelList
-                class={s.books}
                 items={Book.where('series', series)}
                 key={series + 'books'}
             />
@@ -151,54 +139,49 @@ export default class SeriesView extends Component<Props, State> {
         alert('Downloading is not yet implemented')
     }
 
-    @autobind
-    private setList(list: List) {
-        const series = this.state.series
-        series.list = list
-        series.save()
-    }
-
-    @autobind
-    private btnListReading() {
-        this.setList('READING')
-    }
-
-    @autobind
-    private btnListCompleted() {
-        this.setList('COMPLETED')
-    }
-
-    @autobind
-    private btnListDropped() {
-        this.setList('DROPPED')
-    }
-
-    @autobind
-    private btnListPaused() {
-        this.setList('PAUSED')
-    }
-
-    @autobind
-    private btnListPlanning() {
-        this.setList('PLANNING')
-    }
 
     @autobind
     private btnEdit() {
         const series = this.state.series
+        const lists = ['READING', 'COMPLETED', 'DROPPED', 'PAUSED', 'PLANNING']
 
-        OpenModal(<Modal.Surface>
+        const nameChange = (e: Event) => {
+            if (e.target instanceof HTMLInputElement) {
+                series.name = e.target.value as List
+            }
+        }
+        const listChange = (e: Event) => {
+            if (e.target instanceof HTMLSelectElement) {
+                series.list = e.target.value as List
+            }
+        }
+        const formSubmit = () => {
+            series.save()
+        }
+
+        OpenModal(<Modal.Surface formSubmit={formSubmit}>
             <Modal.Title>
                 Edit {series.name}
             </Modal.Title>
             <Modal.Body>
-                <TextField label='name'/>
-                <TextField label='name'/>
-                <TextField label='name'/>
+                <TextField label='Name' value={series.name} class={editS.element} onChange={nameChange} />
+                <TextField label='Tags' class={editS.element} />
+                <Select
+                    hintText='Select a list'
+                    class={editS.element}
+                    selectedIndex={lists.indexOf(series.list) + 1}
+                    onChange={listChange}
+                >
+                    <Select.Item value='READING'>Reading</Select.Item>
+                    <Select.Item value='COMPLETED'>Completed</Select.Item>
+                    <Select.Item value='DROPPED'>Dropped</Select.Item>
+                    <Select.Item value='PAUSED'>Paused</Select.Item>
+                    <Select.Item value='PLANNING'>Planning</Select.Item>
+                </Select>
             </Modal.Body>
             <Modal.Actions>
                 <Modal.Button action='close'>Close</Modal.Button>
-                <Modal.Button action='accept'>Save</Modal.Button>
+                <Modal.Button action='accept' submit>Save</Modal.Button>
             </Modal.Actions>
         </Modal.Surface>)
 

@@ -7,5 +7,4 @@ export const buttons: string;
 export const menu: string;
 export const readFab: string;
 export const summary: string;
-export const books: string;
 export const parallax: string;
