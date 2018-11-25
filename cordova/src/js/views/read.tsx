@@ -1,9 +1,7 @@
-import * as s from 'css/read.scss'
 import autobind from 'autobind-decorator'
+import * as s from 'css/read.scss'
 import Book from 'js/model/book'
-
 import { Component, h } from 'preact'
-
 
 interface Props {
     matches?: { [id: string]: string }
@@ -32,15 +30,15 @@ export default class Read extends Component<Props, State> {
     public async componentWillMount() {
         const id = this.props.matches.id
         const pageMatch = this.props.matches.page
-        var pageNum = 0
-        if (pageMatch != "") {
+        let pageNum = 0
+        if (pageMatch !== '') {
             pageNum = Number(pageMatch)
         }
         const bookQuery = Book
             .select('pages')
             .where('id', '=', id)
             .get()
-        
+
         const book = await bookQuery
         const pages = book[0].pages.map(page => page.url)
 
@@ -54,11 +52,10 @@ export default class Read extends Component<Props, State> {
         })
     }
 
-    componentDidMount() {
-        window.addEventListener("resize", this.debounce(this.resize, 250));
-        this.resize();
+    public componentDidMount() {
+        window.addEventListener('resize', this.debounce(this.resize, 250))
+        this.resize()
     }
-    
 
     public render() {
         const page = this.state.pages[this.state.current]
@@ -66,42 +63,49 @@ export default class Read extends Component<Props, State> {
         const width = this.state.width
         const height = this.state.height
 
-        const leftBox = "0,0,"+Math.floor(width/3)+","+height
-        const rightBox = 2*Math.floor(width/3)+",0,"+width+","+height
-        const centerBox = Math.floor(width/3)+",0,"+2*Math.floor(width/3)+","+height
+        const leftBox = '0,0,' + Math.floor(width / 3) + ',' + height
+        const rightBox = 2 * Math.floor(width / 3) + ',0,' + width + ',' + height
+        const centerBox = Math.floor(width / 3) + ',0,' + 2 * Math.floor(width / 3) + ',' + height
 
         return <div className={s.reader}>
-            <img src={page} className={s.imgResponsive} useMap={`#image-map`} ref={e => this.img = e} onLoad={this.handleImageLoaded}/>
-                <map name="image-map">
-                
-                <area target="" onClick={this.stepPage(-1)} alt="left" title="left"  coords={leftBox} shape="rect" />
-                <area target="" onClick={this.displayNav} alt="center"  title="center" coords={centerBox}  shape="rect" />
-                <area target="" onClick={this.stepPage(1)} alt="right" title="right" coords={rightBox}  shape="rect" />
+            <img
+                src={page}
+                className={s.imgResponsive}
+                useMap={`#image-map`}
+                ref={e => this.img = e}
+                onLoad={this.handleImageLoaded}
+            />
+
+            <map name='image-map'>
+                <area target='' onClick={this.stepPage(-1)} alt='left' coords={leftBox} shape='rect' />
+                <area target='' onClick={this.displayNav} alt='center' coords={centerBox}  shape='rect' />
+                <area target='' onClick={this.stepPage(1)} alt='right' coords={rightBox}  shape='rect' />
             </map>
         </div >
     }
 
-    debounce(fn: any, delay: number) {
-        var timer: any = null;
-        return function () {
-          var context = this, args = arguments;
-          clearTimeout(timer);
-          timer = setTimeout(function () {
-            fn.apply(context, args);
-          }, delay);
-        };
+    private debounce(fn: any, delay: number) {
+        let timer: any = null
+        return () => {
+          const context = this
+          const args = arguments
+          clearTimeout(timer)
+          timer = setTimeout(() => {
+            fn.apply(context, args)
+          }, delay)
+        }
       }
 
     @autobind
-    resize() {
+    private resize() {
         this.handleImageLoaded()
     }
 
     @autobind
-    handleImageLoaded() {
+    private handleImageLoaded() {
         const width = this.img.width
         const height = this.img.height
- 
+
         this.setState((state: State, props: Props) => {
             return {
                 pages: state.pages,
@@ -113,10 +117,10 @@ export default class Read extends Component<Props, State> {
     }
 
     @autobind
-    changePage(dst: number) {
+    private changePage(dst: number) {
         this.setState((state: State, props: Props) => {
             if (dst < state.pages.length && dst > -1) {
-                //TODO update progress to dst
+                // TODO update progress to dst
                 return {
                     pages: state.pages,
                     current: dst,
@@ -125,15 +129,15 @@ export default class Read extends Component<Props, State> {
                 }
             }
             return state
-        })  
+        })
     }
 
     @autobind
-    stepPage(step: number): () => void  {
+    private stepPage(step: number): () => void  {
         return () => this.setState((state: State, props: Props) => {
-            const dst = state.current+step
+            const dst = state.current + step
             if (dst < state.pages.length && dst > -1) {
-                //TODO update progress to dst
+                // TODO update progress to dst
                 return {
                     pages: state.pages,
                     current: dst,
@@ -142,11 +146,11 @@ export default class Read extends Component<Props, State> {
                 }
             }
             return state
-        })  
+        })
     }
 
     @autobind
-    displayNav() {
-        console.log("center")
+    private displayNav() {
+        console.log('center')
     }
 }
