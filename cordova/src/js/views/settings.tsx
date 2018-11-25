@@ -1,5 +1,8 @@
+// TODO: Add stylings to scss sheet
+// import * as s from 'css/settings.scss'
 import autobind from 'autobind-decorator'
 import { login, logout, user } from 'js/auth'
+import { gql } from 'js/graphql'
 import User from 'js/model/user'
 import Options from 'js/options'
 import url from 'js/url'
@@ -7,6 +10,7 @@ import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 import Btn from 'preact-material-components/Button'
 import TextField from 'preact-material-components/TextField'
+import { debug } from 'util'
 
 // interface Props {
 
@@ -19,8 +23,17 @@ interface State {
     username: string
     name: string
 
+    oldPass: string
     newPass: string
     repeatNewPass: string
+
+    // Admin related vars
+    newNameToAdd: string
+    newUsernameToAdd: string
+    newUserPasswordToAdd: string
+    userToDelete: string
+    userToMakeAdmin: string
+    userToRevokeAdmin: string
 }
 
 export default class Settings extends Component<{}, State> {
@@ -43,15 +56,46 @@ export default class Settings extends Component<{}, State> {
 
     public render() {
         let serverSettings = null
+        let adminSettings = null
         let name = ''
         let username = ''
 
+        // Server settings
         if (location.protocol === 'file:') {
             serverSettings = <div>
                 <h2>Server</h2>
                 <TextField label='Address' value={this.state.address} onKeyUp={this.keyUpAddress} readOnly />
-                <Btn raised onClick={this.btnAddress}>Change</Btn>
+                <Btn raised style='margin-left:10px' onClick={this.btnAddress}>Update</Btn>
             </div>
+        }
+        // Admin Settings
+        // TODO: Once user groups are implemented
+        // change if statement to check if user is an admin, if so show admin settings
+        if (true) {
+            adminSettings = <div>
+                <h2>Admin</h2>
+                <h3>Add User</h3>
+                <div>
+                    <TextField label='Name' onKeyUp={this.keyUpNewNameToAdd} />
+                </div>
+                <div>
+                    <TextField label='Username' onKeyUp={this.keyUpNewUsernameToAdd} />
+                </div>
+                <div>
+                    <TextField label='Password' type='password' onKeyUp={this.keyUpNewUserPasswordToAdd} />
+                    <Btn raised style='margin-left:10px' onClick={this.btnAddUser}>Add User</Btn>
+                </div>
+                <h3>Delete User</h3>
+                <TextField label='Username To Delete' onKeyUp={this.keyUpDeleteUser} />
+                <Btn raised style='margin-left:10px' onClick={this.btnDeleteUser}>Delete</Btn>
+                <h3>Grant Admin Status</h3>
+                <TextField label='Username To Make Admin' onKeyUp={this.keyUpAddAdminStatus} />
+                <Btn raised style='margin-left:10px' onClick={this.btnGrantAdminStatus}>Grant</Btn>
+                <h3>Revoke Admin Status</h3>
+                <TextField label='Username To Revoke' onKeyUp={this.keyUpRemoveAdminStatus} />
+                <Btn raised style='margin-left:10px' onClick={this.btnRevokeAdminStatus}>Revoke</Btn>
+            </div>
+
         }
 
         if (this.state.me) {
@@ -60,23 +104,34 @@ export default class Settings extends Component<{}, State> {
         }
         return <Layout backLink='/'>
             <h1>Settings</h1>
-            {serverSettings}
             <div>
                 <Btn raised onClick={this.btnScan}>Start Scan</Btn>
+                <Btn raised style='margin-left:10px' onClick={this.btnLogout}>Logout</Btn>
             </div>
             <div>
-                <h2>User</h2>
-                <TextField label='Name' value={name} onKeyUp={this.keyUpName} />
-                <TextField label='Username' value={username} onKeyUp={this.keyUpUsername} />
-                <Btn raised onClick={this.btnUpdateUser}>Update</Btn>
-
-                <Btn raised onClick={this.btnLogout}>Logout</Btn>
-
+                {serverSettings}
+            </div>
+            <div>
+                <h3>User</h3>
+                <div>
+                    <TextField label='Name' value={name} onKeyUp={this.keyUpName} />
+                </div>
+                <div>
+                    <TextField label='Username' value={username} onKeyUp={this.keyUpUsername} />
+                    <Btn raised style='margin-left:10px' onClick={this.btnUpdateUser}>Update</Btn>
+                </div>
                 <h3>Change Password</h3>
-                <TextField label='New Password' type='password' onKeyUp={this.keyUpNewPass} />
+                <div>
+                    <TextField label='Old Password' type='password' onKeyUp={this.keyUpOldPassCheck} />
+                </div>
+                <div>
+                    <TextField label='New Password' type='password' onKeyUp={this.keyUpNewPass} />
+                </div>
                 <TextField label='Repeat New Password' type='password' onKeyUp={this.keyUpRepeatNewPass} />
-                <Btn raised onClick={this.btnUpdatePassword}>Update</Btn>
-
+                <Btn raised style='margin-left:10px' onClick={this.btnUpdatePassword}>Update</Btn>
+            </div>
+            <div>
+                {adminSettings}
             </div>
         </Layout >
     }
@@ -99,6 +154,55 @@ export default class Settings extends Component<{}, State> {
     private keyUpName(e: Event) {
         if (e.target instanceof HTMLInputElement) {
             this.setState({ name: e.target.value })
+        }
+    }
+
+    @autobind
+    private keyUpNewNameToAdd(e: Event) {
+        if (e.target instanceof HTMLInputElement) {
+            this.setState({ newNameToAdd: e.target.value })
+        }
+    }
+
+    @autobind
+    private keyUpNewUsernameToAdd(e: Event) {
+        if (e.target instanceof HTMLInputElement) {
+            this.setState({ newUsernameToAdd: e.target.value })
+        }
+    }
+
+    @autobind
+    private keyUpNewUserPasswordToAdd(e: Event) {
+        if (e.target instanceof HTMLInputElement) {
+            this.setState({ newUserPasswordToAdd: e.target.value })
+        }
+    }
+
+    @autobind
+    private keyUpDeleteUser(e: Event) {
+        if (e.target instanceof HTMLInputElement) {
+            this.setState({ userToDelete: e.target.value })
+        }
+    }
+
+    @autobind
+    private keyUpAddAdminStatus(e: Event) {
+        if (e.target instanceof HTMLInputElement) {
+            this.setState({ userToMakeAdmin: e.target.value })
+        }
+    }
+
+    @autobind
+    private keyUpRemoveAdminStatus(e: Event) {
+        if (e.target instanceof HTMLInputElement) {
+            this.setState({ userToRevokeAdmin: e.target.value })
+        }
+    }
+
+    @autobind
+    private keyUpOldPassCheck(e: Event) {
+        if (e.target instanceof HTMLInputElement) {
+            this.setState({ oldPass: e.target.value })
         }
     }
 
@@ -144,8 +248,9 @@ export default class Settings extends Component<{}, State> {
     private async btnUpdatePassword() {
         const me = this.state.me
 
+        // TODO: Add check to match original old password with given old password for security
         if (this.state.newPass !== this.state.repeatNewPass) {
-            alert("your passwords don't match")
+            alert("Your passwords don't match. Please try again.")
             return
         }
 
@@ -172,4 +277,39 @@ export default class Settings extends Component<{}, State> {
         }
     }
 
+    // Adds a user to the database
+    @autobind
+    private async btnAddUser() {
+        // Returns whats in the top block (id,name,username)
+        const response = await gql(`
+        user(user: $user) {
+          id
+          name
+          username
+        }
+      `, {
+                user: 'UserInput!',
+            }, {
+                user: {
+                    name: this.state.newNameToAdd,
+                    username: this.state.newUsernameToAdd,
+                    password: this.state.newUserPasswordToAdd,
+                },
+            }, true)
+    }
+
+    @autobind
+    private async btnDeleteUser() {
+        // TODO: Add functionality to delete user from the database
+    }
+
+    @autobind
+    private async btnGrantAdminStatus() {
+        // TODO: Add granting admin status functionality once user groups are implemented
+    }
+
+    @autobind
+    private async btnRevokeAdminStatus() {
+        // TODO: Add revoking admin status functionality once user groups are implemented
+    }
 }
