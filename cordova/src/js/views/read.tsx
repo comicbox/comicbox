@@ -1,10 +1,9 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/read.scss'
-import Book from 'js/model/book'
 import ReadOverlay from 'js/components/read-overlay'
-import { Component, h } from 'preact'
+import Book from 'js/model/book'
 import { debounce } from 'js/util'
-
+import { Component, h } from 'preact'
 
 interface Props {
     matches?: { [id: string]: string }
@@ -35,8 +34,8 @@ export default class Read extends Component<Props, State> {
 
         const bookQuery = Book
             .select(
-                'id', 
-                'pages', 
+                'id',
+                'pages',
                 'current_page',
 
                 'alternate_series',
@@ -53,7 +52,6 @@ export default class Read extends Component<Props, State> {
         const bk = await bookQuery
         console.log(bk)
         bk.current_page = bk.current_page || 0
-        //const pgs = bk[0].pages.map(page => page.url)
         const pageMatch = this.props.matches.page
         if (pageMatch !== '') {
             bk.current_page = Number(pageMatch)
@@ -75,7 +73,6 @@ export default class Read extends Component<Props, State> {
             return
         }
 
-        //console.log(this.state)
         const page = this.state.book.pages[this.state.book.current_page]
 
         const width = this.state.width
@@ -85,7 +82,6 @@ export default class Read extends Component<Props, State> {
         const rightBox = 2 * Math.floor(width / 3) + ',0,' + width + ',' + height
         const centerBox = Math.floor(width / 3) + ',0,' + 2 * Math.floor(width / 3) + ',' + height
 
-        
         return <div className={s.reader}>
             <img
                 src={page.url}
@@ -109,8 +105,7 @@ export default class Read extends Component<Props, State> {
 
                 onClose={this.toggleModal}
                 onUpdateCurrent={this.changePage}
-            >
-            </ReadOverlay>
+            />
         </div >
     }
 
@@ -173,7 +168,6 @@ export default class Read extends Component<Props, State> {
         if (this.state.book === null) {
             return
         }
-
 
         return () => this.setState((state: State, props: Props) => {
             const dst = state.book.current_page + step

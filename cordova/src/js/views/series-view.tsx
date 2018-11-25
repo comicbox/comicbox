@@ -139,7 +139,6 @@ export default class SeriesView extends Component<Props, State> {
         alert('Downloading is not yet implemented')
     }
 
-
     @autobind
     private btnEdit() {
         const series = this.state.series

@@ -1,10 +1,10 @@
+import autobind from 'autobind-decorator'
 import * as s from 'css/read-overlay.scss'
-import { Component, h } from 'preact'
 import { historyPop, historyPrevious } from 'js/history'
-import autobind from 'autobind-decorator';
+import { debounce } from 'js/util'
+import { Component, h } from 'preact'
 import TopAppBar from 'preact-material-components/TopAppBar'
 import { Link, route } from 'preact-router'
-import { debounce } from 'js/util'
 
 interface Props {
     show: boolean
@@ -16,7 +16,6 @@ interface Props {
     onUpdateCurrent: (current: number) => void
 }
 
-
 export default class ReadOverlay extends Component<Props, {}>  {
     private slider: HTMLInputElement
 
@@ -26,7 +25,7 @@ export default class ReadOverlay extends Component<Props, {}>  {
 
     public render() {
         // Render nothing if the "show" prop is false
-        if(!this.props.show) {
+        if (!this.props.show) {
             return null
         }
 
@@ -47,21 +46,21 @@ export default class ReadOverlay extends Component<Props, {}>  {
                     </TopAppBar.Row>
                 </TopAppBar>
 
-                <div class={s.filler} onClick={this.props.onClose}></div>
+                <div class={s.filler} onClick={this.props.onClose} />
 
                 <div class={s.footer}>
                     <div class={s.slidecontainer}>
-                        <input 
-                            type="range"
-                            min="0"
-                            max={this.props.maxPage-1} 
-                            value={this.props.currentPage} 
-                            class={s.slider} 
+                        <input
+                            type='range'
+                            min='0'
+                            max={this.props.maxPage - 1}
+                            value={this.props.currentPage}
+                            class={s.slider}
                             onInput={debounce(this.updateSlider, 250)}
                             ref={e => this.slider = e}
                         />
                     </div>
-                    <p className={s.progress}>{this.props.currentPage+1}/{this.props.maxPage}</p>
+                    <p className={s.progress}>{this.props.currentPage + 1}/{this.props.maxPage}</p>
                     <div className={s.edit}>
                         <button onClick={this.toggleMeta}>
                             Edit
@@ -80,7 +79,7 @@ export default class ReadOverlay extends Component<Props, {}>  {
 
     @autobind
     private toggleMeta() {
-        console.log("Open edit modal")
+        console.log('Open edit modal')
     }
 
     @autobind
