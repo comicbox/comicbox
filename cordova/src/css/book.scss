@@ -9,7 +9,7 @@
     grid-column-gap: $gap;
     grid-row-gap: $gap; // padding: $gap;
     .book {
-        background: white;
+        @include backgroundSurface;
         margin: 0px;
 
         $aspect-ratio: 7/10;
@@ -55,14 +55,15 @@
         }
 
         .series {
-            color: rgba(0, 0, 0, 1);
+            // @include textPrimary;
             font-size: $series-size;
         }
-
+        
         .title {
-            color: rgba(0, 0, 0, 0.5);
+            // @include textSecondary;
             font-size: $title-size;
             margin-bottom: $title-padding;
+            opacity: 0.6;
         }
 
         .unread {
@@ -76,9 +77,11 @@
                 width: 20%;
 
                 fill: $mdc-theme-secondary;
+                fill: var(--mdc-theme-secondary, $mdc-theme-secondary);
 
                 text {
                     fill: $mdc-theme-on-secondary;
+                    fill: var(--mdc-theme-on-secondary, $mdc-theme-on-secondary);
                     font-size: 1.3em;
                     font-weight: bold;
                 }

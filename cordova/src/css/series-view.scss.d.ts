@@ -1,6 +1,7 @@
 export const header: string;
 export const cover: string;
 export const rating: string;
+export const tags: string;
 export const series: string;
 export const title: string;
 export const buttons: string;

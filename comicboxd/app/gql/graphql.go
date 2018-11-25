@@ -288,8 +288,6 @@ func Update(table string, m, arg interface{}, primaryCols map[string]interface{}
 	}
 
 	query := fmt.Sprintf("update %s set %s where %s", table, strings.Join(updates, ", "), strings.Join(wheres, " and "))
-	fmt.Printf("%#v\n", query)
-	fmt.Printf("%#v\n", data)
 	return database.Exec(query, data...)
 }
 

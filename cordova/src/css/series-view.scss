@@ -22,7 +22,16 @@
     }
 
     .rating {
-        color: rgba(#000, 0.6)
+        @include textHint;
+    }
+
+    .tags {
+        padding-top: 5px;
+        height: 18px;
+        @include colorPrimary;
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .series {
@@ -32,14 +41,14 @@
     }
     .title {
         padding-top: 5px;
-        color: rgba(#000, 0.6)
+        @include textSecondary;
     }
     .buttons {
         text-align: center;
 
         button {
-            @include backgroundNormal;
-            
+            @include textPrimary;
+
         }
 
         .menu {
