@@ -39,12 +39,25 @@
         padding-top: 5px;
         color: rgba(#000, 0.6)
     }
+    .buttons {
+        text-align: center;
+
+        button {
+            @include colorSecondary;
+        }
+
+        .menu {
+            display: inline;
+        }
+
+    }
 
     .read-fab {
+        $offset: -#{10 + (56/2)}px;
         float: right;
         position: relative;
-        top: -30px;
-        margin-bottom: -30px;
+        top: $offset;
+        margin-bottom: $offset;
     }
     .summary {
         padding-top: 5px;

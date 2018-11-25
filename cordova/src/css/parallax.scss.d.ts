@@ -1,2 +1,2 @@
-export const parallax: string;
 export const parallaxWrap: string;
+export const parallax: string;

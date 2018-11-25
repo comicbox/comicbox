@@ -4,11 +4,11 @@ import Icon from 'preact-material-components/Icon'
 
 interface Props {
     rating: number
-    onClickStar: (rating: number) => void
+    onClickStar?: (rating: number) => void
 }
 
 export default class Stars extends Component<Props & JSX.HTMLAttributes> {
-    
+
     public render() {
         const rating = this.props.rating * 2
         const stars: JSX.Element[] = []

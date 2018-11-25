@@ -3,6 +3,8 @@ export const cover: string;
 export const rating: string;
 export const series: string;
 export const title: string;
+export const buttons: string;
+export const menu: string;
 export const readFab: string;
 export const summary: string;
 export const books: string;

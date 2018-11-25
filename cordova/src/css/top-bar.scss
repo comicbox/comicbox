@@ -1,18 +1,16 @@
 .top-bar {
+    @include backgroundPrimary;
     position: fixed;
     width: 100%;
     height: 56px;
-    background-color: $mdc-theme-primary;
     z-index: 4;
 
     display: flex;
     justify-content: space-between;
     font-size: 24;
 
-    color: $mdc-theme-on-primary;
 
     transition: background-color 500ms;
-    // transition: background-image 500ms;
 
     section {
         padding: 4px;

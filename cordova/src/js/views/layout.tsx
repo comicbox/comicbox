@@ -10,7 +10,7 @@ import { Link, route } from 'preact-router'
 
 interface Props {
     backLink: string
-    hideTopBar?: number
+    clearTopBar?: boolean
 }
 
 interface State {
@@ -18,8 +18,6 @@ interface State {
 }
 
 export default class Layout extends Component<Props, State> {
-
-    private searchInput: HTMLInputElement
 
     private get menu() {
         return [
@@ -59,43 +57,11 @@ export default class Layout extends Component<Props, State> {
     }
 
     public render() {
-        // let backButton = <TopAppBar.Icon />
-        // // <TopAppBar.Icon onClick={this.toggleDrawer} navigation={true}>menu</TopAppBar.Icon>
-
-        // if (location.hash !== '#/') {
-        //     backButton = <TopAppBar.Icon onClick={this.btnBack} href='#' navigation={true}>
-        //         arrow_back
-        //     </TopAppBar.Icon>
-        // }
-
-
         return <div className={s.app}>
 
-            {/* <TopAppBar onNav={null} fixed>
-                <TopAppBar.Row>
-                    <TopAppBar.Section align-start={true}>
-                        <TopAppBar.Icon href='#' navigation={true}>
-                            arrow_back
-                        </TopAppBar.Icon>
-                        <TopAppBar.Title>
-                            <Link href='/'>ComicBox</Link>
-                        </TopAppBar.Title>
-                    </TopAppBar.Section>
-                    <TopAppBar.Section align-end={true} class={s.search}>
-                        <form>
-                            <input type='text' ref={e => this.searchInput = e} />
-                            <label for='search'>
-                                <Icon>search</Icon>
-                            </label>
-                        </form>
-                    </TopAppBar.Section>
-                </TopAppBar.Row>
-            </TopAppBar> */}
-
-            <TopBar backLink={this.props.backLink} scroller={null} clear={this.props.hideTopBar} />
+            <TopBar backLink={this.props.backLink} scroller={null} clear={this.props.clearTopBar} />
 
             <ParallaxWrap id='parallax-wrap'>
-
                 <main class={s.main}>
                     {this.props.children}
                 </main>

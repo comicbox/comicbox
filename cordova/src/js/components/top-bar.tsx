@@ -8,7 +8,7 @@ import { route } from 'preact-router'
 interface Props {
     backLink: string
     scroller: HTMLElement
-    clear?: number
+    clear?: boolean
 }
 
 const headerHeight = 56
@@ -20,7 +20,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
     private scroller: HTMLElement
     private header: HTMLElement
 
-    private offset: number = 0
+    private offset: number = 1
     private lastScrollTop: number = -1
 
     public componentDidMount() {
@@ -58,12 +58,12 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
     private frame() {
         const scrollTop = this.scroller.scrollTop
 
-        if (this.lastScrollTop !== scrollTop) {
+        if (this.lastScrollTop !== scrollTop && this.header) {
             this.offset = clamp(this.offset + this.lastScrollTop - scrollTop, -headerHeight, 0)
 
             this.header.style.top = this.offset + 'px'
 
-            if (scrollTop < this.props.clear) {
+            if (scrollTop + this.offset === 0 && this.props.clear) {
                 this.header.style.backgroundColor = 'rgba(0,0,0,0)'
                 this.header.style.backgroundImage = 'linear-gradient(black, rgba(0,0,0,0))'
             } else {

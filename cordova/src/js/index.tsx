@@ -12,6 +12,7 @@ import Settings from 'js/views/settings'
 import { h, render } from 'preact'
 import Snackbar from 'preact-material-components/Snackbar'
 import Router from 'preact-router'
+import Modal from './components/modal'
 import url from './url'
 
 let bar: Snackbar
@@ -29,6 +30,7 @@ const jsx = <div>
 
         <Error default={true} />
     </Router>
+    <Modal />
     <Snackbar ref={e => { bar = e }} />
 </div>
 
@@ -40,7 +42,9 @@ url('/api/push').then(uri => {
 
         if ('message' in data) {
             bar.MDComponent.show({
-                message: data.message,
+                message: data.message as string,
+                actionHandler: null,
+                actionText: '',
             })
         }
 
