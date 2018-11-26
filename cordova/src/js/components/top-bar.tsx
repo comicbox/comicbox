@@ -56,6 +56,11 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
 
     @autobind
     private frame() {
+        if (!this.scroller) {
+            this.header.style.top = '0px'
+            return
+        }
+
         const scrollTop = this.scroller.scrollTop
 
         if (this.lastScrollTop !== scrollTop && this.header) {

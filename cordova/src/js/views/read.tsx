@@ -22,8 +22,8 @@ export default class Read extends Component<Props, State> {
     private img: HTMLImageElement
     private user: User = null
 
-    public constructor() {
-        super()
+    public constructor(props: Props) {
+        super(props)
         User.me().then(me => this.user = me)
 
         this.state = {
@@ -51,12 +51,11 @@ export default class Read extends Component<Props, State> {
                 'summary',
                 'title',
                 'genres',
-                )
+            )
             .where('id', '=', id)
             .first()
 
         const bk = await bookQuery
-        console.log(bk)
         let pageNum = 0
 
         const pageMatch = this.props.matches.page
@@ -69,8 +68,8 @@ export default class Read extends Component<Props, State> {
         this.save()
 
         this.setState({
-                current: update,
-                book: bk,
+            current: update,
+            book: bk,
         })
     }
 
@@ -84,7 +83,6 @@ export default class Read extends Component<Props, State> {
             return
         }
 
-        console.log(this.state)
         const page = this.state.book.pages[this.state.current]
 
         const width = this.state.width
@@ -105,8 +103,8 @@ export default class Read extends Component<Props, State> {
 
             <map name='image-map'>
                 <area target='' onClick={this.stepPage(-1)} alt='left' coords={leftBox} shape='rect' />
-                <area target='' onClick={this.toggleModal} alt='center' coords={centerBox}  shape='rect' />
-                <area target='' onClick={this.stepPage(1)} alt='right' coords={rightBox}  shape='rect' />
+                <area target='' onClick={this.toggleModal} alt='center' coords={centerBox} shape='rect' />
+                <area target='' onClick={this.stepPage(1)} alt='right' coords={rightBox} shape='rect' />
             </map>
 
             <ReadOverlay
@@ -122,7 +120,7 @@ export default class Read extends Component<Props, State> {
     }
 
     @autobind
-    private toggleModal()  {
+    private toggleModal() {
         this.setState((state: State, props: Props) => {
             return {
                 boo: state.book,
@@ -131,7 +129,7 @@ export default class Read extends Component<Props, State> {
                 modalOpen: !state.modalOpen,
             }
         })
-      }
+    }
 
     @autobind
     private adjustAreaRegions() {
@@ -178,7 +176,7 @@ export default class Read extends Component<Props, State> {
     }
 
     @autobind
-    private stepPage(step: number): () => void  {
+    private stepPage(step: number): () => void {
         if (this.state.book === null) {
             return
         }
@@ -205,8 +203,7 @@ export default class Read extends Component<Props, State> {
 
     @autobind
     private save() {
-        if (this.user !== null && this.user.id != '00000000-0000-0000-0000-000000000000') {
-            console.log(this.user)
+        if (this.user !== null && this.user.id !== '00000000-0000-0000-0000-000000000000') {
             this.state.book.save()
         }
     }
