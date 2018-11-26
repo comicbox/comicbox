@@ -32,7 +32,7 @@ export default class Home extends Component {
 
 async function firstBook(seriesP: Promise<ModelArray<Series>>): Promise<Book[]> {
     const series = await seriesP
-    return series.map(s => s.books[0])
+    return series.filter(s => s.books.length > 0).map(s => s.books[0])
 }
 
 // async function* firstBook(series: AsyncIterableIterator<Series>): AsyncIterableIterator<Book> {
