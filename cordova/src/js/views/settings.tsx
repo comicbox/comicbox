@@ -1,6 +1,5 @@
-// TODO: Add stylings to scss sheet
-// import * as s from 'css/settings.scss'
 import autobind from 'autobind-decorator'
+import * as s from 'css/settings.scss'
 import { login, logout, user } from 'js/auth'
 import { gql } from 'js/graphql'
 import User from 'js/model/user'
@@ -65,7 +64,7 @@ export default class Settings extends Component<{}, State> {
             serverSettings = <div>
                 <h2>Server</h2>
                 <TextField label='Address' value={this.state.address} onKeyUp={this.keyUpAddress} readOnly />
-                <Btn raised style='margin-left:10px' onClick={this.btnAddress}>Update</Btn>
+                <Btn raised class={s.button} onClick={this.btnAddress}>Update</Btn>
             </div>
         }
         // Admin Settings
@@ -83,17 +82,17 @@ export default class Settings extends Component<{}, State> {
                 </div>
                 <div>
                     <TextField label='Password' type='password' onKeyUp={this.keyUpNewUserPasswordToAdd} />
-                    <Btn raised style='margin-left:10px' onClick={this.btnAddUser}>Add User</Btn>
+                    <Btn raised class={s.button} onClick={this.btnAddUser}>Add User</Btn>
                 </div>
                 <h3>Delete User</h3>
                 <TextField label='Username To Delete' onKeyUp={this.keyUpDeleteUser} />
-                <Btn raised style='margin-left:10px' onClick={this.btnDeleteUser}>Delete</Btn>
+                <Btn raised class={s.button} onClick={this.btnDeleteUser}>Delete</Btn>
                 <h3>Grant Admin Status</h3>
                 <TextField label='Username To Make Admin' onKeyUp={this.keyUpAddAdminStatus} />
-                <Btn raised style='margin-left:10px' onClick={this.btnGrantAdminStatus}>Grant</Btn>
+                <Btn raised class={s.button} onClick={this.btnGrantAdminStatus}>Grant</Btn>
                 <h3>Revoke Admin Status</h3>
                 <TextField label='Username To Revoke' onKeyUp={this.keyUpRemoveAdminStatus} />
-                <Btn raised style='margin-left:10px' onClick={this.btnRevokeAdminStatus}>Revoke</Btn>
+                <Btn raised class={s.button} onClick={this.btnRevokeAdminStatus}>Revoke</Btn>
             </div>
 
         }
@@ -106,7 +105,7 @@ export default class Settings extends Component<{}, State> {
             <h1>Settings</h1>
             <div>
                 <Btn raised onClick={this.btnScan}>Start Scan</Btn>
-                <Btn raised style='margin-left:10px' onClick={this.btnLogout}>Logout</Btn>
+                <Btn raised class={s.button} onClick={this.btnLogout}>Logout</Btn>
             </div>
             <div>
                 {serverSettings}
@@ -118,7 +117,7 @@ export default class Settings extends Component<{}, State> {
                 </div>
                 <div>
                     <TextField label='Username' value={username} onKeyUp={this.keyUpUsername} />
-                    <Btn raised style='margin-left:10px' onClick={this.btnUpdateUser}>Update</Btn>
+                    <Btn raised class={s.button} onClick={this.btnUpdateUser}>Update</Btn>
                 </div>
                 <h3>Change Password</h3>
                 <div>
@@ -128,7 +127,7 @@ export default class Settings extends Component<{}, State> {
                     <TextField label='New Password' type='password' onKeyUp={this.keyUpNewPass} />
                 </div>
                 <TextField label='Repeat New Password' type='password' onKeyUp={this.keyUpRepeatNewPass} />
-                <Btn raised style='margin-left:10px' onClick={this.btnUpdatePassword}>Update</Btn>
+                <Btn raised class={s.button} onClick={this.btnUpdatePassword}>Update</Btn>
             </div>
             <div>
                 {adminSettings}
