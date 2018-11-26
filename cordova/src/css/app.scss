@@ -58,3 +58,7 @@ body {
     text-indent: 1px;
     text-overflow: '';
 }
+
+root {
+    --mdc-theme-surface-border: $mdc-theme-surface-border;
+}

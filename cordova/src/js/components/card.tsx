@@ -11,15 +11,20 @@ import Button from 'preact-material-components/Button'
 import Elevation from 'preact-material-components/Elevation'
 import Icon from 'preact-material-components/Icon'
 import Menu from 'preact-material-components/Menu'
-import { Link } from 'preact-router'
+import { Link, route } from 'preact-router'
 
 export interface PageData {
     url: string
 }
 
+type Option<T extends Model> = ((model: T) => void) | 'divider'
+interface Options<T extends Model> {
+    [name: string]: Option<T>
+}
+
 interface Props<T extends Model> {
     data: T
-    options?: Dictionary<(model: T) => void>
+    options?: Options<T>
     loadQuery?: QueryBuilder<T>
 }
 interface State<T extends Model> {
@@ -66,7 +71,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
         let series = ''
         let title = ''
         let readMark = null
-        let options: Dictionary<(model: any) => void> = {}
+        let options: Options<T> = {}
 
         if (!model) {
             return <Elevation z={2} className={s.book} />
@@ -103,7 +108,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
                 </div>
             }
 
-            options = bookOptions
+            options = bookOptions as Options<T>
         } else if (model instanceof Series) {
             if (model.books && model.books[0] && model.books[0].cover) {
                 image = model.books[0].cover.url + '?height=200&quality=30'
@@ -120,7 +125,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
                     </svg>
                 </div>
             }
-            options = seriesOptions
+            options = seriesOptions as Options<T>
         }
 
         return <Elevation z={2} className={s.book}>
@@ -131,18 +136,8 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
 
                 <div className={s.title} title={title}>{title}</div>
             </Link>
+            {this.buildMenu(this.props.options || options, model)}
 
-            <Menu.Anchor class={s.menu}>
-                <Button class={s.button} onClick={this.openMenu}>
-                    <Icon>more_vert</Icon>
-                </Button>
-                <Menu ref={menu => this.menu = menu} class={s.options}>
-                    {map(this.props.options || options, (func, name) => (
-                        <Menu.Item onClick={func.bind(this, model)} key={name}>{name}</Menu.Item>
-                    ))}
-
-                </Menu>
-            </Menu.Anchor>
         </Elevation>
 
     }
@@ -151,33 +146,49 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
     private openMenu(e: Event) {
         this.menu.MDComponent.open = true
     }
+    private buildMenu(ops: Options<T>, model: Model): JSX.Element {
+        return <Menu.Anchor class={s.menu}>
+            <Button class={s.button} onClick={this.openMenu}>
+                <Icon>more_vert</Icon>
+            </Button>
+            <Menu ref={menu => this.menu = menu} class={s.options}>
+                {map(ops, (func, name) => {
+                    if (func === 'divider') {
+                        return <li class='mdc-list-divider' role='separator' />
+                    } else if (typeof func === 'function') {
+                        return <Menu.Item onClick={func.bind(this, model)} key={name}>{name}</Menu.Item>
+                    }
+                })}
 
+            </Menu>
+        </Menu.Anchor>
+    }
 }
 
-const seriesOptions: Dictionary<(model: Series) => void> = {
-    'Add to Reading': series => {
+const seriesOptions: Options<Series> = {
+    'Add to reading': series => {
         series.list = 'READING'
         series.save()
     },
-    'Add to Paused': series => {
+    'Add to paused': series => {
         series.list = 'PAUSED'
         series.save()
     },
-    'Add to Complected': series => {
+    'Add to complected': series => {
         series.list = 'COMPLETED'
         series.save()
     },
-    'Add to Dropped': series => {
+    'Add to dropped': series => {
         series.list = 'DROPPED'
         series.save()
     },
-    'Add to Planning': series => {
+    'Add to planning': series => {
         series.list = 'PLANNING'
         series.save()
     },
 }
 
-const bookOptions: Dictionary<(model: Book) => void> = {
+const bookOptions: Options<Book> = {
     'Mark as read': book => {
         book.current_page = book.pages.length
         book.save()
@@ -185,5 +196,9 @@ const bookOptions: Dictionary<(model: Book) => void> = {
     'Mark as unread': book => {
         book.current_page = 0
         book.save()
+    },
+    'd1': 'divider',
+    'Go to series': book => {
+        route(`/series/${book.series}`)
     },
 }
