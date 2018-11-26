@@ -7,6 +7,8 @@ import User from 'js/model/user'
 import { debounce } from 'js/util'
 import { Component, h } from 'preact'
 import { route } from 'preact-router';
+import { bookList } from 'css/book.scss';
+import { historyPush } from 'js/history';
 
 interface Props {
     matches?: { [id: string]: string }
@@ -206,12 +208,24 @@ export default class Read extends Component<Props, State> {
 
     @autobind
     private next() {
+        console.log(this.state)
         const bk = this.state.book
-        const n = Book.take(1).where('volume', '>', bk.volume).where('chapter', '>', bk.chapter).where('title', '>', bk.title).first()
-        
-        n.then(b => {
-            route("/book/"+b.id)
-            this.initBook(b)
+        let query = Book.take(1)
+        if (bk.volume) {
+            query = query.where('volume', '>', bk.volume)
+        }
+        if (bk.chapter) {
+            query  = query.where('chapter', '>', bk.chapter)
+        }
+        const book = query.first()
+        book.then(b => {
+            console.log(b)
+            if (b != null) {
+                route("/book/"+b.id+"/0")
+                this.initBook(b)
+            } else {
+                route('/series/'+bk.series)
+            }
         })
     }
 
