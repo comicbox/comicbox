@@ -18,42 +18,6 @@ const paths = {
     CSS: path.resolve(__dirname, 'src/css'),
 };
 
-class SassResolver {
-
-    apply(resolver) {
-        resolver.plugin('resolve', (request, callback) => {
-            console.log('request', request.request);
-
-            callback()
-            return
-
-            // if (this.include && !request.path.startsWith(this.include)) {
-            //     callback()
-            //     return
-            // }
-            // const rfs = resolver.fileSystem;
-            // const filename = `${path.basename(request.path)}.js`
-            // const filePath = resolver.join(request.path, filename)
-            // rfs.stat(filePath, (err, stats) => {
-            //     if (err || !stats.isFile()) {
-            //         callback()
-            //         return
-            //     }
-            //     const indexPath = resolver.join(request.path, 'index.js');
-            //     rfs.stat(indexPath, (indexErr, indexStats) => {
-            //         if (!indexErr && indexStats.isFile()) {
-            //             callback()
-            //             return
-            //         }
-            //         const relativePath = request.relativePath && resolver.join(request.relativePath, filename)
-            //         const nextRequest = Object.assign({}, request, { path: filePath, relativePath })
-            //         resolver.doResolve(target, nextRequest, `using path: ${filePath}`, callback)
-            //     })
-            // })
-        })
-
-    }
-}
 
 module.exports = (env, argv) => {
     const devMode = argv.mode !== 'production'
@@ -98,6 +62,9 @@ module.exports = (env, argv) => {
                             loader: 'sass-resources-loader',
                             options: {
                                 resources: path.join(paths.CSS, '_variables.scss'),
+                                includePaths: [
+                                    'node_modules', 'src', '.'
+                                ]
                             },
                         },
                     ]
@@ -141,9 +108,6 @@ module.exports = (env, argv) => {
                 "node_modules",
                 paths.SRC
             ],
-            plugins: [
-                // new SassResolver(),
-            ]
         },
         output: {
             path: paths.DIST,

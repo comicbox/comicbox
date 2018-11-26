@@ -59,15 +59,6 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Type:    graphql.String,
 			Resolve: gql.ResolveVal("Series"),
 		},
-		// "series_query": &graphql.Field{
-		// 	Type: serieField.Type,
-		// 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		// 		serie := p.Source.(*model.BookUserBook)
-		// 		p.Args["name"] = serie.Series
-		// 		return serieField.Resolve(p)
-		// 		return nil, nil
-		// 	},
-		// },
 		"summary": &graphql.Field{
 			Type:    graphql.String,
 			Resolve: gql.ResolveVal("Summary"),
@@ -170,61 +161,28 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				c := gql.Ctx(p)
 				book := p.Source.(*model.BookUserBook)
-				allPages := []*model.Page{}
-				pages := []*model.Page{}
-
-				if len(book.PagesJSON) == 0 {
-					return pages, nil
-				}
-
-				err := json.Unmarshal(book.PagesJSON, &allPages)
+				err := book.UnmarshalPages(c.URL)
 				if err != nil {
 					return nil, err
 				}
-				if len(allPages) == 0 {
-					return nil, nil
-				}
-				for i, page := range allPages {
-					page.URL = c.URL("/api/v1/book/%s/page/%d.webp", book.ID, i)
+
+				for _, page := range book.Pages {
 					if page.Type == Cover {
 						return page, nil
 					}
 				}
 
-				return allPages[0], nil
+				return book.Pages[0], nil
 			},
 		},
 		"pages": &graphql.Field{
 			Type: graphql.NewList(PageType),
-			Args: graphql.FieldConfigArgument{
-				"type": &graphql.ArgumentConfig{
-					Type: PageTypeEnum,
-				},
-			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				c := gql.Ctx(p)
-				t, typeOk := p.Args["type"].(string)
 				book := p.Source.(*model.BookUserBook)
-				allPages := []*model.Page{}
-				pages := []*model.Page{}
+				book.UnmarshalPages(c.URL)
 
-				if len(book.PagesJSON) == 0 {
-					return pages, nil
-				}
-
-				err := json.Unmarshal(book.PagesJSON, &allPages)
-				if err != nil {
-					return nil, err
-				}
-
-				for i, page := range allPages {
-					if page.Type == t || !typeOk {
-						page.URL = c.URL("/api/v1/book/%s/page/%d.webp", book.ID, i)
-						pages = append(pages, page)
-					}
-				}
-
-				return pages, nil
+				return book.Pages, nil
 			},
 		},
 	},
@@ -295,10 +253,13 @@ var booksField = &graphql.Field{
 			Where(sq.Eq{"user_id": c.User.ID})
 
 		query = gql.Args(query, model.BookUserBook{}, p.Args)
-		query = query.
-			OrderBy("series").
-			OrderBy("chapter").
-			OrderBy("volume")
+		if _, ok := p.Args["sort"]; !ok {
+			query = query.
+				OrderBy("series").
+				OrderBy("chapter").
+				OrderBy("volume").
+				OrderBy("title")
+		}
 		sqll, args, err := query.Columns("count(*)").ToSql()
 		errors.Check(err)
 

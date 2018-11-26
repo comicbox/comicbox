@@ -1,5 +1,7 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/layout.scss'
+import { ParallaxWrap } from 'js/components/parallax'
+import TopBar from 'js/components/top-bar'
 import { historyPop, historyPrevious } from 'js/history'
 import { Component, h } from 'preact'
 import Icon from 'preact-material-components/Icon'
@@ -8,6 +10,7 @@ import { Link, route } from 'preact-router'
 
 interface Props {
     backLink: string
+    clearTopBar?: boolean
 }
 
 interface State {
@@ -15,8 +18,6 @@ interface State {
 }
 
 export default class Layout extends Component<Props, State> {
-
-    private searchInput: HTMLInputElement
 
     private get menu() {
         return [
@@ -56,38 +57,15 @@ export default class Layout extends Component<Props, State> {
     }
 
     public render() {
-        let backButton = <TopAppBar.Icon />
-        // <TopAppBar.Icon onClick={this.toggleDrawer} navigation={true}>menu</TopAppBar.Icon>
-
-        if (location.hash !== '#/') {
-            backButton = <TopAppBar.Icon onClick={this.btnBack} href='#' navigation={true}>
-                arrow_back
-            </TopAppBar.Icon>
-        }
-
         return <div className={s.app}>
-            <TopAppBar onNav={null}>
-                <TopAppBar.Row>
-                    <TopAppBar.Section align-start={true}>
-                        {backButton}
-                        <TopAppBar.Title>
-                            <Link href='/'>ComicBox</Link>
-                        </TopAppBar.Title>
-                    </TopAppBar.Section>
-                    <TopAppBar.Section align-end={true} class={s.search}>
-                        <form onSubmit={this.search}>
-                            <input id='search' type='text' ref={e => this.searchInput = e} />
-                            <label for='search' onClick={this.searchClick}>
-                                <Icon>search</Icon>
-                            </label>
-                        </form>
-                    </TopAppBar.Section>
-                </TopAppBar.Row>
-            </TopAppBar>
 
-            <main class={s.main}>
-                {this.props.children}
-            </main>
+            <TopBar backLink={this.props.backLink} scroller={null} clear={this.props.clearTopBar} />
+
+            <ParallaxWrap id='parallax-wrap'>
+                <main class={s.main}>
+                    {this.props.children}
+                </main>
+            </ParallaxWrap>
 
             <div class={s.bottomBar}>
                 {this.menu.map((item, i) => (
@@ -102,29 +80,5 @@ export default class Layout extends Component<Props, State> {
                 ))}
             </div>
         </div >
-    }
-
-    @autobind
-    private btnBack(e: Event) {
-        e.preventDefault()
-        if (historyPrevious() !== null) {
-            historyPop()
-            history.back()
-
-            return
-        }
-        route(this.props.backLink)
-    }
-
-    @autobind
-    private search(e: Event) {
-        e.preventDefault()
-        this.searchInput.blur()
-        route(`/search/${this.searchInput.value}`)
-    }
-
-    @autobind
-    private searchClick(e: Event) {
-        this.searchInput.select()
     }
 }

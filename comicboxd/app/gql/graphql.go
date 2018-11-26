@@ -2,6 +2,7 @@ package gql
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -269,7 +270,15 @@ func Update(table string, m, arg interface{}, primaryCols map[string]interface{}
 		}
 
 		updates = append(updates, fmt.Sprintf("%s=?", col))
-		data = append(data, value)
+		if _, ok := value.(string); ok {
+			data = append(data, value)
+		} else {
+			b, err := json.Marshal(value)
+			if err != nil {
+				return nil, err
+			}
+			data = append(data, string(b))
+		}
 	}
 
 	wheres := []string{}
@@ -279,7 +288,6 @@ func Update(table string, m, arg interface{}, primaryCols map[string]interface{}
 	}
 
 	query := fmt.Sprintf("update %s set %s where %s", table, strings.Join(updates, ", "), strings.Join(wheres, " and "))
-
 	return database.Exec(query, data...)
 }
 
@@ -302,7 +310,15 @@ func Insert(table string, m, arg interface{}, primaryCols map[string]interface{}
 
 		changedCols = append(changedCols, col)
 		questions = append(questions, "?")
-		data = append(data, value)
+		if _, ok := value.(string); ok {
+			data = append(data, value)
+		} else {
+			b, err := json.Marshal(value)
+			if err != nil {
+				return nil, err
+			}
+			data = append(data, string(b))
+		}
 	}
 
 	for col, value := range primaryCols {

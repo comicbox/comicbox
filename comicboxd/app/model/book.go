@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
@@ -49,4 +50,24 @@ type Page struct {
 	FileNumber int    `json:"file_number"`
 	Type       string `json:"type"`
 	URL        string `json:"url"`
+}
+
+func (b *BookUserBook) UnmarshalPages(url func(string, ...interface{}) string) error {
+	pages := []*Page{}
+
+	if len(b.PagesJSON) == 0 {
+		b.Pages = []*Page{}
+		return nil
+	}
+
+	err := json.Unmarshal(b.PagesJSON, &pages)
+	if err != nil {
+		return err
+	}
+
+	for i := range pages {
+		pages[i].URL = url("/api/v1/book/%s/page/%d.jpg", b.ID, i)
+	}
+	b.Pages = pages
+	return nil
 }
