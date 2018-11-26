@@ -7,6 +7,7 @@ import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 import Btn from 'preact-material-components/Button'
 import TextField from 'preact-material-components/TextField'
+import { Link } from 'preact-router';
 
 // interface Props {
 
@@ -77,6 +78,9 @@ export default class Settings extends Component<{}, State> {
                 <TextField label='Repeat New Password' type='password' onKeyUp={this.keyUpRepeatNewPass} />
                 <Btn raised onClick={this.btnUpdatePassword}>Update</Btn>
 
+            </div>
+            <div>
+                <Link href='/theme'><Btn>Edit Theme</Btn></Link>
             </div>
         </Layout >
     }
