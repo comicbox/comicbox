@@ -12,6 +12,9 @@ export default class Series extends Model {
     @prop('List')
     public list: List
 
+    @prop('[String]')
+    public tags: string[]
+
     @prop('String')
     public name: string
 

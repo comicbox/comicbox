@@ -32,17 +32,12 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
     }
 
     public render() {
-        let backButton = <Icon />
-        // <TopAppBar.Icon onClick={this.toggleDrawer} navigation={true}>menu</TopAppBar.Icon>
-
-        if (location.hash !== '#/') {
-            backButton = <Icon onClick={this.btnBack} href='#' navigation={true}>
-                arrow_back
-            </Icon>
-        }
-
         return <header {...this.props} class={s.topBar + ' ' + this.props.class} ref={e => this.header = e}>
-            <section class={s.left}>{backButton}</section>
+            <section class={s.left}>
+                <Icon onClick={this.btnBack} href='#' navigation={true}>
+                    arrow_back
+                </Icon>
+            </section>
             <section class={s.right}>
                 <form onSubmit={this.search}>
                     <input id='search' type='text' ref={e => this.searchInput = e} />

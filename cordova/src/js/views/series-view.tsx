@@ -30,13 +30,11 @@ interface State {
 
 export default class SeriesView extends Component<Props, State> {
 
-    private listMenu: Menu
-
     public async componentDidMount() {
         const series = this.props.matches.name
 
         Series.where('name', series)
-            .select('name', 'list')
+            .select('name', 'list', 'tags')
             .first()
             .then(serie => this.setState({ series: serie }))
 
@@ -61,8 +59,13 @@ export default class SeriesView extends Component<Props, State> {
         let thumbImg = ''
         let summary = ''
         let title = ''
+        let tags: JSX.Element[] = null
         let rating: number = 0
 
+        if (this.state.series) {
+            const serie = this.state.series
+            tags = serie.tags.map(tag => <Link href={`/tag/${tag}`} key={tag}>#{tag} </Link>)
+        }
         if (this.state.first) {
             const first = this.state.first
             backgroundImg = first.cover.url
@@ -97,7 +100,8 @@ export default class SeriesView extends Component<Props, State> {
                     {/* <Fab><Fab.Icon>play_arrow</Fab.Icon></Fab> */}
                     <Fab><Fab.Icon>book</Fab.Icon></Fab>
                 </Link>
-                <div class={s.rating}><Stars rating={rating} /></div>
+                {/* <div class={s.rating}><Stars rating={rating} /></div> */}
+                <div class={s.tags}>{tags}</div>
                 <div class={s.series}>{series}</div>
                 <div class={s.title}>{title}</div>
                 <div class={s.summary}>{summary}</div>
@@ -123,11 +127,6 @@ export default class SeriesView extends Component<Props, State> {
     }
 
     @autobind
-    private openMenu(e: Event) {
-        this.listMenu.MDComponent.open = true
-    }
-
-    @autobind
     private btnRead() {
         const series = this.state.series
 
@@ -149,6 +148,15 @@ export default class SeriesView extends Component<Props, State> {
                 series.name = e.target.value as List
             }
         }
+        const tagsChange = (e: Event) => {
+            if (e.target instanceof HTMLInputElement) {
+                if (e.target.value === '') {
+                    series.tags = []
+                } else {
+                    series.tags = e.target.value.split(',').map(tag => tag.trim().replace(/ /g, '_'))
+                }
+            }
+        }
         const listChange = (e: Event) => {
             if (e.target instanceof HTMLSelectElement) {
                 series.list = e.target.value as List
@@ -156,6 +164,7 @@ export default class SeriesView extends Component<Props, State> {
         }
         const formSubmit = () => {
             series.save()
+            this.setState({ series: series })
         }
 
         OpenModal(<Modal.Surface formSubmit={formSubmit}>
@@ -163,8 +172,8 @@ export default class SeriesView extends Component<Props, State> {
                 Edit {series.name}
             </Modal.Title>
             <Modal.Body>
-                <TextField label='Name' value={series.name} class={editS.element} onChange={nameChange} />
-                <TextField label='Tags' class={editS.element} />
+                <TextField class={editS.element} label='Name' value={series.name} onChange={nameChange} />
+                <TextField class={editS.element} label='Tags' value={series.tags.join(', ')} onChange={tagsChange} />
                 <Select
                     hintText='Select a list'
                     class={editS.element}

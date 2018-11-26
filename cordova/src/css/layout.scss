@@ -55,8 +55,9 @@
         height: 56px;
         width: 100%;
 
-        background: white;
-        border-top: solid #ddd 2px;
+        @include backgroundSurface;
+        border-top: solid $mdc-theme-surface-border 2px;
+        border-top: solid var(--mdc-theme-surface-border, $mdc-theme-surface-border) 2px;
 
         z-index: 1;
 
@@ -64,10 +65,10 @@
             display: inline-block;
             width: 20%;
             text-align: center;
-            color: #444;
+            // @include textSecondary;
 
             &.active {
-                color: var(--mdc-theme-primary, #6200ee);
+                @include colorPrimary;
             }
 
             .icon {
