@@ -2,9 +2,11 @@ import autobind from 'autobind-decorator'
 import * as s from 'css/read.scss'
 import ReadOverlay from 'js/components/read-overlay'
 import Book from 'js/model/book'
+import Series from 'js/model/series'
 import User from 'js/model/user'
 import { debounce } from 'js/util'
 import { Component, h } from 'preact'
+import { route } from 'preact-router';
 
 interface Props {
     matches?: { [id: string]: string }
@@ -16,14 +18,17 @@ interface State {
     width: number
     height: number
     modalOpen: boolean
+
+    toNext: boolean
+    dst: string
 }
 
 export default class Read extends Component<Props, State> {
     private img: HTMLImageElement
     private user: User = null
 
-    public constructor(props: Props) {
-        super(props)
+    public constructor() {
+        super()
         User.me().then(me => this.user = me)
 
         this.state = {
@@ -32,43 +37,46 @@ export default class Read extends Component<Props, State> {
             width: 0,
             height: 0,
             modalOpen: false,
+
+            toNext: false,
+            dst: '/',
         }
     }
+
+
 
     public async componentWillMount() {
         const id = this.props.matches.id
 
-        const bookQuery = Book
-            .select(
-                'id',
-                'pages',
-                'current_page',
+        await this.loadBookState(id)
+    }
 
-                'alternate_series',
-                'authors',
-                'series',
-                'story_arc',
-                'summary',
-                'title',
-                'genres',
-            )
+    @autobind
+    private async loadBookState(id: string) {
+        const bookQuery = Book
             .where('id', '=', id)
             .first()
 
         const bk = await bookQuery
+        this.initBook(bk)
+    }
+
+    @autobind
+    private initBook(bk: Book) {
         let pageNum = 0
 
         const pageMatch = this.props.matches.page
         if (pageMatch !== '') {
             pageNum = Number(pageMatch)
+        } else {
+            pageNum = bk.current_page || pageNum
         }
 
-        const update = bk.current_page || pageNum
-        bk.current_page = update
+        bk.current_page = pageNum
         this.save()
 
         this.setState({
-            current: update,
+            current: pageNum,
             book: bk,
         })
     }
@@ -103,8 +111,8 @@ export default class Read extends Component<Props, State> {
 
             <map name='image-map'>
                 <area target='' onClick={this.stepPage(-1)} alt='left' coords={leftBox} shape='rect' />
-                <area target='' onClick={this.toggleModal} alt='center' coords={centerBox} shape='rect' />
-                <area target='' onClick={this.stepPage(1)} alt='right' coords={rightBox} shape='rect' />
+                <area target='' onClick={this.toggleModal} alt='center' coords={centerBox}  shape='rect' />
+                <area target='' onClick={this.stepPage(1)} alt='right' coords={rightBox}  shape='rect' />
             </map>
 
             <ReadOverlay
@@ -120,16 +128,13 @@ export default class Read extends Component<Props, State> {
     }
 
     @autobind
-    private toggleModal() {
+    private toggleModal()  {
         this.setState((state: State, props: Props) => {
             return {
-                boo: state.book,
-                width: state.width,
-                height: state.height,
                 modalOpen: !state.modalOpen,
             }
         })
-    }
+      }
 
     @autobind
     private adjustAreaRegions() {
@@ -141,10 +146,8 @@ export default class Read extends Component<Props, State> {
 
         this.setState((state: State, props: Props) => {
             return {
-                book: state.book,
                 width: width,
                 height: height,
-                modalOpen: state.modalOpen,
             }
         })
     }
@@ -168,7 +171,6 @@ export default class Read extends Component<Props, State> {
                     book: bk,
                     width: 0,
                     height: 0,
-                    modalOpen: state.modalOpen,
                 }
             }
             return state
@@ -176,13 +178,13 @@ export default class Read extends Component<Props, State> {
     }
 
     @autobind
-    private stepPage(step: number): () => void {
+    private stepPage(step: number): () => void  {
         if (this.state.book === null) {
             return
         }
 
         return () => this.setState((state: State, props: Props) => {
-            const dst = state.book.current_page + step
+            const dst = state.current + step
             if (dst < state.book.pages.length && dst > -1) {
                 const bk = state.book
                 bk.last_page_read = bk.current_page
@@ -194,16 +196,29 @@ export default class Read extends Component<Props, State> {
                     book: bk,
                     width: 0,
                     height: 0,
-                    modalOpen: state.modalOpen,
                 }
+            } else if (dst === state.book.pages.length) {
+                this.next()
             }
             return state
         })
     }
 
     @autobind
+    private next() {
+        const bk = this.state.book
+        const n = Book.take(1).where('volume', '>', bk.volume).where('chapter', '>', bk.chapter).where('title', '>', bk.title).first()
+        
+        n.then(b => {
+            route("/book/"+b.id)
+            this.initBook(b)
+        })
+    }
+
+
+    @autobind
     private save() {
-        if (this.user !== null && this.user.id !== '00000000-0000-0000-0000-000000000000') {
+        if (this.user !== null && this.user.id != '00000000-0000-0000-0000-000000000000') {
             this.state.book.save()
         }
     }
