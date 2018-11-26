@@ -1,6 +1,7 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/layout.scss'
 import { ParallaxWrap } from 'js/components/parallax'
+import { endBottomBar, startBottomBar } from 'js/components/snack'
 import TopBar from 'js/components/top-bar'
 import { historyPop, historyPrevious } from 'js/history'
 import { Component, h } from 'preact'
@@ -13,11 +14,7 @@ interface Props {
     clearTopBar?: boolean
 }
 
-interface State {
-    drawerOpened: boolean
-}
-
-export default class Layout extends Component<Props, State> {
+export default class Layout extends Component<Props> {
 
     private get menu() {
         return [
@@ -49,11 +46,12 @@ export default class Layout extends Component<Props, State> {
         ]
     }
 
-    constructor() {
-        super()
-        this.state = {
-            drawerOpened: false,
-        }
+    public componentDidMount() {
+        startBottomBar()
+    }
+
+    public componentWillUnmount() {
+        endBottomBar()
     }
 
     public render() {

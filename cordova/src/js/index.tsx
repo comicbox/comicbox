@@ -1,5 +1,7 @@
 import 'css/app.scss'
 import createHashHistory from 'history/createHashHistory'
+import Modal from 'js/components/modal'
+import Snack from 'js/components/snack'
 import { historyPush } from 'js/history'
 import Error from 'js/views/error'
 import Home from 'js/views/home'
@@ -10,12 +12,7 @@ import SeriesIndex from 'js/views/series-index'
 import SeriesView from 'js/views/series-view'
 import Settings from 'js/views/settings'
 import { h, render } from 'preact'
-import Snackbar from 'preact-material-components/Snackbar'
 import Router from 'preact-router'
-import Modal from './components/modal'
-import url from './url'
-
-let bar: Snackbar
 
 const jsx = <div>
     <Router onChange={historyPush} history={createHashHistory()}>
@@ -30,23 +27,9 @@ const jsx = <div>
 
         <Error default={true} />
     </Router>
+
+    <Snack />
     <Modal />
-    <Snackbar ref={e => { bar = e }} />
 </div>
 
 render(jsx, document.getElementById('app'))
-url('/api/push').then(uri => {
-    const ws = new WebSocket(uri.replace(/^http/, 'ws'))
-    ws.onmessage = e => {
-        const data = JSON.parse(e.data)
-
-        if ('message' in data) {
-            bar.MDComponent.show({
-                message: data.message as string,
-                actionHandler: null,
-                actionText: '',
-            })
-        }
-
-    }
-})
