@@ -1,3 +1,6 @@
+@import '@material/layout-grid/_variables.scss';
+@import '@material/layout-grid/_mixins.scss';
+
 .header {
     $height-offset: 75px;
 
@@ -5,6 +8,10 @@
     padding-top: 10px;
     padding-bottom: 10px;
     margin-bottom: 10px;
+
+    @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+        margin-top: 65px;
+    }
 
     &::after {
         content: "";
@@ -29,7 +36,7 @@
         padding-top: 5px;
         height: 18px;
         @include colorPrimary;
-        white-space: nowrap; 
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -79,5 +86,9 @@
     background: #333;
     img {
         opacity: calc(1 - var(--scroll-per) * 1.5);
+    }
+
+    @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+        display: none;
     }
 }

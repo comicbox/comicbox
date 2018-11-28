@@ -14,6 +14,6 @@ type ComicRackBook struct {
 }
 
 type ComicRackPage struct {
-	Image int
+	Image *int
 	Type  string
 }

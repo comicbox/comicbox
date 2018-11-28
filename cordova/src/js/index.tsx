@@ -7,6 +7,7 @@ import Error from 'js/views/error'
 import Home from 'js/views/home'
 import List from 'js/views/list'
 import Login from 'js/views/login'
+import Read from 'js/views/read'
 import SearchIndex from 'js/views/search-index'
 import SeriesIndex from 'js/views/series-index'
 import SeriesView from 'js/views/series-view'
@@ -23,6 +24,7 @@ const jsx = <div>
         <SearchIndex path='/search/:query' />
         <Settings path='/settings' />
         <List path='/list' />
+        <Read path='/book/:id/:page?' />
         <Theme path='/theme' />
 
         <Login path='/login' />

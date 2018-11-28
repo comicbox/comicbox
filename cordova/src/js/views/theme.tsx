@@ -1,7 +1,7 @@
 import autobind from 'autobind-decorator'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
-import Button from 'preact-material-components/Button';
+import Button from 'preact-material-components/Button'
 
 export default class Theme extends Component {
 

@@ -87,7 +87,7 @@ export abstract class Model {
         // ${qb.generateGQL(TClass).join(', ')}
         const newData = await gql(`
             ${mutationName} (${primaryName}: $id ${mutationName}: $data) {
-                ${primaryName}
+                ${(new QueryBuilder(TClass)).generateGQL(TClass)}
             }
             `, {
                 id: primaryType,

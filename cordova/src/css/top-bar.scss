@@ -1,3 +1,6 @@
+@import '@material/layout-grid/_variables.scss';
+@import '@material/layout-grid/_mixins.scss';
+
 .top-bar {
     @include backgroundPrimary;
     position: fixed;
@@ -9,8 +12,20 @@
     justify-content: space-between;
     font-size: 24;
 
-
     transition: background-color 500ms;
+    &.hidden {
+        background-color: rgba(0, 0, 0, 0);
+        background-image: linear-gradient(black, rgba(0, 0, 0, 0));
+
+        @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+            @include backgroundPrimary;
+            background-image: unset;
+        }
+    }
+
+    @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+        top: 0 !important;
+    }
 
     section {
         padding: 4px;
@@ -27,6 +42,7 @@
         justify-content: flex-end;
 
         input {
+            @include backgroundSurface;
             width: 0px;
             transition: width 0.15s;
             position: fixed;
@@ -45,15 +61,34 @@
                 padding-right: 34px;
                 padding-left: 10px;
                 border-bottom: solid $mdc-theme-primary 3px;
+                border-bottom: solid var(--mdc-theme-primary, $mdc-theme-primary) 3px;
+                &+label {
+                    @include textSecondary;
+                    position: fixed;
+                    right: 4px;
+                    pointer-events: none;
+                }
+            }
+
+        }
+
+        @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+            input,
+            input:focus {
+                width: 400px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-right: 34px;
+                padding-left: 10px;
+                border-bottom: unset;
+                margin: 6px;
+            }
+            label {
+                @include textSecondary;
+                position: fixed;
+                right: 4px;
+                pointer-events: none;
             }
         }
-
-        input:focus+label {
-            color: #444;
-            position: fixed;
-            right: 4px;
-            pointer-events: none;
-        }
-
     }
 }

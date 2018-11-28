@@ -1,3 +1,10 @@
+@import '@material/layout-grid/_variables.scss';
+@import '@material/layout-grid/_mixins.scss';
+
 .bottom-bar {
-    bottom: 56px !important;
+    bottom: 56px;
+
+    @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+        bottom: 0px;
+    }
 }

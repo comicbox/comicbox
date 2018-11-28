@@ -1,22 +1,14 @@
 import autobind from 'autobind-decorator'
-import * as editS from 'css/edit.scss'
 import * as s from 'css/series-view.scss'
-import Modal, { OpenModal, OpenYesNo } from 'js/components/modal'
 import ModelList from 'js/components/model-list'
 import Parallax from 'js/components/parallax'
-import { toast } from 'js/components/snack'
-import Stars from 'js/components/stars'
-import { gql } from 'js/graphql'
 import Book from 'js/model/book'
-import Series, { List } from 'js/model/series'
+import Series from 'js/model/series'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 import Button from 'preact-material-components/Button'
 import Fab from 'preact-material-components/Fab'
 import Icon from 'preact-material-components/Icon'
-import Menu from 'preact-material-components/Menu'
-import Select from 'preact-material-components/Select'
-import TextField from 'preact-material-components/TextField'
 import { Link } from 'preact-router'
 
 interface Props {
@@ -140,61 +132,10 @@ export default class SeriesView extends Component<Props, State> {
     }
 
     @autobind
-    private btnEdit() {
+    private async btnEdit() {
         const series = this.state.series
-        const lists = ['READING', 'COMPLETED', 'DROPPED', 'PAUSED', 'PLANNING']
-
-        const nameChange = (e: Event) => {
-            if (e.target instanceof HTMLInputElement) {
-                series.name = e.target.value as List
-            }
-        }
-        const tagsChange = (e: Event) => {
-            if (e.target instanceof HTMLInputElement) {
-                if (e.target.value === '') {
-                    series.tags = []
-                } else {
-                    series.tags = e.target.value.split(',').map(tag => tag.trim().replace(/ /g, '_'))
-                }
-            }
-        }
-        const listChange = (e: Event) => {
-            if (e.target instanceof HTMLSelectElement) {
-                series.list = e.target.value as List
-            }
-        }
-        const formSubmit = async () => {
-            await series.save()
-            this.setState({ series: series })
-            toast(`Updated ${series.name}`)
-        }
-
-        OpenModal(<Modal.Surface formSubmit={formSubmit}>
-            <Modal.Title>
-                Edit {series.name}
-            </Modal.Title>
-            <Modal.Body>
-                <TextField class={editS.element} label='Name' value={series.name} onChange={nameChange} />
-                <TextField class={editS.element} label='Tags' value={series.tags.join(', ')} onChange={tagsChange} />
-                <Select
-                    hintText='Select a list'
-                    class={editS.element}
-                    selectedIndex={lists.indexOf(series.list) + 1}
-                    onChange={listChange}
-                >
-                    <Select.Item value='READING'>Reading</Select.Item>
-                    <Select.Item value='COMPLETED'>Completed</Select.Item>
-                    <Select.Item value='DROPPED'>Dropped</Select.Item>
-                    <Select.Item value='PAUSED'>Paused</Select.Item>
-                    <Select.Item value='PLANNING'>Planning</Select.Item>
-                </Select>
-            </Modal.Body>
-            <Modal.Actions>
-                <Modal.Button action='close'>Close</Modal.Button>
-                <Modal.Button action='accept' submit>Save</Modal.Button>
-            </Modal.Actions>
-        </Modal.Surface>)
-
+        await series.openEditModal()
+        this.setState({ series: series })
     }
 
 }
