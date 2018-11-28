@@ -173,7 +173,7 @@ var BookType = graphql.NewObject(graphql.ObjectConfig{
 				}
 
 				if len(book.Pages) == 0 {
-					return nil, fmt.Errorf("this book has no pages")
+					return nil, nil //fmt.Errorf("this book has no pages")
 				}
 				return book.Pages[0], nil
 			},
