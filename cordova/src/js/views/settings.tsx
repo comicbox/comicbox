@@ -9,7 +9,7 @@ import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 import Btn from 'preact-material-components/Button'
 import TextField from 'preact-material-components/TextField'
-import { debug } from 'util'
+import { Link } from 'preact-router'
 
 // interface Props {
 
@@ -131,6 +131,9 @@ export default class Settings extends Component<{}, State> {
             </div>
             <div>
                 {adminSettings}
+            </div>
+            <div>
+                <Link href='/theme'><Btn>Edit Theme</Btn></Link>
             </div>
         </Layout >
     }
