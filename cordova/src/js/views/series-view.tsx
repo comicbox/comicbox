@@ -4,6 +4,7 @@ import * as s from 'css/series-view.scss'
 import Modal, { OpenModal, OpenYesNo } from 'js/components/modal'
 import ModelList from 'js/components/model-list'
 import Parallax from 'js/components/parallax'
+import { toast } from 'js/components/snack'
 import Stars from 'js/components/stars'
 import { gql } from 'js/graphql'
 import Book from 'js/model/book'
@@ -162,9 +163,10 @@ export default class SeriesView extends Component<Props, State> {
                 series.list = e.target.value as List
             }
         }
-        const formSubmit = () => {
-            series.save()
+        const formSubmit = async () => {
+            await series.save()
             this.setState({ series: series })
+            toast(`Updated ${series.name}`)
         }
 
         OpenModal(<Modal.Surface formSubmit={formSubmit}>
