@@ -16,9 +16,8 @@ export function isString(value: any) {
 
 export function debounce(fn: (...args: any[]) => any, delay: number) {
     let timer: any = null
-    return () => {
+    return (...args: any[]) => {
       // const context = this
-      const args = arguments
       clearTimeout(timer)
       timer = setTimeout(() => {
         fn.call(this, args)
