@@ -1,6 +1,6 @@
 import User from 'js/model/user'
 import { route } from 'preact-router'
-import url from './url'
+import url from 'js/url'
 
 let _user: User = null
 

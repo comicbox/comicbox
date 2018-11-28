@@ -22,18 +22,16 @@ interface State {
     modalOpen: boolean
 
     toNext: boolean
-    dst: string
 }
 
 export default class Read extends Component<Props, State> {
     private img: HTMLImageElement
     private user: User = null
 
-    public constructor() {
-        super()
+    public async componentWillMount() {
         User.me().then(me => this.user = me)
 
-        this.state = {
+        this.setState({
             book: null,
             current: 0,
             width: 0,
@@ -41,13 +39,7 @@ export default class Read extends Component<Props, State> {
             modalOpen: false,
 
             toNext: false,
-            dst: '/',
-        }
-    }
-
-
-
-    public async componentWillMount() {
+        })
         const id = this.props.matches.id
 
         await this.loadBookState(id)
@@ -106,7 +98,7 @@ export default class Read extends Component<Props, State> {
             <img
                 src={page.url}
                 className={s.imgResponsive}
-                useMap={`#image-map`}
+                useMap='#image-map'
                 ref={e => this.img = e}
                 onLoad={this.adjustAreaRegions}
             />
@@ -131,10 +123,8 @@ export default class Read extends Component<Props, State> {
 
     @autobind
     private toggleModal()  {
-        this.setState((state: State, props: Props) => {
-            return {
-                modalOpen: !state.modalOpen,
-            }
+        this.setState({
+            modalOpen: !this.state.modalOpen,
         })
       }
 
@@ -146,11 +136,9 @@ export default class Read extends Component<Props, State> {
         const width = this.img.width
         const height = this.img.height
 
-        this.setState((state: State, props: Props) => {
-            return {
-                width: width,
-                height: height,
-            }
+        this.setState({
+            width: width,
+            height: height,
         })
     }
 
@@ -164,7 +152,6 @@ export default class Read extends Component<Props, State> {
             if (dst < state.book.pages.length && dst > -1) {
                 // TODO update progress to dst
                 const bk = state.book
-                bk.last_page_read = bk.current_page
                 bk.current_page = dst
                 this.save()
 
@@ -189,7 +176,6 @@ export default class Read extends Component<Props, State> {
             const dst = state.current + step
             if (dst < state.book.pages.length && dst > -1) {
                 const bk = state.book
-                bk.last_page_read = bk.current_page
                 bk.current_page = dst
                 this.save()
 

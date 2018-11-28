@@ -17,11 +17,12 @@ export function isString(value: any) {
 export function debounce(fn: (...args: any[]) => any, delay: number) {
     let timer: any = null
     return () => {
-      const context = this
+      // const context = this
       const args = arguments
       clearTimeout(timer)
       timer = setTimeout(() => {
-        fn.apply(context, args)
+        fn.call(this, args)
+        // fn.apply(context, args)
       }, delay)
     }
   }

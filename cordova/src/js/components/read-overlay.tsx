@@ -22,10 +22,6 @@ interface Props {
 export default class ReadOverlay extends Component<Props, {}>  {
     private slider: Slider
 
-    constructor(props: Props, ctx: any) {
-        super(props)
-    }
-
     public render() {
         // Render nothing if the "show" prop is false
         if (!this.props.show) {
