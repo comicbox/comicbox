@@ -116,6 +116,7 @@ func Args(query sq.SelectBuilder, m interface{}, args map[string]interface{}) sq
 				}
 			}
 		case "search":
+			hasWheres = true
 			exprs := []sq.Sqlizer{}
 			// for _, tag := range model.GetTags(m, "db") {
 			// 	exprs = append(exprs, sq.Expr(fmt.Sprintf("%s like ?", tag), fmt.Sprint("%", val, "%")))
