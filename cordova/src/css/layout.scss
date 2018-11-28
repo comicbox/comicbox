@@ -9,7 +9,7 @@
     height: calc(100vh - 56px);
 
     @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
-        height: 100vh;
+        top: 56px;
     }
 
     .main {
@@ -20,6 +20,7 @@
             $desktopMargin: 10%;
             margin-left: $desktopMargin;
             margin-right: $desktopMargin;
+            margin-top: 0;
         }
     }
 
@@ -60,14 +61,16 @@
             bottom: unset;
             left: 0;
             top: 56px;
-            width: 34px;
+            width: 54px;
             height: 300px;
             background-color: unset;
             border-top: unset;
 
             .link {
                 width: 100%;
-                padding: 10px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-left: 5px;
             }
         }
     }
