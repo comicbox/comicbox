@@ -41,7 +41,14 @@ class ModalTitle extends Component<JSX.HTMLAttributes> {
 // tslint:disable-next-line:max-classes-per-file
 class ModalBody extends Component<JSX.HTMLAttributes> {
     public render() {
-        return <div {...this.props} class='mdc-dialog__content'>
+        return <div
+            {...this.props}
+            class='mdc-dialog__content'
+            style={{
+                overflowY: 'scroll',
+                height: 'calc(100vh - 175px)',
+            }}
+        >
             {this.props.children}
         </div>
     }
