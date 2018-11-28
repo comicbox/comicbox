@@ -1,11 +1,11 @@
 import * as s from 'css/edit.scss'
 import Modal, { OpenModal } from 'js/components/modal'
+import { toast } from 'js/components/snack'
 import Book from 'js/model/book'
 import { Model, ModelArray, prop, table } from 'js/model/model'
 import { Component, h } from 'preact'
 import Select from 'preact-material-components/Select'
 import TextField from 'preact-material-components/TextField'
-import { toast } from 'js/components/snack';
 
 export type List = 'PLANNING' | 'READING' | 'COMPLETED' | 'PAUSED' | 'DROPPED'
 
