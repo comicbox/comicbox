@@ -59,11 +59,9 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
             this.header.style.top = this.offset + 'px'
 
             if (scrollTop + this.offset === 0 && this.props.clear) {
-                this.header.style.backgroundColor = 'rgba(0,0,0,0)'
-                this.header.style.backgroundImage = 'linear-gradient(black, rgba(0,0,0,0))'
+                this.header.classList.add(s.hidden)
             } else {
-                this.header.style.backgroundColor = null
-                this.header.style.backgroundImage = null
+                this.header.classList.remove(s.hidden)
             }
 
             this.lastScrollTop = scrollTop

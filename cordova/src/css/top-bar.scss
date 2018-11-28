@@ -1,3 +1,6 @@
+@import '@material/layout-grid/_variables.scss';
+@import '@material/layout-grid/_mixins.scss';
+
 .top-bar {
     @include backgroundPrimary;
     position: fixed;
@@ -9,8 +12,20 @@
     justify-content: space-between;
     font-size: 24;
 
-
     transition: background-color 500ms;
+    &.hidden {
+        background-color: rgba(0, 0, 0, 0);
+        background-image: linear-gradient(black, rgba(0, 0, 0, 0));
+
+        @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+            @include backgroundPrimary;
+            background-image: unset;
+        }
+    }
+
+    @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+        top: 0 !important;
+    }
 
     section {
         padding: 4px;
