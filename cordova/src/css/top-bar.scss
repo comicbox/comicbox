@@ -42,6 +42,7 @@
         justify-content: flex-end;
 
         input {
+            @include backgroundSurface;
             width: 0px;
             transition: width 0.15s;
             position: fixed;
@@ -60,15 +61,34 @@
                 padding-right: 34px;
                 padding-left: 10px;
                 border-bottom: solid $mdc-theme-primary 3px;
+                border-bottom: solid var(--mdc-theme-primary, $mdc-theme-primary) 3px;
+                &+label {
+                    @include textSecondary;
+                    position: fixed;
+                    right: 4px;
+                    pointer-events: none;
+                }
+            }
+
+        }
+
+        @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+            input,
+            input:focus {
+                width: 400px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-right: 34px;
+                padding-left: 10px;
+                border-bottom: unset;
+                margin: 6px;
+            }
+            label {
+                @include textSecondary;
+                position: fixed;
+                right: 4px;
+                pointer-events: none;
             }
         }
-
-        input:focus+label {
-            color: #444;
-            position: fixed;
-            right: 4px;
-            pointer-events: none;
-        }
-
     }
 }
