@@ -225,4 +225,8 @@ const bookOptions: Options<Book> = {
     'Go to series': book => {
         route(`/series/${book.series}`)
     },
+    'd2': 'divider',
+    'Edit Book': book => {
+        book.openEditModal()
+    },
 }
