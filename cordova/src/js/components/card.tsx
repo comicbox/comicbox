@@ -17,7 +17,7 @@ export interface PageData {
     url: string
 }
 
-type Option<T extends Model> = ((model: T) => void) | 'divider'
+type Option<T extends Model> = ((model: T) => void | Promise<void>) | 'divider'
 interface Options<T extends Model> {
     [name: string]: Option<T>
 }
@@ -35,6 +35,12 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
 
     private menu: Menu
     private observer: IntersectionObserver
+
+    public componentWillMount() {
+        if (this.props.data) {
+            this.setState({ data: this.props.data })
+        }
+    }
 
     public componentDidMount() {
         if (this.props.loadQuery) {
@@ -66,7 +72,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
     }
 
     public render() {
-        const model = this.state.data || this.props.data
+        const model = this.state.data
         let image = ''
         let series = ''
         let title = ''
@@ -146,7 +152,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
     private openMenu(e: Event) {
         this.menu.MDComponent.open = true
     }
-    private buildMenu(ops: Options<T>, model: Model): JSX.Element {
+    private buildMenu(ops: Options<T>, model: T): JSX.Element {
         return <Menu.Anchor class={s.menu}>
             <Button class={s.button} onClick={this.openMenu}>
                 <Icon>more_vert</Icon>
@@ -156,46 +162,60 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
                     if (func === 'divider') {
                         return <li class='mdc-list-divider' role='separator' />
                     } else if (typeof func === 'function') {
-                        return <Menu.Item onClick={func.bind(this, model)} key={name}>{name}</Menu.Item>
+                        return <Menu.Item onClick={this.btnMenuItem(func, model)} key={name}>{name}</Menu.Item>
                     }
                 })}
 
             </Menu>
         </Menu.Anchor>
     }
+
+    @autobind
+    private btnMenuItem(func: Option<T>, model: T) {
+        return async () => {
+            if (func === 'divider') {
+                return
+            }
+            const done = func.call(this, model)
+            if ('then' in done) {
+                await done
+            }
+            this.setState({ data: model })
+        }
+    }
 }
 
 const seriesOptions: Options<Series> = {
-    'Add to reading': series => {
+    'Add to reading': async series => {
         series.list = 'READING'
-        series.save()
+        await series.save()
     },
-    'Add to paused': series => {
+    'Add to paused': async series => {
         series.list = 'PAUSED'
-        series.save()
+        await series.save()
     },
-    'Add to complected': series => {
+    'Add to complected': async  series => {
         series.list = 'COMPLETED'
-        series.save()
+        await series.save()
     },
-    'Add to dropped': series => {
+    'Add to dropped': async  series => {
         series.list = 'DROPPED'
-        series.save()
+        await series.save()
     },
-    'Add to planning': series => {
+    'Add to planning': async series => {
         series.list = 'PLANNING'
-        series.save()
+        await series.save()
     },
 }
 
 const bookOptions: Options<Book> = {
-    'Mark as read': book => {
+    'Mark as read': async book => {
         book.current_page = book.pages.length
-        book.save()
+        await book.save()
     },
-    'Mark as unread': book => {
+    'Mark as unread': async book => {
         book.current_page = 0
-        book.save()
+        await book.save()
     },
     'd1': 'divider',
     'Go to series': book => {
