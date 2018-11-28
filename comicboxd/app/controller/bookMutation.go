@@ -327,6 +327,7 @@ func loadNewBookData(bookMap map[string]interface{}) (map[string]interface{}, er
 	for key, val := range bookMap {
 		newBookMap[key] = val
 	}
+
 	return newBookMap, nil
 }
 
@@ -384,29 +385,71 @@ func parseFileName(path string) (map[string]interface{}, error) {
 }
 
 func parseBookJSON(f *zip.File) (map[string]interface{}, error) {
-	bookMap := map[string]interface{}{}
+	book := struct {
+		model.Book
+		author string
+		number float64
+	}{}
 	b, err := fileBytes(f)
 	if err != nil {
 		return nil, err
 	}
 
-	err = json.Unmarshal(b, &bookMap)
+	err = json.Unmarshal(b, &book)
 	if err != nil {
 		return nil, err
 	}
 
-	if author, ok := bookMap["author"]; ok {
-		bookMap["authors"] = []interface{}{author}
+	if book.author != "" {
+		if book.Authors == nil {
+			book.Authors = []string{}
+		}
+		book.Authors = append(book.Authors, book.author)
 	}
-	if number, ok := bookMap["number"]; ok {
-		bookMap["chapter"] = number
+	// if author, ok := book["author"]; ok {
+	// 	book["authors"] = []interface{}{author}
+	// }
+	if book.Chapter == nil {
+		book.Chapter = &book.number
 	}
+	// if number, ok := bookMap["number"]; ok {
+	// 	bookMap["chapter"] = number
+	// }
+
+	if len(book.Pages) > 0 {
+		allZero := true
+		for _, page := range book.Pages {
+			if page.FileNumber != 0 {
+				allZero = false
+			}
+		}
+		if allZero {
+			for i := range book.Pages {
+				book.Pages[i].FileNumber = i
+			}
+		}
+	} else {
+		book.Pages = nil
+	}
+
+	bookMap := toMap(book)
+
 	for key, value := range bookMap {
 		if IsZero(value) {
 			delete(bookMap, key)
 		}
 	}
 	return bookMap, nil
+}
+
+func toMap(in interface{}) map[string]interface{} {
+	b, err := json.Marshal(in)
+	if err != nil {
+		return nil
+	}
+	outMap := map[string]interface{}{}
+	json.Unmarshal(b, &outMap)
+	return outMap
 }
 
 // from https://stackoverflow.com/a/33116479
@@ -452,26 +495,36 @@ func parseComicInfoXML(f *zip.File) (map[string]interface{}, error) {
 		bookMap["title"] = crBook.Title
 	}
 
-	numPages := len(crBook.Pages)
-	tmpPages := make([]interface{}, numPages)
-	for i := 0; i < numPages; i++ {
-		var typ string
-		switch crBook.Pages[i].Type {
-		case "FrontCover":
-			typ = Cover
-		case "Story":
-			typ = Story
-		case "Deleted":
-			typ = Deleted
-		default:
-			typ = Story
+	if numPages := len(crBook.Pages); numPages != 0 {
+		tmpPages := make([]interface{}, numPages)
+		for i := 0; i < numPages; i++ {
+			var typ string
+			switch crBook.Pages[i].Type {
+			case "FrontCover":
+				typ = Cover
+			case "Story":
+				typ = Story
+			case "Deleted":
+				typ = Deleted
+			default:
+				typ = Story
+			}
+			img := i
+			if crBook.Pages[i].Image != nil {
+				img = *crBook.Pages[i].Image
+			}
+			tmpPages[i] = &model.Page{
+				FileNumber: img,
+				Type:       typ,
+			}
 		}
-		tmpPages[i] = &model.Page{
-			FileNumber: crBook.Pages[i].Image,
-			Type:       typ,
+		bookMap["pages"] = tmpPages
+	}
+	for key, value := range bookMap {
+		if IsZero(value) {
+			delete(bookMap, key)
 		}
 	}
-	bookMap["pages"] = tmpPages
 
 	return bookMap, nil
 }

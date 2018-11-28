@@ -1,5 +1,4 @@
 export const app: string;
-export const search: string;
 export const main: string;
 export const bottomBar: string;
 export const link: string;

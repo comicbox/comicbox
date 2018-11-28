@@ -94,4 +94,5 @@ export default class Book extends Model {
     public get sortIndex() {
         return `book-${this.series}-${(this.volume + '').padStart(6, '0')}-${(this.chapter + '').padStart(6, '0')}`
     }
+
 }

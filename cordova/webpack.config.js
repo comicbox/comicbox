@@ -19,6 +19,35 @@ const paths = {
 };
 
 
+const scssLoaders = (loaders) => [
+    MiniCssExtractPlugin.loader,
+].concat(loaders).concat([
+    {
+        loader: 'postcss-loader',
+        options: {
+            ident: 'postcss',
+            plugins: [
+                require("css-mqpacker")({ sort: true }),
+            ]
+        },
+    },
+    {
+        loader: "sass-loader",
+        options: {
+            sourceMap: true,
+            includePaths: [
+                'node_modules', 'src', '.'
+            ]
+        }
+    },
+    {
+        loader: 'sass-resources-loader',
+        options: {
+            resources: path.join(paths.CSS, '_variables.scss'),
+        },
+    },
+])
+
 module.exports = (env, argv) => {
     const devMode = argv.mode !== 'production'
     return {
@@ -46,8 +75,7 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /(?<!app)\.scss$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
+                    use: scssLoaders([
                         {
                             loader: 'typings-for-css-modules-loader',
                             options: {
@@ -57,46 +85,19 @@ module.exports = (env, argv) => {
                                 localIdentName: '[name]__[local]___[hash:base64:5]',
                             }
                         },
-                        "sass-loader",
-                        {
-                            loader: 'sass-resources-loader',
-                            options: {
-                                resources: path.join(paths.CSS, '_variables.scss'),
-                                includePaths: [
-                                    'node_modules', 'src', '.'
-                                ]
-                            },
-                        },
-                    ]
+                    ]),
                 },
                 {
                     test: /app\.scss$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
+                    use: scssLoaders([
                         'css-loader',
-                        {
-                            loader: "sass-loader",
-                            options: {
-                                sourceMap: true,
-                                includePaths: [
-                                    'node_modules', 'src', '.'
-                                ]
-                            }
-                        },
-                        {
-                            loader: 'sass-resources-loader',
-                            options: {
-                                resources: path.join(paths.CSS, '_variables.scss'),
-                            },
-                        },
-                    ]
+                    ]),
                 },
                 {
                     test: /\.css$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
+                    use: scssLoaders([
                         'css-loader',
-                    ]
+                    ]),
                 },
 
             ],

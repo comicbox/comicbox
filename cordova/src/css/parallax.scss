@@ -1,6 +1,7 @@
 .parallax-wrap {
-    height: calc(100vh - 56px);
+    height: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
     perspective: 1px;
 
     .parallax {
@@ -8,6 +9,8 @@
         img {
             position: relative;
             width: 100%; // top: calc(var(--scroll-px) / 2);
+            height: 100%;
+            object-fit: cover;
             transform: translateZ(-1px) scale(2);
         }
     }
