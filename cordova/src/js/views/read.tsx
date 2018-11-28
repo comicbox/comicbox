@@ -50,12 +50,12 @@ export default class Read extends Component<Props, State> {
         }
         const move = (e: any) => {
             if (!this.state.modalOpen) {
-                let changed = e.changedTouches[0]
-                let delta = Math.abs(touch.clientX - changed.clientX)
+                const changed = e.changedTouches[0]
+                const delta = Math.abs(touch.clientX - changed.clientX)
                 if (delta < 50) {
                     return
                 }
-    
+
                 if (changed.clientX > touch.clientX) {
                     this.stepPage(-1)()
                 } else if (changed.clientX < touch.clientX) {
@@ -65,18 +65,17 @@ export default class Read extends Component<Props, State> {
         }
 
         const press = (e: any) => {
-            console.log(e)
             if (e.code === 'ArrowRight') {
                 this.stepPage(1)()
-            } else if (e.code == 'ArrowLeft') {
+            } else if (e.code === 'ArrowLeft') {
                 this.stepPage(-1)()
             }
         }
 
-        window.addEventListener('touchstart', save.bind(this), false);
-        window.addEventListener('touchend', move.bind(this), false);
+        window.addEventListener('touchstart', save.bind(this), false)
+        window.addEventListener('touchend', move.bind(this), false)
 
-        window.addEventListener('keyup', press.bind(this), false);
+        window.addEventListener('keyup', press.bind(this), false)
 
         window.addEventListener('resize', debounce(this.adjustAreaRegions, 250))
         this.adjustAreaRegions()
