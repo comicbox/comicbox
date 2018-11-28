@@ -111,9 +111,12 @@ export default class Modal extends Component<{}, State> {
 
 }
 
-export function OpenModal(jsx: JSX.Element) {
-    modal.setState({ content: jsx })
-    dialog.open()
+export async function OpenModal(jsx: JSX.Element) {
+    return new Promise(resolve => {
+        modal.setState({ content: jsx })
+        dialog.open()
+        dialog.listen('MDCDialog:closed', () => resolve())
+    })
 }
 
 export function OpenYesNo(title: string, body: string): Promise<boolean> {

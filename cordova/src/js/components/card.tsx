@@ -206,6 +206,10 @@ const seriesOptions: Options<Series> = {
         series.list = 'PLANNING'
         await series.save()
     },
+    'd1': 'divider',
+    'Edit': async series => {
+        await series.openEditModal()
+    },
 }
 
 const bookOptions: Options<Book> = {
