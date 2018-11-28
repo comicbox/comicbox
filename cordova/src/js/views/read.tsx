@@ -2,13 +2,10 @@ import autobind from 'autobind-decorator'
 import * as s from 'css/read.scss'
 import ReadOverlay from 'js/components/read-overlay'
 import Book from 'js/model/book'
-import Series from 'js/model/series'
 import User from 'js/model/user'
 import { debounce } from 'js/util'
 import { Component, h } from 'preact'
-import { route } from 'preact-router';
-import { bookList } from 'css/book.scss';
-import { historyPush } from 'js/history';
+import { route } from 'preact-router'
 
 interface Props {
     matches?: { [id: string]: string }
@@ -45,37 +42,42 @@ export default class Read extends Component<Props, State> {
         await this.loadBookState(id)
     }
 
-    @autobind
-    private async loadBookState(id: string) {
-        const bookQuery = Book
-            .where('id', '=', id)
-            .first()
+    public componentDidMount() {
+        let touch: any = null
 
-        const bk = await bookQuery
-        this.initBook(bk)
-    }
-
-    @autobind
-    private initBook(bk: Book) {
-        let pageNum = 0
-
-        const pageMatch = this.props.matches.page
-        if (pageMatch !== '') {
-            pageNum = Number(pageMatch)
-        } else {
-            pageNum = bk.current_page || pageNum
+        const save = (e: any) => {
+            touch = e.changedTouches[0]
+        }
+        const move = (e: any) => {
+            if (!this.state.modalOpen) {
+                let changed = e.changedTouches[0]
+                let delta = Math.abs(touch.clientX - changed.clientX)
+                if (delta < 50) {
+                    return
+                }
+    
+                if (changed.clientX > touch.clientX) {
+                    this.stepPage(-1)()
+                } else if (changed.clientX < touch.clientX) {
+                    this.stepPage(1)()
+                }
+            }
         }
 
-        bk.current_page = pageNum
-        this.save()
+        const press = (e: any) => {
+            console.log(e)
+            if (e.code === 'ArrowRight') {
+                this.stepPage(1)()
+            } else if (e.code == 'ArrowLeft') {
+                this.stepPage(-1)()
+            }
+        }
 
-        this.setState({
-            current: pageNum,
-            book: bk,
-        })
-    }
+        window.addEventListener('touchstart', save.bind(this), false);
+        window.addEventListener('touchend', move.bind(this), false);
 
-    public componentDidMount() {
+        window.addEventListener('keyup', press.bind(this), false);
+
         window.addEventListener('resize', debounce(this.adjustAreaRegions, 250))
         this.adjustAreaRegions()
     }
@@ -119,6 +121,36 @@ export default class Read extends Component<Props, State> {
                 onUpdateCurrent={this.changePage}
             />
         </div >
+    }
+
+    @autobind
+    private async loadBookState(id: string) {
+        const bookQuery = Book
+            .where('id', '=', id)
+            .first()
+
+        const bk = await bookQuery
+        this.initBook(bk)
+    }
+
+    @autobind
+    private initBook(bk: Book) {
+        let pageNum = 0
+
+        const pageMatch = this.props.matches.page
+        if (pageMatch !== '') {
+            pageNum = Number(pageMatch)
+        } else {
+            pageNum = bk.current_page || pageNum
+        }
+
+        bk.current_page = pageNum
+        this.save()
+
+        this.setState({
+            current: pageNum,
+            book: bk,
+        })
     }
 
     @autobind
@@ -194,7 +226,6 @@ export default class Read extends Component<Props, State> {
 
     @autobind
     private next() {
-        console.log(this.state)
         const bk = this.state.book
         let query = Book.take(1)
         if (bk.volume) {
@@ -205,20 +236,18 @@ export default class Read extends Component<Props, State> {
         }
         const book = query.first()
         book.then(b => {
-            console.log(b)
             if (b != null) {
-                route("/book/"+b.id+"/0")
+                route('/book/' + b.id)
                 this.initBook(b)
             } else {
-                route('/series/'+bk.series)
+                route('/series/' + bk.series)
             }
         })
     }
 
-
     @autobind
     private save() {
-        if (this.user !== null && this.user.id != '00000000-0000-0000-0000-000000000000') {
+        if (this.user !== null && this.user.id !== '00000000-0000-0000-0000-000000000000') {
             this.state.book.save()
         }
     }
