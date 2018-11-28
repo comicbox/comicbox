@@ -8,6 +8,8 @@
         img {
             position: relative;
             width: 100%; // top: calc(var(--scroll-px) / 2);
+            height: 100%;
+            object-fit: cover;
             transform: translateZ(-1px) scale(2);
         }
     }

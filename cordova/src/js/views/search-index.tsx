@@ -8,8 +8,15 @@ export default class SearchIndex extends Component<any> {
 
     public render() {
         const query = this.props.matches.query
-        const series = Series.where('search', query).take(10).get({ cache: false })
-        const books = Book.where('search', query).take(20).get({ cache: false })
+        const series = Series
+            .where('search', query)
+            .with(Book.take(1))
+            .take(10)
+            .get()
+        const books = Book
+            .where('search', query)
+            .take(20)
+            .get()
 
         return <Layout backLink='/'>
             <h1>Search</h1>

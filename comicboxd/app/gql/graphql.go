@@ -95,7 +95,7 @@ func ToSQL(model interface{}, args map[string]interface{}) (string, []interface{
 }
 
 func Args(query sq.SelectBuilder, m interface{}, args map[string]interface{}) sq.SelectBuilder {
-
+	hasWheres := false
 	for name, val := range args {
 		switch name {
 		case "skip", "take":
@@ -127,6 +127,7 @@ func Args(query sq.SelectBuilder, m interface{}, args map[string]interface{}) sq
 			}
 			query = query.Where(sq.Or(exprs))
 		default:
+			hasWheres = true
 			parts := strings.Split(name, "_")
 			subName := ""
 			if len(parts) > 1 {
@@ -150,6 +151,11 @@ func Args(query sq.SelectBuilder, m interface{}, args map[string]interface{}) sq
 			}
 		}
 	}
+
+	if hasWheres {
+		query = query.Suffix("COLLATE NOCASE")
+	}
+
 	return query
 }
 
