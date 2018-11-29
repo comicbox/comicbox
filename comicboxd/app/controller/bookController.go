@@ -24,7 +24,6 @@ import (
 	"github.com/abibby/comicbox/comicboxd/app/gql"
 	"github.com/abibby/comicbox/comicboxd/app/model"
 	"github.com/abibby/comicbox/comicboxd/errors"
-	"github.com/chai2010/webp"
 	"github.com/nfnt/resize"
 )
 
@@ -104,13 +103,6 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 		// w.Header().Set("Content-Type", "image/jpeg")
 	case "png":
 		err = png.Encode(w, img)
-		errors.Check(err)
-		// w.Header().Set("Content-Type", "image/png")
-	case "webp":
-		err = webp.Encode(w, img, &webp.Options{
-			Lossless: false,
-			Quality:  float32(quality),
-		})
 		errors.Check(err)
 		// w.Header().Set("Content-Type", "image/png")
 	}

@@ -259,8 +259,8 @@ var booksField = &graphql.Field{
 		if _, ok := p.Args["sort"]; !ok {
 			query = query.
 				OrderBy("series").
-				OrderBy("chapter").
 				OrderBy("volume").
+				OrderBy("chapter").
 				OrderBy("title")
 		}
 		sqll, args, err := query.Columns("count(*)").ToSql()
