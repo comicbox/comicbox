@@ -8,6 +8,7 @@ import { Component, h } from 'preact'
 import Icon from 'preact-material-components/Icon'
 import TopAppBar from 'preact-material-components/TopAppBar'
 import { Link, route } from 'preact-router'
+import Series from 'js/model/series';
 
 interface Props {
     backLink: string
@@ -34,9 +35,13 @@ export default class Layout extends Component<Props> {
                 href: '/series',
             },
             {
-                name: 'Something',
+                name: 'Random',
                 icon: 'help',
-                href: '/something',
+                onClick: async () => {
+                    const list = await Series.take(0).get()
+                    const series = await Series.skip(Math.floor(Math.random() * list.total)).first()
+                    route(series.link)
+                },
             },
             {
                 name: 'Settings',
@@ -70,6 +75,7 @@ export default class Layout extends Component<Props> {
                     <Link
                         key={i}
                         href={item.href}
+                        onClick={item.onClick}
                         class={s.link + ' ' + (location.hash === '#' + item.href ? s.active : '')}
                     >
                         <Icon class={s.icon}>{item.icon}</Icon>

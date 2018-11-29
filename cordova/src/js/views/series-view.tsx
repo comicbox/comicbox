@@ -23,6 +23,26 @@ interface State {
 
 export default class SeriesView extends Component<Props, State> {
 
+    public componentWillReceiveProps() {
+        const series = this.props.matches.name
+
+        Series.where('name', series)
+            .select('name', 'list', 'tags')
+            .first()
+            .then(serie => this.setState({ series: serie }))
+
+        Book.where('series', series)
+            .where('read', false)
+            .select('id', 'series', 'cover', 'chapter', 'volume', 'title', 'summary', 'rating', 'community_rating')
+            .first()
+            .then(current => this.setState({ current: current }))
+
+        Book.where('series', series)
+            .select('series', 'cover', 'chapter', 'volume', 'title', 'summary')
+            .first()
+            .then(first => this.setState({ first: first }))
+
+    }
     public async componentDidMount() {
         const series = this.props.matches.name
 
