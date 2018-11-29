@@ -99,6 +99,15 @@ module.exports = (env, argv) => {
                         'css-loader',
                     ]),
                 },
+                {
+                    test: /\.(png|jpg|gif|woff2)$/,
+                    use: [
+                        {
+                            loader: 'file-loader',
+                            options: {}
+                        }
+                    ]
+                }
 
             ],
 

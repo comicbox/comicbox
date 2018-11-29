@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/spf13/viper"
+	"golang.org/x/image/bmp"
 
 	"github.com/abibby/comicbox/comicboxd/j"
 
@@ -68,10 +69,15 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer rc.Close()
+
+	// _, err = io.Copy(w, rc)
+	// errors.Check(err)
+	// return
+
 	imgBytes, err := ioutil.ReadAll(rc)
 	errors.Check(err)
 
-	c.Response = imgBytes
+	// c.Response = imgBytes
 	mime := http.DetectContentType(imgBytes)
 	var img image.Image
 	if mime == "image/jpeg" {
@@ -87,7 +93,7 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if height, ok := c.QGetInt64("height"); ok {
-		img = resize.Resize(uint(height), 0, img, resize.Lanczos3)
+		img = resize.Resize(uint(height), 0, img, resize.NearestNeighbor)
 	}
 	quality, ok := c.QGetInt64("quality")
 	if !ok {
@@ -105,6 +111,10 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 		err = png.Encode(w, img)
 		errors.Check(err)
 		// w.Header().Set("Content-Type", "image/png")
+	case "bmp":
+		err = bmp.Encode(w, img)
+		errors.Check(err)
+		// w.Header().Set("Content-Type", "image/bmp")
 	}
 }
 

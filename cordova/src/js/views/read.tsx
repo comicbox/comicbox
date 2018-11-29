@@ -97,7 +97,7 @@ export default class Read extends Component<Props, State> {
 
         return <div className={s.reader}>
             <img
-                src={page.url}
+                src={page.url + '?height=500'}
                 className={s.imgResponsive}
                 useMap='#image-map'
                 ref={e => this.img = e}

@@ -24,7 +24,12 @@ func Web(s *server.Server) {
 
 		auth.HandleFunc("/push", controller.Push.Sub)
 		auth.HandleFunc("/scan", controller.Book.Scan)
-		auth.HandleFunc("/v1/book/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}/page/{page:[0-9]+}.{ext:(?:jpg|png|webp)}", controller.Book.Page).Methods("GET")
+
+		if auth := auth.PathPrefix("/v1").Subrouter(); true {
+			// auth.Use(middleware.Cache)
+			auth.Use(middleware.HTTPCache)
+			auth.HandleFunc("/book/{id:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}}/page/{page:[0-9]+}.{ext:(?:jpg|png|bmp)}", controller.Book.Page).Methods("GET")
+		}
 	}
 
 	s.Router.Methods("GET").Handler(http.FileServer(&assetfs.AssetFS{
