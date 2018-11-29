@@ -40,14 +40,14 @@ $ cd ..
 $ make dev
 ```
 
-4a. (Optional) Create a configuration file for the server.
+5. (**Optional**) Create a configuration file for the server.
 ```
 $ cat > config.yml
 port: 8080 # Port the server will listen on (default=8080)
 dir: /path/to/your/comics # Path to the directory containing your comics (default=/home/<your user>/comics/)
 ```
 
-5. Run the server
+6. Run the server
 ```
 $ ./bin/comicboxd
 Using config file: /home/<your user>/go/src/github.com/abibby/comicbox/config.yml
