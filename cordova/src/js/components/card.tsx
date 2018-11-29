@@ -226,7 +226,7 @@ const bookOptions: Options<Book> = {
         route(`/series/${book.series}`)
     },
     'd2': 'divider',
-    'Edit Book': book => {
-        book.openEditModal()
+    'Edit Book': async book => {
+        await book.openEditModal()
     },
 }

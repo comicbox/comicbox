@@ -101,7 +101,7 @@ export default class Book extends Model {
     }
 
     @autobind
-    public openEditModal() {
+    public async openEditModal() {
 
         const alternate_seriesChange = (e: Event) => {
             if (e.target instanceof HTMLInputElement) {
@@ -179,7 +179,11 @@ export default class Book extends Model {
 
         const volumeChange = (e: Event) => {
             if (e.target instanceof HTMLInputElement) {
-                this.volume = Number(e.target.value)
+                if (e.target.value === '') {
+                    this.volume = null
+                } else {
+                    this.volume = Number(e.target.value)
+                }
             }
         }
 
@@ -193,7 +197,7 @@ export default class Book extends Model {
             await this.save()
         }
 
-        OpenModal(<Modal.Surface formSubmit={formSubmit}>
+        await OpenModal(<Modal.Surface formSubmit={formSubmit}>
             <Modal.Title>
                 Edit {this.title}
             </Modal.Title>

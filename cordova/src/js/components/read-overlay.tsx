@@ -2,6 +2,7 @@ import autobind from 'autobind-decorator'
 import * as s from 'css/read-overlay.scss'
 import TopBar from 'js/components/top-bar'
 import { historyPop, historyPrevious } from 'js/history'
+import Book from 'js/model/book'
 import { debounce } from 'js/util'
 import { Component, h } from 'preact'
 import Button from 'preact-material-components/Button'
@@ -17,6 +18,8 @@ interface Props {
 
     onClose: () => void
     onUpdateCurrent: (current: number) => void
+
+    book: Book
 }
 
 export default class ReadOverlay extends Component<Props, {}>  {
@@ -64,6 +67,6 @@ export default class ReadOverlay extends Component<Props, {}>  {
 
     @autobind
     private toggleMeta() {
-        alert('Open edit modal')
+        this.props.book.openEditModal()
     }
 }

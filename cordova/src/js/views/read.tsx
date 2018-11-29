@@ -118,6 +118,8 @@ export default class Read extends Component<Props, State> {
 
                 onClose={this.toggleModal}
                 onUpdateCurrent={this.changePage}
+
+                book={this.state.book}
             />
         </div >
     }
