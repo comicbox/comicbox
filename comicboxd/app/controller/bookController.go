@@ -93,7 +93,7 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if height, ok := c.QGetInt64("height"); ok {
-		img = resize.Resize(uint(height), 0, img, resize.NearestNeighbor)
+		img = resize.Resize(uint(height), 0, img, resize.Lanczos3)
 	}
 	quality, ok := c.QGetInt64("quality")
 	if !ok {
