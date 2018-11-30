@@ -1,4 +1,4 @@
-bindata = -o data/bindata.go -pkg data migrations/... ../cordova/platforms/browser/www/...
+bindata = -o data/bindata.go -pkg data migrations/... ../web/dist/...
 build = go build -o ../bin/comicboxd
 
 all: data
@@ -9,10 +9,14 @@ dev:
 	$(build)
 
 data:
-	cd ../cordova; cordova build browser
+	cd ../web; npm run build-prod
+	go-bindata $(bindata)
+
+data-watch:
+	cd ../web; npm run build-prod
 	go-bindata $(bindata)
 
 bsd:
-	cd ../cordova; cordova build browser
+	cd ../web; npm run build-prod
 	go-bindata $(bindata)
 	env GOOS=freebsd $(build)-bsd
