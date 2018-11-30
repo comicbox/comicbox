@@ -10,6 +10,8 @@ dev:
 	go-bindata -debug $(bindata)
 	$(build)
 
+data:
+	go-bindata $(bindata)
 
 bsd:
 	cd ../cordova; cordova build browser
