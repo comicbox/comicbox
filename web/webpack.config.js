@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const WebpackOnBuildPlugin = require('on-build-webpack');
+const WebpackPwaManifest = require('webpack-pwa-manifest')
 const { ncp } = require('ncp');
 const child = require('child_process');
 
@@ -17,6 +18,7 @@ const paths = {
     SRC: path.resolve(__dirname, 'src'),
     JS: path.resolve(__dirname, 'src/js'),
     CSS: path.resolve(__dirname, 'src/css'),
+    RES: path.resolve(__dirname, 'res'),
     COMICBOXD: path.resolve(__dirname, '../comicboxd'),
 };
 
@@ -102,7 +104,7 @@ module.exports = (env, argv) => {
                     ]),
                 },
                 {
-                    test: /\.(png|jpg|gif|woff2)$/,
+                    test: /\.(png|jpg|gif|woff2|josn)$/,
                     use: [
                         {
                             loader: 'file-loader',
@@ -146,14 +148,21 @@ module.exports = (env, argv) => {
             new webpack.WatchIgnorePlugin([
                 /css\.d\.ts$/
             ]),
+            new WebpackPwaManifest({
+                name: 'ComicBox',
+                theme_color: '#2196f3',
+                background_color: '#f5f5f5',
+                start_url: '/',
+                display: 'fullscreen',
+                fingerprints: !devMode,
+                icons: [
+                    {
+                        src: path.resolve(paths.RES, 'icons/icon.png'),
+                        sizes: [96, 128, 192, 256, 384, 512]
+                    }
+                ],
+            }),
             new WebpackOnBuildPlugin(stats => {
-
-                // gobindata({
-                //     'o': path.join(paths.COMICBOXD, 'data/bindata.go'),
-                //     'ignore': '.gitignore',
-                //     'pkg': 'data',
-                // }, 'migrations/...', '../web/dist/...');
-
                 const args = []
 
                 if (devMode) {
