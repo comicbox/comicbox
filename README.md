@@ -55,4 +55,5 @@ I: 17:52:57 Starting server at http://localhost:8080
 ```
 
 You're done! Simply navigate to [localhost:8080](localhost:8080) to access the app.
-To scan the specified directory for books go to get settings page and click `START SCAN`
+
+To scan the specified directory for books go to the settings page and click `START SCAN`
