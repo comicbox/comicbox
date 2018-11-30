@@ -9,9 +9,9 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/abibby/comicbox/comicboxd/app"
-	"github.com/abibby/comicbox/comicboxd/app/database"
-	"github.com/abibby/comicbox/comicboxd/app/model"
+	"github.com/zwzn/comicbox/comicboxd/app"
+	"github.com/zwzn/comicbox/comicboxd/app/database"
+	"github.com/zwzn/comicbox/comicboxd/app/model"
 	"github.com/fatih/structs"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"

@@ -6,10 +6,10 @@ import (
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/abibby/comicbox/comicboxd/app/database"
-	"github.com/abibby/comicbox/comicboxd/app/gql"
-	"github.com/abibby/comicbox/comicboxd/app/model"
-	"github.com/abibby/comicbox/comicboxd/errors"
+	"github.com/zwzn/comicbox/comicboxd/app/database"
+	"github.com/zwzn/comicbox/comicboxd/app/gql"
+	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/zwzn/comicbox/comicboxd/errors"
 	"github.com/google/uuid"
 	"github.com/graphql-go/graphql"
 )

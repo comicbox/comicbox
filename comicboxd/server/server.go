@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/abibby/comicbox/comicboxd/j"
+	"github.com/zwzn/comicbox/comicboxd/j"
 	"github.com/spf13/viper"
 
 	_ "github.com/golang-migrate/migrate/source/file"

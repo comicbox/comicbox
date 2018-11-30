@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/abibby/comicbox/comicboxd/errors"
+	"github.com/zwzn/comicbox/comicboxd/errors"
 )
 
 var cachePath = "./.cache"

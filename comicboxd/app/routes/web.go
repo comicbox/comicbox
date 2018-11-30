@@ -3,10 +3,10 @@ package routes
 import (
 	"net/http"
 
-	"github.com/abibby/comicbox/comicboxd/app/controller"
-	"github.com/abibby/comicbox/comicboxd/app/middleware"
-	"github.com/abibby/comicbox/comicboxd/data"
-	"github.com/abibby/comicbox/comicboxd/server"
+	"github.com/zwzn/comicbox/comicboxd/app/controller"
+	"github.com/zwzn/comicbox/comicboxd/app/middleware"
+	"github.com/zwzn/comicbox/comicboxd/data"
+	"github.com/zwzn/comicbox/comicboxd/server"
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 )
 

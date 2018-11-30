@@ -17,14 +17,14 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/image/bmp"
 
-	"github.com/abibby/comicbox/comicboxd/j"
+	"github.com/zwzn/comicbox/comicboxd/j"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/abibby/comicbox/comicboxd/app"
-	"github.com/abibby/comicbox/comicboxd/app/database"
-	"github.com/abibby/comicbox/comicboxd/app/gql"
-	"github.com/abibby/comicbox/comicboxd/app/model"
-	"github.com/abibby/comicbox/comicboxd/errors"
+	"github.com/zwzn/comicbox/comicboxd/app"
+	"github.com/zwzn/comicbox/comicboxd/app/database"
+	"github.com/zwzn/comicbox/comicboxd/app/gql"
+	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/zwzn/comicbox/comicboxd/errors"
 	"github.com/nfnt/resize"
 )
 

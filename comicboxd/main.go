@@ -12,9 +12,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/abibby/comicbox/comicboxd/app/routes"
-	"github.com/abibby/comicbox/comicboxd/j"
-	"github.com/abibby/comicbox/comicboxd/server"
+	"github.com/zwzn/comicbox/comicboxd/app/routes"
+	"github.com/zwzn/comicbox/comicboxd/j"
+	"github.com/zwzn/comicbox/comicboxd/server"
 	"github.com/kardianos/service"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"

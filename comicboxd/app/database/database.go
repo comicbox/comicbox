@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/abibby/comicbox/comicboxd/data"
-	"github.com/abibby/comicbox/comicboxd/j"
+	"github.com/zwzn/comicbox/comicboxd/data"
+	"github.com/zwzn/comicbox/comicboxd/j"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/sqlite3"
 	bindata "github.com/golang-migrate/migrate/source/go_bindata"
