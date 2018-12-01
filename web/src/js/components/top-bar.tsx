@@ -7,7 +7,7 @@ import { route } from 'preact-router'
 
 interface Props {
     backLink: string
-    scroller: HTMLElement
+    scroller?: HTMLElement
     clear?: boolean
 }
 
@@ -25,7 +25,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
 
     public componentDidMount() {
         setTimeout(() => {
-            this.scroller = document.getElementById('parallax-wrap')
+            this.scroller = document.getElementById('parallax-wrap') as HTMLElement
 
             window.requestAnimationFrame(this.frame)
         })

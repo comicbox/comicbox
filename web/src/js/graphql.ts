@@ -32,7 +32,7 @@ export function gql(
             name: name,
             query: query,
             variables: variables || {},
-            types: types,
+            types: types || {},
             gqlType: mutation ? 'mutation' : 'query',
             success: data => {
                 resolve(data)
@@ -157,7 +157,7 @@ async function fetchQuery(query: string, variables: any): Promise<Response> {
 export class QueryError extends Error {
     private status: number
 
-    constructor(response: Response, message: string) {
+    constructor(response: Response | null, message: string) {
         super(message)
         if (response !== null) {
             this.status = response.status

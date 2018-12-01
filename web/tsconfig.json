@@ -24,6 +24,7 @@
         },
         "experimentalDecorators": true,
         "pretty": true,
+        "strictNullChecks": true
     },
     "exclude": [
         "node_modules",

@@ -46,11 +46,11 @@ export default class Settings extends Component<{}, State> {
                 name: me.name,
             })
         })
-        Options.getOrigin().then(address => {
-            this.setState({
-                address: address,
-            })
-        })
+        // Options.getOrigin().then(address => {
+        //     this.setState({
+        //         address: address,
+        //     })
+        // })
     }
 
     public render() {
@@ -224,10 +224,10 @@ export default class Settings extends Component<{}, State> {
 
     @autobind
     private async btnAddress() {
-        const address = await Options.setOrigin()
-        this.setState({
-            address: address,
-        })
+        // const address = await Options.setOrigin()
+        // this.setState({
+        //     address: address,
+        // })
     }
 
     @autobind

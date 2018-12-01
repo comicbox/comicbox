@@ -23,12 +23,12 @@ interface Options<T extends Model> {
 }
 
 interface Props<T extends Model> {
-    data: T
+    data: T | null
     options?: Options<T>
     loadQuery?: QueryBuilder<T>
 }
 interface State<T extends Model> {
-    data: T
+    data: T | null
 }
 
 export default class Card<T extends Model> extends Component<Props<T>, State<T>> {
@@ -36,23 +36,17 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
     private menu: Menu
     private observer: IntersectionObserver
 
-    public componentWillMount() {
-        if (this.props.data) {
-            this.setState({ data: this.props.data })
-        }
-    }
-
     public componentDidMount() {
         if (this.props.loadQuery) {
             const options = {
-                root: null as HTMLElement,
+                root: null as any as HTMLElement,
                 rootMargin: '0px',
                 threshold: 0.1,
             }
             this.observer = new IntersectionObserver(elements => {
                 for (const element of elements) {
                     if (element.isIntersecting) {
-                        if (!this.props.data && !this.state.data) {
+                        if (!this.props.data && !this.state.data && this.props.loadQuery) {
                             this.props.loadQuery.first().then(model => {
                                 this.setState({ data: model })
                                 this.observer.disconnect()
@@ -61,7 +55,9 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
                     }
                 }
             }, options)
-            this.observer.observe(this.base)
+            if (this.base) {
+                this.observer.observe(this.base)
+            }
         }
     }
 
@@ -72,7 +68,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
     }
 
     public render() {
-        const model = this.state.data
+        const model = this.state.data || this.props.data
         let image = ''
         let series = ''
         let title = ''
@@ -150,7 +146,9 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
 
     @autobind
     private openMenu(e: Event) {
-        this.menu.MDComponent.open = true
+        if (this.menu.MDComponent) {
+            this.menu.MDComponent.open = true
+        }
     }
     private buildMenu(ops: Options<T>, model: T): JSX.Element {
         return <Menu.Anchor class={s.menu}>

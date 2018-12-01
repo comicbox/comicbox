@@ -24,7 +24,7 @@ interface State {
 export default class SeriesView extends Component<Props, State> {
 
     public componentWillReceiveProps() {
-        const series = this.props.matches.name
+        const series = this.props.matches!.name
 
         Series.where('name', series)
             .select('name', 'list', 'tags')
@@ -44,7 +44,7 @@ export default class SeriesView extends Component<Props, State> {
 
     }
     public async componentDidMount() {
-        const series = this.props.matches.name
+        const series = this.props.matches!.name
 
         Series.where('name', series)
             .select('name', 'list', 'tags')
@@ -65,14 +65,14 @@ export default class SeriesView extends Component<Props, State> {
     }
 
     public render() {
-        const series = this.props.matches.name
+        const series = this.props.matches!.name
 
         let backgroundImg = ''
         let readLink = ''
         let thumbImg = ''
         let summary = ''
         let title = ''
-        let tags: JSX.Element[] = null
+        let tags: JSX.Element[] | null = null
         let rating: number = 0
 
         if (this.state.series) {
