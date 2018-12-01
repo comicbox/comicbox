@@ -7,7 +7,7 @@ npm:
 	cd web; npm run build-prod
 
 run:
-	cd comicboxd; go run main.go
+	go run comicboxd/main.go
 
 get:
 	cd web; npm install
