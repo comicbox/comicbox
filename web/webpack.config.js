@@ -161,27 +161,6 @@ module.exports = (env, argv) => {
                         sizes: [96, 128, 192, 256, 384, 512]
                     }
                 ],
-<<<<<<< HEAD:web/webpack.config.js
-            }),
-            new WebpackOnBuildPlugin(stats => {
-                const args = []
-
-                if (devMode) {
-                    args.push('-debug')
-                }
-
-                args.push(...[
-                    '-o', path.join(paths.COMICBOXD, 'data/bindata.go'),
-                    '-pkg', 'data',
-                    'comicboxd/migrations/...', 'web/dist/...'
-                ])
-
-                const result = child.spawnSync('go-bindata', args, { cwd: paths.ROOT })
-                if (result.stderr.length !== 0) {
-                    throw new Error(result.stderr.toString('utf8'))
-                }
-=======
->>>>>>> master:web/webpack.config.js
             }),
         ],
     }

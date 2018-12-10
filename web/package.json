@@ -75,18 +75,5 @@
         "webpack-bundle-analyzer": "^3.0.3",
         "webpack-cli": "^3.1.1",
         "webpack-pwa-manifest": "^3.7.1"
-<<<<<<< HEAD:web/package.json
-    },
-    "cordova": {
-        "plugins": {
-            "cordova-plugin-whitelist": {},
-            "cordova-plugin-file": {}
-        },
-        "platforms": [
-            "browser",
-            "android"
-        ]
-=======
->>>>>>> master:web/package.json
     }
 }
