@@ -4,11 +4,11 @@ import { ParallaxWrap } from 'js/components/parallax'
 import { endBottomBar, startBottomBar } from 'js/components/snack'
 import TopBar from 'js/components/top-bar'
 import { historyPop, historyPrevious } from 'js/history'
+import Series from 'js/model/series'
 import { Component, h } from 'preact'
 import Icon from 'preact-material-components/Icon'
 import TopAppBar from 'preact-material-components/TopAppBar'
 import { Link, route } from 'preact-router'
-import Series from 'js/model/series';
 
 interface Props {
     backLink: string
