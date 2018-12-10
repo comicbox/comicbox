@@ -38,7 +38,6 @@ interface State {
 export default class Settings extends Component<{}, State> {
 
     public componentDidMount() {
-        // login('adam', 'test')
         user().then(me => {
             this.setState({
                 me: me,
@@ -46,11 +45,6 @@ export default class Settings extends Component<{}, State> {
                 name: me.name,
             })
         })
-        // Options.getOrigin().then(address => {
-        //     this.setState({
-        //         address: address,
-        //     })
-        // })
     }
 
     public render() {
