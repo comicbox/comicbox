@@ -161,6 +161,7 @@ module.exports = (env, argv) => {
                         sizes: [96, 128, 192, 256, 384, 512]
                     }
                 ],
+<<<<<<< HEAD:web/webpack.config.js
             }),
             new WebpackOnBuildPlugin(stats => {
                 const args = []
@@ -179,6 +180,8 @@ module.exports = (env, argv) => {
                 if (result.stderr.length !== 0) {
                     throw new Error(result.stderr.toString('utf8'))
                 }
+=======
+>>>>>>> master:web/webpack.config.js
             }),
         ],
     }
