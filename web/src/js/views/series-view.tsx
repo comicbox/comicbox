@@ -30,7 +30,11 @@ export default class SeriesView extends Component<Props, State> {
         this.seriesChange()
     }
     public async componentDidUpdate(prevProps: Props) {
+<<<<<<< HEAD
         if (this.props.matches!.name !== prevProps.matches!.name) {
+=======
+        if (this.props.matches.name !== prevProps.matches.name) {
+>>>>>>> master
             this.seriesChange()
         }
     }
@@ -130,7 +134,11 @@ export default class SeriesView extends Component<Props, State> {
     }
 
     private async seriesChange() {
+<<<<<<< HEAD
         const series = this.props.matches!.name
+=======
+        const series = this.props.matches.name
+>>>>>>> master
 
         const [serie, current, first] = await Promise.all([
 
