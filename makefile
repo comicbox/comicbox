@@ -11,12 +11,12 @@ npm:
 run: bindata-debug
 	go run comicboxd/main.go
 
-get:
-	cd web; npm install
-	cd comicboxd; go get
-
 bindata: npm
 	go-bindata $(bindata)
 
 bindata-debug:
 	go-bindata -debug $(bindata)
+
+get:
+	cd web; npm install
+	go get ./...
