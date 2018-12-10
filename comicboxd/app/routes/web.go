@@ -3,11 +3,11 @@ package routes
 import (
 	"net/http"
 
+	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"github.com/zwzn/comicbox/comicboxd/app/controller"
 	"github.com/zwzn/comicbox/comicboxd/app/middleware"
 	"github.com/zwzn/comicbox/comicboxd/data"
 	"github.com/zwzn/comicbox/comicboxd/server"
-	assetfs "github.com/elazarl/go-bindata-assetfs"
 )
 
 func Web(s *server.Server) {
@@ -36,7 +36,7 @@ func Web(s *server.Server) {
 		Asset:     data.Asset,
 		AssetDir:  data.AssetDir,
 		AssetInfo: data.AssetInfo,
-		Prefix:    "../cordova/platforms/browser/www",
+		Prefix:    "web/dist",
 	}))
 
 	// s.Router.Methods("GET").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

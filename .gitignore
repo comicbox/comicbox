@@ -1,22 +1,11 @@
 *.sqlite
-bin/*
-comicboxd/data/bindata.go
-comicboxd/web/node_modules/*
-comicboxd/web-old/node_modules/*
-comicboxd/web/dist/*
 .cache/*
-comicboxd/.cache/*
+bin/*
 config.yml
 
-cordova/www/*
+comicboxd/data/bindata.go
+comicboxd/.cache/*
+
+web/dist/*
 
 **/node_modules/*
-
-# android 
-cordova/platforms/android/.gradle/*
-cordova/platforms/android/CordovaLib/build/*
-cordova/platforms/android/app/build/*
-cordova/platforms/android/app/src/main/assets/www/*
-
-# browser
-cordova/platforms/browser/www/*

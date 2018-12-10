@@ -5,12 +5,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/zwzn/comicbox/comicboxd/data"
-	"github.com/zwzn/comicbox/comicboxd/j"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/sqlite3"
 	bindata "github.com/golang-migrate/migrate/source/go_bindata"
 	"github.com/jmoiron/sqlx"
+	"github.com/zwzn/comicbox/comicboxd/data"
+	"github.com/zwzn/comicbox/comicboxd/j"
 )
 
 var db *sqlx.DB
@@ -36,14 +36,14 @@ func init() {
 
 func getMigrate() (*migrate.Migrate, error) {
 
-	dir, err := data.AssetDir("migrations")
+	dir, err := data.AssetDir("comicboxd/migrations")
 	if err != nil {
 		return nil, fmt.Errorf("error finding migration folder: %v", err)
 	}
 
 	assetSource := bindata.Resource(dir,
 		func(name string) ([]byte, error) {
-			return data.Asset("migrations/" + name)
+			return data.Asset("comicboxd/migrations/" + name)
 		},
 	)
 	assetDriver, err := bindata.WithInstance(assetSource)
