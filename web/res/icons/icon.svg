@@ -10,6 +10,9 @@
         .text {
             fill: #202020;
         }
+        .bubble {
+            fill: #ffffff;
+        }
     </style>
     <defs>
         <g id="back">
@@ -40,12 +43,12 @@
                 <g class="shadow" >
                     <rect x="0" y="-16" height="35" width="50" />
                 </g>
-                <g fill="#fff">
+                <g class="bubble">
                     <circle cx="0" cy="0" r="16"  />
                     <path d="
                         M  0 19
-                        L 10  5
-                        L-10  5
+                        L  10  5
+                        L -10  5
                         Z"/>
                 </g>
             </g>
