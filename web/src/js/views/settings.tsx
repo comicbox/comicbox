@@ -1,19 +1,14 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/settings.scss'
-import { login, logout, user } from 'js/auth'
+import { logout, user } from 'js/auth'
 import { gql } from 'js/graphql'
 import User from 'js/model/user'
-import Options from 'js/options'
 import url from 'js/url'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 import Btn from 'preact-material-components/Button'
 import TextField from 'preact-material-components/TextField'
 import { Link } from 'preact-router'
-
-// interface Props {
-
-// }
 
 interface State {
     address: string
@@ -48,19 +43,10 @@ export default class Settings extends Component<{}, State> {
     }
 
     public render() {
-        let serverSettings = null
         let adminSettings = null
         let name = ''
         let username = ''
 
-        // Server settings
-        if (location.protocol === 'file:') {
-            serverSettings = <div>
-                <h2>Server</h2>
-                <TextField label='Address' value={this.state.address} onKeyUp={this.keyUpAddress} readOnly />
-                <Btn raised class={s.button} onClick={this.btnAddress}>Update</Btn>
-            </div>
-        }
         // Admin Settings
         // TODO: Once user groups are implemented
         // change if statement to check if user is an admin, if so show admin settings
@@ -100,9 +86,6 @@ export default class Settings extends Component<{}, State> {
             <div>
                 <Btn raised onClick={this.btnScan}>Start Scan</Btn>
                 <Btn raised class={s.button} onClick={this.btnLogout}>Logout</Btn>
-            </div>
-            <div>
-                {serverSettings}
             </div>
             <div>
                 <h3>User</h3>
@@ -214,14 +197,6 @@ export default class Settings extends Component<{}, State> {
         if (e.target instanceof HTMLInputElement) {
             this.setState({ repeatNewPass: e.target.value })
         }
-    }
-
-    @autobind
-    private async btnAddress() {
-        // const address = await Options.setOrigin()
-        // this.setState({
-        //     address: address,
-        // })
     }
 
     @autobind
