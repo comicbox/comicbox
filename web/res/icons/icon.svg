@@ -5,10 +5,10 @@
             fill: #2196f3;
         }
         .shadow {
-            fill: #007abc;
+            fill: #0069c0;
         }
         .text {
-            fill: #2a2a2a;
+            fill: #202020;
         }
     </style>
     <defs>

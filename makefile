@@ -5,7 +5,7 @@ all: comicboxd
 comicboxd: bindata
 	cd comicboxd; go build -o ../bin/comicboxd
 
-npm:
+npm: icon
 	cd web; npm run build-prod
 
 run: bindata-debug
@@ -16,6 +16,9 @@ bindata: npm
 
 bindata-debug:
 	go-bindata -debug $(bindata)
+
+icon:
+	inkscape -f web/res/icons/icon.svg -e web/res/icons/icon.png -h 1024
 
 get:
 	cd web; npm install
