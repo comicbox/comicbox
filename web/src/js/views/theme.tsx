@@ -86,7 +86,7 @@ function getVar(name: string): string {
 }
 function setVar(name: string, colour: string): void {
     document.body.style.setProperty(`--mdc-theme-${name}`, colour)
-    const theme: Dictionary<string> = JSON.parse(localStorage.getItem('theme') || '') || {}
+    const theme: Dictionary<string> = JSON.parse(localStorage.getItem('theme') || '{}') || {}
     theme[name] = colour
     localStorage.setItem('theme', JSON.stringify(theme))
 }
