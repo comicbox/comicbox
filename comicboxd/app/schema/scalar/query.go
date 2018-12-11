@@ -3,8 +3,6 @@ package scalar
 import (
 	"reflect"
 
-	graphql "github.com/graph-gophers/graphql-go"
-
 	"github.com/Masterminds/squirrel"
 )
 
@@ -27,9 +25,7 @@ func Query(query squirrel.SelectBuilder, args interface{}) squirrel.SelectBuilde
 		switch value := vField.Interface().(type) {
 		case Querier:
 			query = value.Query(query, tag)
-		case bool, graphql.ID:
-			query = query.Where(squirrel.Eq{tag: value})
-		case *bool, *graphql.ID:
+		default:
 			if value != nil {
 				query = query.Where(squirrel.Eq{tag: value})
 			}

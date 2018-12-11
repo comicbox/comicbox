@@ -45,8 +45,8 @@ input SeriesInput {
 }
 
 type SeriesQuery {
-    page_info: page_info
-    results: [Series]
+    total: Int!
+    results: [Series!]!
 }
 
 enum List {

@@ -62,17 +62,21 @@ type RootQuery {
 
     # me: User
     serie(name: String!): Series
-    # series(
-    #     total: String
-    #     list: List
-    #     search: String
-    #     sort: String
-    #     take: Int!
-    #     name: String
-    #     read: String
-    #     user_id: ID
-    #     tags: String
-    #     skip: Int): SeriesQuery
+    series(
+        skip: Int
+        take: Int!
+
+        search: String
+        
+        sort: String
+        list: List
+
+        name: Regex
+        tags: Regex
+        
+        total: NumberRange
+        read: NumberRange
+    ): SeriesQuery
     # users(
     #     sort: String
     #     name: String
