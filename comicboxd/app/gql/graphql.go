@@ -126,6 +126,7 @@ func Args(query sq.SelectBuilder, m interface{}, args map[string]interface{}) sq
 			// }
 			// query = query.Where(sq.Or(exprs))
 		default:
+
 			query = query.Where(fmt.Sprintf("%s regexp ?", name), val)
 		}
 	}

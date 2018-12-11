@@ -1,0 +1,77 @@
+
+type Book {
+    alternate_series: String!
+    authors: [String!]!
+    chapter: Float
+    community_rating: Float
+    # cover: Page
+
+    # the date a book was created
+    created_at: Time!
+    current_page: Int
+    date_released: Time
+    file: String!
+    genres: [String!]!
+
+    # a unique id for the books
+    id: ID!
+    # last_page_read: Int
+    # pages: [Page]
+    # rating: Float
+    # read: Boolean
+    # reading_direction: String
+    # series: String
+    # series_query: Series
+    # story_arc: String
+    # summary: String
+    # title: String
+    # type: String
+    # updated_at: Time
+    # volume: Int
+    # web: String
+}
+
+input BookInput {
+    chapter: Float
+    summary: String
+    series: String
+    current_page: Int
+    date_released: Time
+    rating: Float
+    alternate_series: String
+    reading_direction: String
+    file: String
+    authors: [String]
+    story_arc: String
+    last_page_read: Int
+    volume: Int
+    community_rating: Float
+    type: String
+    web: String
+    genres: [String]
+    title: String
+    pages: [PageInput]
+}
+
+type BookQuery {
+    page_info: page_info
+    results: [Book]
+}
+
+type Page {
+    file_number: Int
+    type: PageType
+    url: String
+}
+
+input PageInput {
+    url: String
+    file_number: Int
+    type: PageType
+}
+
+enum PageType {
+    FrontCover
+    Story
+    Deleted
+}

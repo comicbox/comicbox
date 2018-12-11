@@ -139,6 +139,11 @@ module.exports = (env, argv) => {
                 template: path.join(paths.SRC, 'index.html'),
                 filename: "index.html",
             }),
+            new HtmlWebpackPlugin({
+                chunks: [],
+                template: path.join(paths.SRC, 'graphql.html'),
+                filename: "graphql.html",
+            }),
             new MiniCssExtractPlugin({
                 // Options similar to the same options in webpackOptions.output
                 // both options are optional

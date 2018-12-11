@@ -4,14 +4,15 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/gorilla/mux"
+	"github.com/graphql-go/graphql"
+	"github.com/graphql-go/handler"
 	"github.com/zwzn/comicbox/comicboxd/app"
 	"github.com/zwzn/comicbox/comicboxd/app/controller"
 	"github.com/zwzn/comicbox/comicboxd/app/gql"
 	"github.com/zwzn/comicbox/comicboxd/app/middleware"
+	"github.com/zwzn/comicbox/comicboxd/app/schema"
 	"github.com/zwzn/comicbox/comicboxd/errors"
-	"github.com/gorilla/mux"
-	"github.com/graphql-go/graphql"
-	"github.com/graphql-go/handler"
 )
 
 func GraphQL(r *mux.Router) {
@@ -27,14 +28,14 @@ func GraphQL(r *mux.Router) {
 		controller.UserMutations,
 	)
 
-	schema, err := graphql.NewSchema(graphql.SchemaConfig{
+	sch, err := graphql.NewSchema(graphql.SchemaConfig{
 		Query:    graphql.NewObject(graphql.ObjectConfig{Name: "RootQuery", Fields: queries}),
 		Mutation: graphql.NewObject(graphql.ObjectConfig{Name: "RootMutation", Fields: mutations}),
 	})
 	errors.Check(err)
 
 	h := handler.New(&handler.Config{
-		Schema:     &schema,
+		Schema:     &sch,
 		Pretty:     true,
 		Playground: true,
 		// GraphiQL: true,
@@ -52,6 +53,7 @@ func GraphQL(r *mux.Router) {
 	gql.GQLHandler = h
 
 	r.Handle("/graphql", middleware.Auth(h))
+	r.Handle("/graphql-new", middleware.Auth(schema.Handler()))
 }
 
 func mergeFields(fieldss ...graphql.Fields) graphql.Fields {

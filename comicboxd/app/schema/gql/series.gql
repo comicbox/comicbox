@@ -1,0 +1,60 @@
+
+type Series {
+    books(
+        skip: Int
+        take: Int!
+        
+        search: String
+
+        series: String        
+        id: ID,
+        web: String,
+        pages: String,
+        created_at: String
+        title: String
+        last_page_read: String
+        updated_at: String
+        sort: String
+        chapter: String
+        read: Boolean
+        story_arc: String
+        genres: String
+        type: String
+        alternate_series: String
+        date_released: String
+        book_id: ID
+        current_page: String
+        volume: String
+        summary: String
+        authors: String
+        user_id: ID
+        rating: String
+        reading_direction: String
+        file: String
+        community_rating: String
+        page_count: String): BookQuery
+        
+    list: List
+    name: String
+    read: Int
+    tags: [String]
+    total: Int
+}
+
+input SeriesInput {
+    list: List
+    tags: [String]
+}
+
+type SeriesQuery {
+    page_info: page_info
+    results: [Series]
+}
+
+enum List {
+    DROPPED
+    PLANNING
+    READING
+    COMPLETED
+    PAUSED
+}

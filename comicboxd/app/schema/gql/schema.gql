@@ -1,0 +1,29 @@
+schema {
+    query: RootQuery
+    mutation: RootMutation
+}
+
+# The `DateTime` scalar type represents a DateTime. The DateTime is serialized as an RFC 3339 quoted string
+scalar Time
+
+type page_info {
+    skip: Int
+    take: Int
+    total: Int
+}
+
+type RootMutation {
+    # book(id: ID, book: BookInput!): Book
+    # deleteBook(id: ID!): Book
+    # series(name: String!, series: SeriesInput!): Series
+    # user(id: ID, user: UserInput!): User
+}
+
+type RootQuery {
+    book(id: ID!): Book
+    # books(reading_direction: String, page_count: String, file: String, community_rating: String, web: String, pages: String, created_at: String, series: String, id: ID, take: Int!, title: String, last_page_read: String, chapter: String, read: Boolean, updated_at: String, sort: String, search: String, skip: Int, story_arc: String, genres: String, date_released: String, book_id: ID, current_page: String, type: String, alternate_series: String, authors: String, user_id: ID, rating: String, volume: String, summary: String): BookQuery
+    # me: User
+    # serie(name: String!): Series
+    # series(total: String, list: List, search: String, sort: String, take: Int!, name: String, read: String, user_id: ID, tags: String, skip: Int): SeriesQuery
+    # users(sort: String, name: String, username: String, password: String, skip: Int, id: ID, created_at: String, updated_at: String, search: String, take: Int!, me: Boolean): UserQuery
+}
