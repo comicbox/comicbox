@@ -23,7 +23,7 @@ type Book struct {
 	MediaType        string     `json:"type"              db:"type"`
 	File             string     `json:"file"              db:"file"`
 	Title            string     `json:"title"             db:"title"`
-	Volume           *int       `json:"volume"            db:"volume"`
+	Volume           *int32     `json:"volume"            db:"volume"`
 	CommunityRating  *float64   `json:"community_rating"  db:"community_rating"`
 	Chapter          *float64   `json:"chapter"           db:"chapter"`
 	DateReleased     *time.Time `json:"date_released"     db:"date_released"`
@@ -35,8 +35,8 @@ type Book struct {
 type UserBook struct {
 	UserID       *uuid.UUID `json:"-"              db:"user_id"`
 	BookID       *uuid.UUID `json:"-"              db:"book_id"`
-	CurrentPage  *int64     `json:"current_page"   db:"current_page"`
-	LastPageRead *int64     `json:"last_page_read" db:"last_page_read"`
+	CurrentPage  *int32     `json:"current_page"   db:"current_page"`
+	LastPageRead *int32     `json:"last_page_read" db:"last_page_read"`
 	Rating       *float64   `json:"rating"         db:"rating"`
 }
 
@@ -47,7 +47,7 @@ type BookUserBook struct {
 }
 
 type Page struct {
-	FileNumber int    `json:"file_number"`
+	FileNumber int32  `json:"file_number"`
 	Type       string `json:"type"`
 	URL        string `json:"url"`
 }

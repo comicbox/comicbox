@@ -4,7 +4,7 @@ type Book {
     authors: [String!]!
     chapter: Float
     community_rating: Float
-    # cover: Page
+    cover: Page
 
     # the date a book was created
     created_at: Time!
@@ -15,20 +15,17 @@ type Book {
 
     # a unique id for the books
     id: ID!
-    # last_page_read: Int
-    # pages: [Page]
-    # rating: Float
-    # read: Boolean
-    # reading_direction: String
-    # series: String
-    # series_query: Series
-    # story_arc: String
-    # summary: String
-    # title: String
-    # type: String
-    # updated_at: Time
-    # volume: Int
-    # web: String
+    last_page_read: Int
+    pages: [Page!]!
+    rating: Float
+    read: Boolean!
+    series: String!
+    story_arc: String!
+    summary: String!
+    title: String!
+    updated_at: Time!
+    volume: Int
+    web: String!
 }
 
 input BookInput {
@@ -54,14 +51,14 @@ input BookInput {
 }
 
 type BookQuery {
-    page_info: page_info
-    results: [Book]
+    total: Int!
+    results: [Book]!
 }
 
 type Page {
-    file_number: Int
-    type: PageType
-    url: String
+    file_number: Int!
+    type: PageType!
+    url: String!
 }
 
 input PageInput {

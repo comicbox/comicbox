@@ -14,12 +14,12 @@ import (
 	"strings"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/google/uuid"
+	"github.com/graphql-go/graphql"
 	"github.com/zwzn/comicbox/comicboxd/app/database"
 	"github.com/zwzn/comicbox/comicboxd/app/gql"
 	"github.com/zwzn/comicbox/comicboxd/app/model"
 	"github.com/zwzn/comicbox/comicboxd/errors"
-	"github.com/google/uuid"
-	"github.com/graphql-go/graphql"
 )
 
 var BookInput = graphql.NewInputObject(graphql.InputObjectConfig{
@@ -285,7 +285,7 @@ func loadNewBookData(bookMap map[string]interface{}) (map[string]interface{}, er
 				typ = Cover
 			}
 			tmpPages[i] = &model.Page{
-				FileNumber: i,
+				FileNumber: int32(i),
 				Type:       typ,
 			}
 		}
@@ -425,7 +425,7 @@ func parseBookJSON(f *zip.File) (map[string]interface{}, error) {
 		}
 		if allZero {
 			for i := range book.Pages {
-				book.Pages[i].FileNumber = i
+				book.Pages[i].FileNumber = int32(i)
 			}
 		}
 	} else {
@@ -514,7 +514,7 @@ func parseComicInfoXML(f *zip.File) (map[string]interface{}, error) {
 				img = *crBook.Pages[i].Image
 			}
 			tmpPages[i] = &model.Page{
-				FileNumber: img,
+				FileNumber: int32(img),
 				Type:       typ,
 			}
 		}

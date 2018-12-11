@@ -1,10 +1,16 @@
 schema {
     query: RootQuery
-    mutation: RootMutation
+    # mutation: RootMutation
 }
 
-# The `DateTime` scalar type represents a DateTime. The DateTime is serialized as an RFC 3339 quoted string
+# The `Time` scalar type represents a DateTime. The DateTime is serialized as an RFC 3339 quoted string
 scalar Time
+
+# The `NumberRange` scalar represents a range of numbers with the format eg [1] matches the number 1
+# and (1:10] is 1<x<=10 and [:10] is x<=10
+scalar NumberRange
+
+scalar Regex
 
 type page_info {
     skip: Int
@@ -21,9 +27,64 @@ type RootMutation {
 
 type RootQuery {
     book(id: ID!): Book
-    # books(reading_direction: String, page_count: String, file: String, community_rating: String, web: String, pages: String, created_at: String, series: String, id: ID, take: Int!, title: String, last_page_read: String, chapter: String, read: Boolean, updated_at: String, sort: String, search: String, skip: Int, story_arc: String, genres: String, date_released: String, book_id: ID, current_page: String, type: String, alternate_series: String, authors: String, user_id: ID, rating: String, volume: String, summary: String): BookQuery
+    books(
+        skip: Int
+        take: Int!
+        
+        search: String
+        sort: String
+
+        id: ID
+        book_id: ID
+        user_id: ID
+
+        read: Boolean
+
+        file: Regex
+        web: Regex
+        pages: Regex
+        created_at: Regex
+        series: Regex
+        title: Regex
+        last_page_read: Regex
+        updated_at: Regex
+        story_arc: Regex
+        genres: Regex
+        date_released: Regex
+        current_page: Regex
+        type: Regex
+        alternate_series: Regex
+        authors: Regex
+        summary: Regex
+
+        page_count: NumberRange
+        community_rating: NumberRange
+        chapter: NumberRange
+        rating: NumberRange
+        volume: NumberRange
+    ): BookQuery
+
     # me: User
     # serie(name: String!): Series
-    # series(total: String, list: List, search: String, sort: String, take: Int!, name: String, read: String, user_id: ID, tags: String, skip: Int): SeriesQuery
-    # users(sort: String, name: String, username: String, password: String, skip: Int, id: ID, created_at: String, updated_at: String, search: String, take: Int!, me: Boolean): UserQuery
+    # series(total: String
+    #     list: List
+    #     search: String
+    #     sort: String
+    #     take: Int!
+    #     name: String
+    #     read: String
+    #     user_id: ID
+    #     tags: String
+    #     skip: Int): SeriesQuery
+    # users(sort: String
+    #     name: String
+    #     username: String
+    #     password: String
+    #     skip: Int
+    #     id: ID
+    #     created_at: String
+    #     updated_at: String
+    #     search: String
+    #     take: Int!
+    #     me: Boolean): UserQuery
 }
