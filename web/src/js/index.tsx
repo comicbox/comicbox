@@ -38,4 +38,4 @@ const jsx = <div>
 
 loadTheme()
 
-render(jsx, document.getElementById('app'))
+render(jsx, document.getElementById('app')!)

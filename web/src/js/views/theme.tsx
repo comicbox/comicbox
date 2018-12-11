@@ -70,7 +70,7 @@ export default class Theme extends Component {
 }
 
 export function loadTheme() {
-    const theme: Dictionary<string> = JSON.parse(localStorage.getItem('theme'))
+    const theme: Dictionary<string> = JSON.parse(localStorage.getItem('theme') || '{}') || {}
     for (const name in theme) {
         if (theme.hasOwnProperty(name)) {
             const colour = theme[name]
@@ -86,7 +86,7 @@ function getVar(name: string): string {
 }
 function setVar(name: string, colour: string): void {
     document.body.style.setProperty(`--mdc-theme-${name}`, colour)
-    const theme: Dictionary<string> = JSON.parse(localStorage.getItem('theme')) || {}
+    const theme: Dictionary<string> = JSON.parse(localStorage.getItem('theme') || '{}') || {}
     theme[name] = colour
     localStorage.setItem('theme', JSON.stringify(theme))
 }

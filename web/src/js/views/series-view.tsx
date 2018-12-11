@@ -12,7 +12,9 @@ import Icon from 'preact-material-components/Icon'
 import { Link } from 'preact-router'
 
 interface Props {
-    matches?: { [name: string]: string }
+    matches?: {
+        name: string,
+    }
 }
 
 interface State {
@@ -23,56 +25,25 @@ interface State {
 
 export default class SeriesView extends Component<Props, State> {
 
-    public componentWillReceiveProps() {
-        const series = this.props.matches.name
-
-        Series.where('name', series)
-            .select('name', 'list', 'tags')
-            .first()
-            .then(serie => this.setState({ series: serie }))
-
-        Book.where('series', series)
-            .where('read', false)
-            .select('id', 'series', 'cover', 'chapter', 'volume', 'title', 'summary', 'rating', 'community_rating')
-            .first()
-            .then(current => this.setState({ current: current }))
-
-        Book.where('series', series)
-            .select('series', 'cover', 'chapter', 'volume', 'title', 'summary')
-            .first()
-            .then(first => this.setState({ first: first }))
-
+    constructor(props: Props) {
+        super(props)
+        this.seriesChange()
     }
-    public async componentDidMount() {
-        const series = this.props.matches.name
-
-        Series.where('name', series)
-            .select('name', 'list', 'tags')
-            .first()
-            .then(serie => this.setState({ series: serie }))
-
-        Book.where('series', series)
-            .where('read', false)
-            .select('id', 'series', 'cover', 'chapter', 'volume', 'title', 'summary', 'rating', 'community_rating')
-            .first()
-            .then(current => this.setState({ current: current }))
-
-        Book.where('series', series)
-            .select('series', 'cover', 'chapter', 'volume', 'title', 'summary')
-            .first()
-            .then(first => this.setState({ first: first }))
-
+    public async componentDidUpdate(prevProps: Props) {
+        if (this.props.matches!.name !== prevProps.matches!.name) {
+            this.seriesChange()
+        }
     }
 
     public render() {
-        const series = this.props.matches.name
+        const series = this.props.matches!.name
 
         let backgroundImg = ''
         let readLink = ''
         let thumbImg = ''
         let summary = ''
         let title = ''
-        let tags: JSX.Element[] = null
+        let tags: JSX.Element[] | null = null
         let rating: number = 0
 
         if (this.state.series) {
@@ -156,6 +127,31 @@ export default class SeriesView extends Component<Props, State> {
         const series = this.state.series
         await series.openEditModal()
         this.setState({ series: series })
+    }
+
+    private async seriesChange() {
+        const series = this.props.matches!.name
+
+        const [serie, current, first] = await Promise.all([
+
+            Series.where('name', series)
+                .select('name', 'list', 'tags')
+                .first(),
+
+            Book.where('series', series)
+                .where('read', false)
+                .select('id', 'series', 'cover', 'chapter', 'volume', 'title', 'summary', 'rating', 'community_rating')
+                .first(),
+
+            Book.where('series', series)
+                .select('series', 'cover', 'chapter', 'volume', 'title', 'summary')
+                .first(),
+        ])
+        this.setState({
+            series: serie,
+            current: current,
+            first: first,
+        })
     }
 
 }

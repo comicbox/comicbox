@@ -6,11 +6,15 @@ export function historyPush(e: RouterOnChangeArgs) {
     historyStack.push(e.url)
 }
 
-export function historyPop(): string {
-    return historyStack.pop()
+export function historyPop(): string | null {
+    const url = historyStack.pop()
+    if (!url) {
+        return null
+    }
+    return url
 }
 
-export function historyPrevious(): string {
+export function historyPrevious(): string | null {
     if (historyStack.length < 2) {
         return null
     }

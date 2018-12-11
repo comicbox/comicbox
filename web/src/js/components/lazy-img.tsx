@@ -9,7 +9,9 @@ const lazyImageObserver = new IntersectionObserver((entries, observer) => {
         if (entry.isIntersecting) {
             if (entry.target instanceof HTMLImageElement) {
                 const lazyImage = entry.target
-                lazyImage.src = lazyImage.dataset.src
+                if (lazyImage.dataset.src) {
+                    lazyImage.src = lazyImage.dataset.src
+                }
                 // lazyImage.srcset = lazyImage.dataset.srcset
 
                 lazyImageObserver.unobserve(lazyImage)

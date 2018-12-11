@@ -1,5 +1,6 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/read.scss'
+import Page from 'js/components/page'
 import ReadOverlay from 'js/components/read-overlay'
 import Book from 'js/model/book'
 import User from 'js/model/user'
@@ -12,7 +13,7 @@ interface Props {
 }
 
 interface State {
-    book: Book
+    book: Book | null
     current: number
     width: number
     height: number
@@ -21,14 +22,15 @@ interface State {
     toNext: boolean
 }
 
-export default class Read extends Component<Props, State> {
+export default class Read extends Page<Props, State> {
     private img: HTMLImageElement
-    private user: User = null
+    private user: User | null = null
 
-    public async componentWillMount() {
+    constructor(props: Props) {
+        super(props)
         User.me().then(me => this.user = me)
 
-        this.setState({
+        this.state = {
             book: null,
             current: 0,
             width: 0,
@@ -36,13 +38,8 @@ export default class Read extends Component<Props, State> {
             modalOpen: false,
 
             toNext: false,
-        })
-        const id = this.props.matches.id
+        }
 
-        await this.loadBookState(id)
-    }
-
-    public componentDidMount() {
         let touch: any = null
 
         const save = (e: any) => {
@@ -81,9 +78,15 @@ export default class Read extends Component<Props, State> {
         this.adjustAreaRegions()
     }
 
+    public pageLoad() {
+        const id = this.props.matches!.id
+
+        this.loadBookState(id)
+    }
+
     public render() {
         if (this.state.book === null) {
-            return
+            return <div />
         }
 
         const page = this.state.book.pages[this.state.current]
@@ -106,8 +109,8 @@ export default class Read extends Component<Props, State> {
 
             <map name='image-map'>
                 <area target='' onClick={this.stepPage(-1)} alt='left' coords={leftBox} shape='rect' />
-                <area target='' onClick={this.toggleModal} alt='center' coords={centerBox}  shape='rect' />
-                <area target='' onClick={this.stepPage(1)} alt='right' coords={rightBox}  shape='rect' />
+                <area target='' onClick={this.toggleModal} alt='center' coords={centerBox} shape='rect' />
+                <area target='' onClick={this.stepPage(1)} alt='right' coords={rightBox} shape='rect' />
             </map>
 
             <ReadOverlay
@@ -126,40 +129,39 @@ export default class Read extends Component<Props, State> {
 
     @autobind
     private async loadBookState(id: string) {
-        const bookQuery = Book
+        const book = await Book
             .where('id', '=', id)
             .first()
 
-        const bk = await bookQuery
-        this.initBook(bk)
+        this.initBook(book)
     }
 
     @autobind
-    private initBook(bk: Book) {
+    private initBook(book: Book) {
         let pageNum = 0
 
-        const pageMatch = this.props.matches.page
+        const pageMatch = this.props.matches!.page
         if (pageMatch !== '') {
             pageNum = Number(pageMatch)
         } else {
-            pageNum = bk.current_page || pageNum
+            pageNum = book.current_page || pageNum
         }
 
-        bk.current_page = pageNum
+        book.current_page = pageNum
         this.save()
 
         this.setState({
             current: pageNum,
-            book: bk,
+            book: book,
         })
     }
 
     @autobind
-    private toggleModal()  {
+    private toggleModal() {
         this.setState({
             modalOpen: !this.state.modalOpen,
         })
-      }
+    }
 
     @autobind
     private adjustAreaRegions() {
@@ -177,78 +179,81 @@ export default class Read extends Component<Props, State> {
 
     @autobind
     private changePage(dst: number) {
-        if (this.state.book === null) {
+        const book = this.state.book
+        if (book === null) {
             return
         }
 
-        this.setState((state: State, props: Props) => {
-            if (dst < state.book.pages.length && dst > -1) {
-                // TODO update progress to dst
-                const bk = state.book
-                bk.current_page = dst
-                this.save()
+        if (dst < book.pages.length && dst > -1) {
+            // TODO update progress to dst
+            book.current_page = dst
+            this.save()
 
-                return {
-                    current: dst,
-                    book: bk,
-                    width: 0,
-                    height: 0,
-                }
-            }
-            return state
-        })
+            this.setState({
+                current: dst,
+                book: book,
+                width: 0,
+                height: 0,
+            })
+        }
+
     }
 
     @autobind
-    private stepPage(step: number): () => void  {
+    private stepPage(step: number): () => void {
         if (this.state.book === null) {
-            return
+            return () => null
         }
 
-        return () => this.setState((state: State, props: Props) => {
-            const dst = state.current + step
-            if (dst < state.book.pages.length && dst > -1) {
-                const bk = state.book
-                bk.current_page = dst
+        return () => {
+            const book = this.state.book
+
+            if (!book) {
+                return
+            }
+
+            const dst = this.state.current + step
+            if (dst < book.pages.length && dst > -1) {
+                book.current_page = dst
                 this.save()
 
-                return {
+                this.setState({
                     current: dst,
-                    book: bk,
+                    book: book,
                     width: 0,
                     height: 0,
-                }
-            } else if (dst === state.book.pages.length) {
+                })
+            } else if (dst === book.pages.length) {
                 this.next()
             }
-            return state
-        })
+        }
     }
 
     @autobind
-    private next() {
+    private async next() {
         const bk = this.state.book
-        let query = Book.take(1)
+        if (!bk) {
+            return
+        }
+        let query = Book.where('series', bk.series)
         if (bk.volume) {
             query = query.where('volume', '>', bk.volume)
         }
         if (bk.chapter) {
-            query  = query.where('chapter', '>', bk.chapter)
+            query = query.where('chapter', '>', bk.chapter)
         }
-        const book = query.first()
-        book.then(b => {
-            if (b != null) {
-                route('/book/' + b.id)
-                this.initBook(b)
-            } else {
-                route('/series/' + bk.series)
-            }
-        })
+        const book = await query.first()
+
+        if (book != null) {
+            route('/book/' + book.id, true)
+        } else {
+            route('/series/' + bk.series)
+        }
     }
 
     @autobind
     private save() {
-        if (this.user !== null && this.user.id !== '00000000-0000-0000-0000-000000000000') {
+        if (this.user !== null && this.user.id !== '00000000-0000-0000-0000-000000000000' && this.state.book) {
             this.state.book.save()
         }
     }

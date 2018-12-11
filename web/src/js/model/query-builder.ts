@@ -225,14 +225,14 @@ export class QueryBuilder<T extends Model> {
             }
 
             return `${key} {${this.generateGQL(type.jsType).join(', ')}}`
-        })
+        }).filter(select => select !== undefined) as string[]
 
     }
 
     private buildResult(jsType: StaticModel<any>, data: any): ModelArray<T> {
         const elements: T[] = []
 
-        for (const element of [].concat(data.results)) {
+        for (const element of [].concat(data.results) as any[]) {
             map(jsType.types, (type, key) => {
                 if (!element[key]) { return }
                 if (type.jsType && type.jsType.prototype instanceof Model) {

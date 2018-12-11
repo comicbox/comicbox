@@ -36,10 +36,11 @@ export default class Snack extends Component<{}, State> {
 export function toast(message: string): void
 export function toast(message: string, actionText: string, actionHandler: () => void): void
 export function toast(message: string, actionText?: string, actionHandler?: () => void): void {
+    if (!bar || !bar.MDComponent) { return }
     bar.MDComponent.show({
         message: message,
-        actionText: actionText,
-        actionHandler: actionHandler,
+        actionText: actionText || '',
+        actionHandler: actionHandler || (() => null),
     })
 }
 
