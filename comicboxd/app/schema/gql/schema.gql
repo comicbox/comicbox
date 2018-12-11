@@ -6,8 +6,8 @@ schema {
 # The `Time` scalar type represents a DateTime. The DateTime is serialized as an RFC 3339 quoted string
 scalar Time
 
-# The `NumberRange` scalar represents a range of numbers with the format eg [1] matches the number 1
-# and (1:10] is 1<x<=10 and [:10] is x<=10
+# The `NumberRange` scalar represents a range of numbers with the format eg [1:1] is x = 1
+# and (1:10] is 1 < x <= 10 and [:10] is x <= 10
 scalar NumberRange
 
 scalar Regex
