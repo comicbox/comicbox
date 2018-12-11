@@ -1,3 +1,8 @@
+Dockerfile
+.git
+.gitattributes
+.gitignore
+
 *.sqlite
 .cache/*
 bin/*
@@ -7,6 +12,5 @@ comicboxd/data/bindata.go
 comicboxd/.cache/*
 
 web/dist/*
-web/data/bindata.go
 
 **/node_modules/*
