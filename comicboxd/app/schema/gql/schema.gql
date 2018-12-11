@@ -18,12 +18,12 @@ type page_info {
     total: Int
 }
 
-type RootMutation {
-    # book(id: ID, book: BookInput!): Book
-    # deleteBook(id: ID!): Book
-    # series(name: String!, series: SeriesInput!): Series
-    # user(id: ID, user: UserInput!): User
-}
+# type RootMutation {
+#     book(id: ID, book: BookInput!): Book
+#     deleteBook(id: ID!): Book
+#     series(name: String!, series: SeriesInput!): Series
+#     user(id: ID, user: UserInput!): User
+# }
 
 type RootQuery {
     book(id: ID!): Book
@@ -35,28 +35,24 @@ type RootQuery {
         sort: String
 
         id: ID
-        book_id: ID
-        user_id: ID
-
         read: Boolean
 
+        # created_at: Regex
+        # updated_at: Regex
+        # date_released: Regex
         file: Regex
         web: Regex
-        pages: Regex
-        created_at: Regex
         series: Regex
         title: Regex
-        last_page_read: Regex
-        updated_at: Regex
         story_arc: Regex
         genres: Regex
-        date_released: Regex
         current_page: Regex
         type: Regex
         alternate_series: Regex
         authors: Regex
         summary: Regex
 
+        last_page_read: NumberRange
         page_count: NumberRange
         community_rating: NumberRange
         chapter: NumberRange
@@ -65,8 +61,9 @@ type RootQuery {
     ): BookQuery
 
     # me: User
-    # serie(name: String!): Series
-    # series(total: String
+    serie(name: String!): Series
+    # series(
+    #     total: String
     #     list: List
     #     search: String
     #     sort: String
@@ -76,7 +73,8 @@ type RootQuery {
     #     user_id: ID
     #     tags: String
     #     skip: Int): SeriesQuery
-    # users(sort: String
+    # users(
+    #     sort: String
     #     name: String
     #     username: String
     #     password: String

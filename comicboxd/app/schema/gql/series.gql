@@ -5,40 +5,38 @@ type Series {
         take: Int!
         
         search: String
-
-        series: String        
-        id: ID,
-        web: String,
-        pages: String,
-        created_at: String
-        title: String
-        last_page_read: String
-        updated_at: String
         sort: String
-        chapter: String
+
+        id: ID
         read: Boolean
-        story_arc: String
-        genres: String
-        type: String
-        alternate_series: String
-        date_released: String
-        book_id: ID
-        current_page: String
-        volume: String
-        summary: String
-        authors: String
-        user_id: ID
-        rating: String
-        reading_direction: String
-        file: String
-        community_rating: String
-        page_count: String): BookQuery
+
+        # created_at: Regex
+        # updated_at: Regex
+        # date_released: Regex
+        file: Regex
+        web: Regex
+        title: Regex
+        story_arc: Regex
+        genres: Regex
+        current_page: Regex
+        type: Regex
+        alternate_series: Regex
+        authors: Regex
+        summary: Regex
+
+        last_page_read: NumberRange
+        page_count: NumberRange
+        community_rating: NumberRange
+        chapter: NumberRange
+        rating: NumberRange
+        volume: NumberRange
+    ): BookQuery
         
     list: List
-    name: String
-    read: Int
-    tags: [String]
-    total: Int
+    name: String!
+    read: Int!
+    tags: [String!]!
+    total: Int!
 }
 
 input SeriesInput {

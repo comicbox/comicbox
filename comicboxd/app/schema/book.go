@@ -11,7 +11,93 @@ import (
 
 	"github.com/zwzn/comicbox/comicboxd/app/database"
 	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/zwzn/comicbox/comicboxd/app/schema/scalar"
 )
+
+type bookArgs struct {
+	ID string
+}
+
+func (q *query) Book(args bookArgs) (*BookResolver, error) {
+	book := model.BookUserBook{}
+	sqll, opts, err := squirrel.Select("*").
+		From("book_user_book").
+		Where(squirrel.Eq{"id": args.ID}).
+		Where(squirrel.Eq{"user_id": q.user.ID}).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+	err = database.Get(&book, sqll, opts...)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+	return &BookResolver{b: book}, nil
+}
+
+type booksArgs struct {
+	Skip *int32
+	Take int32
+
+	Search *string
+	Sort   *string
+
+	ID   *graphql.ID `db:"id"`
+	Read *bool       `db:"read"`
+
+	// CreatedAt       *scalar.TimeRange
+	// UpdatedAt       *scalar.TimeRange
+	// DateReleased    *scalar.TimeRange
+	File            *scalar.Regex `db:"file"`
+	Web             *scalar.Regex `db:"web"`
+	Series          *scalar.Regex `db:"series"`
+	Title           *scalar.Regex `db:"title"`
+	StoryArc        *scalar.Regex `db:"story_arc"`
+	Genres          *scalar.Regex `db:"genres"`
+	CurrentPage     *scalar.Regex `db:"current_page"`
+	Type            *scalar.Regex `db:"type"`
+	AlternateSeries *scalar.Regex `db:"alternate_series"`
+	Authors         *scalar.Regex `db:"authors"`
+	Summary         *scalar.Regex `db:"summary"`
+
+	LastPageRead    *scalar.NumberRange `db:"last_page_read"`
+	PageCount       *scalar.NumberRange `db:"page_Count"`
+	CommunityRating *scalar.NumberRange `db:"community_rating"`
+	Chapter         *scalar.NumberRange `db:"chapter"`
+	Rating          *scalar.NumberRange `db:"rating"`
+	Volume          *scalar.NumberRange `db:"volume"`
+}
+
+func (q *query) Books(args booksArgs) (*BookQueryResolver, error) {
+	skip := int32(0)
+	if args.Skip != nil {
+		skip = *args.Skip
+	}
+	take := args.Take
+	if 0 > take || take > 100 {
+		return nil, fmt.Errorf("you must take between 0 and 100 items")
+	}
+
+	query := squirrel.Select().
+		From("book_user_book").
+		Where(squirrel.Eq{"user_id": q.user.ID})
+
+	query = query.
+		OrderBy("series").
+		OrderBy("volume").
+		OrderBy("chapter").
+		OrderBy("title")
+
+	query = scalar.Query(query, args)
+
+	return &BookQueryResolver{
+		query: query,
+		skip:  skip,
+		take:  take,
+	}, nil
+}
 
 type BookResolver struct {
 	b model.BookUserBook
