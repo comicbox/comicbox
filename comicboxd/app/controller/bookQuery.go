@@ -6,11 +6,10 @@ import (
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/graphql-go/graphql"
 	"github.com/zwzn/comicbox/comicboxd/app/database"
 	"github.com/zwzn/comicbox/comicboxd/app/gql"
 	"github.com/zwzn/comicbox/comicboxd/app/model"
-	"github.com/zwzn/comicbox/comicboxd/errors"
-	"github.com/graphql-go/graphql"
 )
 
 type obj = map[string]interface{}
@@ -263,28 +262,14 @@ var booksField = &graphql.Field{
 				OrderBy("chapter").
 				OrderBy("title")
 		}
-		sqll, args, err := query.Columns("count(*)").ToSql()
-		errors.Check(err)
 
-		var count int
-		err = database.Get(&count, sqll, args...)
-		if err == sql.ErrNoRows {
-			count = 0
-		} else if err != nil {
+		count, err := getBookCount(query)
+		if err != nil {
 			return nil, err
 		}
-		books := []*model.BookUserBook{}
-		sqll, args, err = query.
-			Columns("*").
-			Offset(uint64(skip)).
-			Limit(uint64(take)).
-			ToSql()
-		errors.Check(err)
 
-		err = database.Select(&books, sqll, args...)
-		if err == sql.ErrNoRows {
-			return nil, nil
-		} else if err != nil {
+		books, err := getBooks(query, skip, take)
+		if err != nil {
 			return nil, err
 		}
 
@@ -298,6 +283,40 @@ var booksField = &graphql.Field{
 		}
 		return bq, nil
 	},
+}
+
+func getBookCount(query sq.SelectBuilder) (int, error) {
+	sqll, args, err := query.Columns("count(*)").ToSql()
+	if err != nil {
+		return 0, err
+	}
+
+	var count int
+	err = database.Get(&count, sqll, args...)
+	if err == sql.ErrNoRows {
+		count = 0
+	} else if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func getBooks(query sq.SelectBuilder, skip, take int) ([]*model.BookUserBook, error) {
+	books := []*model.BookUserBook{}
+	sqll, args, err := query.Columns("*").Offset(uint64(skip)).Limit(uint64(take)).ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	err = database.Select(&books, sqll, args...)
+	if err == sql.ErrNoRows {
+		books = []*model.BookUserBook{}
+	} else if err != nil {
+		return nil, err
+	}
+
+	return books, nil
 }
 
 var bookField = &graphql.Field{

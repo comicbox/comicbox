@@ -1,14 +1,17 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/sqlite3"
 	bindata "github.com/golang-migrate/migrate/source/go_bindata"
 	"github.com/jmoiron/sqlx"
+	sqlite3Driver "github.com/mattn/go-sqlite3"
 	"github.com/zwzn/comicbox/comicboxd/data"
 	"github.com/zwzn/comicbox/comicboxd/j"
 )
@@ -16,8 +19,17 @@ import (
 var db *sqlx.DB
 
 func init() {
+	var regex = func(re, s string) (bool, error) {
+		return regexp.MatchString(re, s)
+	}
+	sql.Register("sqlite3_regex",
+		&sqlite3Driver.SQLiteDriver{
+			ConnectHook: func(conn *sqlite3Driver.SQLiteConn) error {
+				return conn.RegisterFunc("regexp", regex, true)
+			},
+		})
 	var err error
-	db, err = sqlx.Connect("sqlite3", "test.sqlite")
+	db, err = sqlx.Connect("sqlite3_regex", "test.sqlite")
 	if err != nil {
 		j.Error(err)
 		os.Exit(1)
