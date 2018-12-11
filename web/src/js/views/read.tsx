@@ -1,5 +1,6 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/read.scss'
+import Page from 'js/components/page'
 import ReadOverlay from 'js/components/read-overlay'
 import Book from 'js/model/book'
 import User from 'js/model/user'
@@ -21,7 +22,7 @@ interface State {
     toNext: boolean
 }
 
-export default class Read extends Component<Props, State> {
+export default class Read extends Page<Props, State> {
     private img: HTMLImageElement
     private user: User | null = null
 
@@ -38,12 +39,7 @@ export default class Read extends Component<Props, State> {
 
             toNext: false,
         }
-        const id = this.props.matches!.id
 
-        this.loadBookState(id)
-    }
-
-    public componentDidMount() {
         let touch: any = null
 
         const save = (e: any) => {
@@ -80,6 +76,12 @@ export default class Read extends Component<Props, State> {
 
         window.addEventListener('resize', debounce(this.adjustAreaRegions, 250))
         this.adjustAreaRegions()
+    }
+
+    public pageLoad() {
+        const id = this.props.matches!.id
+
+        this.loadBookState(id)
     }
 
     public render() {
@@ -228,27 +230,26 @@ export default class Read extends Component<Props, State> {
     }
 
     @autobind
-    private next(): void {
+    private async next() {
         const bk = this.state.book
         if (!bk) {
             return
         }
-        let query = Book.take(1)
+        let query = Book.where('series', bk.series)
         if (bk.volume) {
             query = query.where('volume', '>', bk.volume)
         }
         if (bk.chapter) {
             query = query.where('chapter', '>', bk.chapter)
         }
-        const book = query.first()
-        book.then(b => {
-            if (b != null) {
-                route('/book/' + b.id)
-                this.initBook(b)
-            } else {
-                route('/series/' + bk.series)
-            }
-        })
+        const book = await query.first()
+console.log(book);
+
+        if (book != null) {
+            route('/book/' + book.id)
+        } else {
+            route('/series/' + bk.series)
+        }
     }
 
     @autobind
