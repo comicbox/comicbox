@@ -243,10 +243,9 @@ export default class Read extends Page<Props, State> {
             query = query.where('chapter', '>', bk.chapter)
         }
         const book = await query.first()
-console.log(book);
 
         if (book != null) {
-            route('/book/' + book.id)
+            route('/book/' + book.id, true)
         } else {
             route('/series/' + bk.series)
         }

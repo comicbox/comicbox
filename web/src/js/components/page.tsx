@@ -15,7 +15,7 @@ export default abstract class Page<P = {}, S = {}> extends Component<P & PagePro
         this.pageLoad()
     }
 
-    public componentDidUpdate(prevProps: P & PageProps) {        
+    public componentDidUpdate(prevProps: P & PageProps) {
         if (!isEqual(this.props.matches, prevProps.matches)) {
             this.pageUnload()
             this.pageLoad()
