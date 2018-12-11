@@ -2,7 +2,7 @@ import User from 'js/model/user'
 import url from 'js/url'
 import { route } from 'preact-router'
 
-let _user: User = null
+let _user: User | null = null
 
 export async function user(): Promise<User> {
     if (_user === null) {
@@ -16,7 +16,7 @@ export async function user(): Promise<User> {
     return _user
 }
 
-export async function login(username: string, password: string): Promise<User> {
+export async function login(username: string, password: string): Promise<User | null> {
 
     const data = await fetch(await url('/login'), {
         method: 'POST',

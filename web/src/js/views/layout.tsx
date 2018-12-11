@@ -62,7 +62,7 @@ export default class Layout extends Component<Props> {
     public render() {
         return <div className={s.app}>
 
-            <TopBar backLink={this.props.backLink} scroller={null} clear={this.props.clearTopBar} />
+            <TopBar backLink={this.props.backLink} clear={this.props.clearTopBar} />
 
             <ParallaxWrap id='parallax-wrap'>
                 <main class={s.main}>

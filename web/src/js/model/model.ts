@@ -180,7 +180,7 @@ export class ModelArray<T> extends Array<T> {
     }
     private page_info: PageInfo
     constructor(results: T[], page_info: PageInfo) {
-        super(...[].concat(results))
+        super(...([] as T[]).concat(results))
         this.page_info = page_info
     }
 }

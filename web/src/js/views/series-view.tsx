@@ -30,20 +30,20 @@ export default class SeriesView extends Component<Props, State> {
         this.seriesChange()
     }
     public async componentDidUpdate(prevProps: Props) {
-        if (this.props.matches.name !== prevProps.matches.name) {
+        if (this.props.matches!.name !== prevProps.matches!.name) {
             this.seriesChange()
         }
     }
 
     public render() {
-        const series = this.props.matches.name
+        const series = this.props.matches!.name
 
         let backgroundImg = ''
         let readLink = ''
         let thumbImg = ''
         let summary = ''
         let title = ''
-        let tags: JSX.Element[] = null
+        let tags: JSX.Element[] | null = null
         let rating: number = 0
 
         if (this.state.series) {
@@ -130,7 +130,7 @@ export default class SeriesView extends Component<Props, State> {
     }
 
     private async seriesChange() {
-        const series = this.props.matches.name
+        const series = this.props.matches!.name
 
         const [serie, current, first] = await Promise.all([
 

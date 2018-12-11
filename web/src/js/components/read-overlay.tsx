@@ -33,7 +33,7 @@ export default class ReadOverlay extends Component<Props, {}>  {
 
         return <div className={s.backdrop}>
             <div className={s.modal}>
-                <TopBar backLink={'/'} scroller={null} />
+                <TopBar backLink={'/'} />
 
                 <div class={s.filler} onClick={this.props.onClose} />
 

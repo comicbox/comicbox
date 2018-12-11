@@ -25,7 +25,9 @@ class ModalSurface extends Component<SurfaceProps & JSX.HTMLAttributes> {
     @autobind
     private formSubmit(e: Event) {
         e.preventDefault()
-        this.props.formSubmit(e)
+        if (this.props.formSubmit) {
+            this.props.formSubmit(e)
+        }
     }
 }
 

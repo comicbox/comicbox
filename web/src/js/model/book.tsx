@@ -87,7 +87,7 @@ export default class Book extends Model {
     public updated_at: Date
 
     @prop('Int')
-    public volume: number
+    public volume: number | null
 
     @prop('String')
     public web: string
