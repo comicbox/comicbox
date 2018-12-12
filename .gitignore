@@ -10,3 +10,4 @@ web/dist/*
 web/data/bindata.go
 
 **/node_modules/*
+web/res/icons/icon.png
