@@ -15,8 +15,7 @@ RUN cd web && npm install && cd ..
 # Download go dependencies and compile
 # TODO: Figure out a way to cache the go dependencies like we do the JS ones to speed up build
 COPY . .
-RUN make npm \
-    && make get \
+RUN make get \
     && make \
     && echo 'dir: /mnt/comics' > config.yml 
 
