@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -18,12 +19,13 @@ type bookArgs struct {
 	ID string
 }
 
-func (q *query) Book(args bookArgs) (*BookResolver, error) {
+func (q *query) Book(ctx context.Context, args bookArgs) (*BookResolver, error) {
+	c := q.Ctx(ctx)
 	book := model.BookUserBook{}
 	sqll, opts, err := squirrel.Select("*").
 		From("book_user_book").
 		Where(squirrel.Eq{"id": args.ID}).
-		Where(squirrel.Eq{"user_id": q.user.ID}).
+		Where(squirrel.Eq{"user_id": c.User.ID}).
 		ToSql()
 	if err != nil {
 		return nil, err
@@ -70,7 +72,8 @@ type booksArgs struct {
 	Volume          *scalar.NumberRange `db:"volume"`
 }
 
-func (q *query) Books(args booksArgs) (*BookQueryResolver, error) {
+func (q *query) Books(ctx context.Context, args booksArgs) (*BookQueryResolver, error) {
+	c := q.Ctx(ctx)
 	skip := int32(0)
 	if args.Skip != nil {
 		skip = *args.Skip
@@ -82,7 +85,7 @@ func (q *query) Books(args booksArgs) (*BookQueryResolver, error) {
 
 	query := squirrel.Select().
 		From("book_user_book").
-		Where(squirrel.Eq{"user_id": q.user.ID})
+		Where(squirrel.Eq{"user_id": c.User.ID})
 
 	query = query.
 		OrderBy("series").

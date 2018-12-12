@@ -1,11 +1,12 @@
 package schema
 
 import (
+	"context"
 	"net/http"
 	"path/filepath"
 	"time"
 
-	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/zwzn/comicbox/comicboxd/app"
 
 	"github.com/zwzn/comicbox/comicboxd/data"
 	"github.com/zwzn/comicbox/comicboxd/errors"
@@ -16,9 +17,7 @@ import (
 
 type DateTime time.Time
 
-type query struct {
-	user model.User
-}
+type query struct{}
 
 func Handler() http.Handler {
 	dir := "comicboxd/app/schema/gql"
@@ -30,5 +29,22 @@ func Handler() http.Handler {
 	}
 	schema := graphql.MustParseSchema(s, &query{})
 
-	return &relay.Handler{Schema: schema}
+	return addUser(&relay.Handler{Schema: schema})
+}
+
+func addUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c := app.Ctx(r)
+		ctx := context.WithValue(r.Context(), "appctx", c)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (*query) Ctx(ctx context.Context) *app.Context {
+	cI := ctx.Value("appctx")
+	c, ok := cI.(*app.Context)
+	if !ok {
+		return &app.Context{}
+	}
+	return c
 }

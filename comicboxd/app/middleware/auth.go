@@ -49,7 +49,6 @@ func Auth(next http.Handler) http.Handler {
 				Username: "guest",
 			}
 		}
-
 		next.ServeHTTP(w, r)
 	})
 }

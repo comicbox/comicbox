@@ -60,7 +60,7 @@ type RootQuery {
         volume: NumberRange
     ): BookQuery
 
-    # me: User
+    me: User
     serie(name: String!): Series
     series(
         skip: Int

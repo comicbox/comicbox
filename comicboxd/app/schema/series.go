@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -16,13 +17,14 @@ type serieArgs struct {
 	Name string
 }
 
-func (q *query) Serie(args serieArgs) (*SeriesResolver, error) {
+func (q *query) Serie(ctx context.Context, args serieArgs) (*SeriesResolver, error) {
+	c := q.Ctx(ctx)
 	serie := model.Series{}
 	sqll, opts, err := squirrel.
 		Select("*").
 		From("series").
 		Where(squirrel.Eq{"name": args.Name}).
-		Where(squirrel.Eq{"user_id": q.user.ID}).
+		Where(squirrel.Eq{"user_id": c.User.ID}).
 		ToSql()
 	if err != nil {
 		return nil, err
@@ -52,7 +54,8 @@ type seriesArgs struct {
 	Read  *scalar.NumberRange `db:"read"`
 }
 
-func (q *query) Series(args seriesArgs) (*SeriesQueryResolver, error) {
+func (q *query) Series(ctx context.Context, args seriesArgs) (*SeriesQueryResolver, error) {
+	c := q.Ctx(ctx)
 	skip := int32(0)
 	if args.Skip != nil {
 		skip = *args.Skip
@@ -64,7 +67,7 @@ func (q *query) Series(args seriesArgs) (*SeriesQueryResolver, error) {
 
 	query := squirrel.Select().
 		From("series").
-		Where(squirrel.Eq{"user_id": q.user.ID})
+		Where(squirrel.Eq{"user_id": c.User.ID})
 
 	query = scalar.Query(query, args)
 
@@ -79,10 +82,10 @@ type SeriesResolver struct {
 	s model.Series
 }
 
-func (r SeriesResolver) Books(args booksArgs) (*BookQueryResolver, error) {
+func (r SeriesResolver) Books(ctx context.Context, args booksArgs) (*BookQueryResolver, error) {
 	name := scalar.Regex("^" + r.s.Name + "$")
 	args.Series = &name
-	return (&query{}).Books(args)
+	return (&query{}).Books(ctx, args)
 }
 
 func (r SeriesResolver) List() *string {

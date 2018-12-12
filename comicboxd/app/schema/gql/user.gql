@@ -1,13 +1,13 @@
 
 type User {
     # the date a book was created
-    created_at: Time
+    created_at: Time!
 
     # a unique id for the books
-    id: ID
-    name: String
-    updated_at: Time
-    username: String
+    id: ID!
+    name: String!
+    updated_at: Time!
+    username: String!
 }
 
 input UserInput {
@@ -17,6 +17,6 @@ input UserInput {
 }
 
 type UserQuery {
-    page_info: page_info
-    results: [User]
+    total: Int!
+    results: [User!]!
 }
