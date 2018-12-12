@@ -9,3 +9,4 @@ comicboxd/.cache/*
 web/dist/*
 
 **/node_modules/*
+web/res/icons/icon.png
