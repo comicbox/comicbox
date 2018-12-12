@@ -8,7 +8,9 @@ const webpack = require("webpack");
 const WebpackOnBuildPlugin = require('on-build-webpack');
 const WebpackPwaManifest = require('webpack-pwa-manifest')
 const { ncp } = require('ncp');
-const child = require('child_process');
+
+const fs = require("fs");
+const svg2png = require("svg2png");
 
 ncp.limit = 16;
 
@@ -157,7 +159,16 @@ module.exports = (env, argv) => {
                 fingerprints: !devMode,
                 icons: [
                     {
-                        src: path.resolve(paths.RES, 'icons/icon.png'),
+                        src: (()=>{
+                            const svgPath = path.join(paths.RES, 'icons/icon.svg')
+                            const pngPath = path.resolve(paths.RES, 'icons/icon.png')
+
+                            let svg = fs.readFileSync(svgPath)
+                            let png = svg2png.sync(svg, { height: 1024 })
+                            fs.writeFileSync(pngPath, png)
+
+                            return pngPath
+                        })(),
                         sizes: [96, 128, 192, 256, 384, 512]
                     }
                 ],
