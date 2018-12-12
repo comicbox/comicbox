@@ -15,9 +15,13 @@ import (
 	"github.com/graph-gophers/graphql-go/relay"
 )
 
+type ctxKey string
+
 type DateTime time.Time
 
 type query struct{}
+
+var appCtx = ctxKey("appCtx")
 
 func Handler() http.Handler {
 	dir := "comicboxd/app/schema/gql"
@@ -35,13 +39,13 @@ func Handler() http.Handler {
 func addUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c := app.Ctx(r)
-		ctx := context.WithValue(r.Context(), "appctx", c)
+		ctx := context.WithValue(r.Context(), appCtx, c)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func (*query) Ctx(ctx context.Context) *app.Context {
-	cI := ctx.Value("appctx")
+	cI := ctx.Value(appCtx)
 	c, ok := cI.(*app.Context)
 	if !ok {
 		return &app.Context{}

@@ -1,6 +1,6 @@
 schema {
     query: RootQuery
-    # mutation: RootMutation
+    mutation: RootMutation
 }
 
 # The `Time` scalar type represents a DateTime. The DateTime is serialized as an RFC 3339 quoted string
@@ -18,12 +18,12 @@ type page_info {
     total: Int
 }
 
-# type RootMutation {
-#     book(id: ID, book: BookInput!): Book
+type RootMutation {
+    book(id: ID!, book: BookInput!): Book!
 #     deleteBook(id: ID!): Book
 #     series(name: String!, series: SeriesInput!): Series
 #     user(id: ID, user: UserInput!): User
-# }
+}
 
 type RootQuery {
     book(id: ID!): Book
@@ -78,15 +78,15 @@ type RootQuery {
         read: NumberRange
     ): SeriesQuery
     # users(
-    #     sort: String
-    #     name: String
-    #     username: String
-    #     password: String
     #     skip: Int
+    #     take: Int!
     #     id: ID
+    #     sort: String
     #     created_at: String
     #     updated_at: String
-    #     search: String
-    #     take: Int!
-    #     me: Boolean): UserQuery
+    #     me: Boolean
+    #     name: Regex
+    #     username: Regex
+    #     search: Regex
+    # ): UserQuery
 }
