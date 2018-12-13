@@ -16,7 +16,7 @@ import (
 )
 
 type bookArgs struct {
-	ID string
+	ID graphql.ID
 }
 
 func (q *query) Book(ctx context.Context, args bookArgs) (*BookResolver, error) {

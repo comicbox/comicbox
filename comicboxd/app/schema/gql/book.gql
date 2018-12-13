@@ -38,16 +38,16 @@ input BookInput {
     alternate_series: String
     reading_direction: String
     file: String
-    authors: [String]
+    authors: [String!]
     story_arc: String
     last_page_read: Int
     volume: Int
     community_rating: Float
     type: String
     web: String
-    genres: [String]
+    genres: [String!]
     title: String
-    pages: [PageInput]
+    pages: [PageInput!]
 }
 
 type BookQuery {
