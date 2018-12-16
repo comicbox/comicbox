@@ -62,9 +62,8 @@ type Page {
 }
 
 input PageInput {
-    url: String
-    file_number: Int
-    type: PageType
+    file_number: Int!
+    type: PageType!
 }
 
 enum PageType {

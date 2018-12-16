@@ -13,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/jmoiron/sqlx"
+
 	"github.com/zwzn/comicbox/comicboxd/app/controller"
 	"github.com/zwzn/comicbox/comicboxd/app/schema/comicrack"
 
@@ -21,8 +23,6 @@ import (
 
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"
-
-	"github.com/zwzn/comicbox/comicboxd/app/model"
 )
 
 type bookInput struct {
@@ -56,9 +56,8 @@ type bookUserBookInput struct {
 }
 
 type pageInput struct {
-	URL        *string
-	FileNumber *int32
-	Type       *string
+	FileNumber int32  `json:"file_number"`
+	Type       string `json:"type"`
 }
 
 type newBookArgs struct {
@@ -66,35 +65,41 @@ type newBookArgs struct {
 }
 
 func (q *query) NewBook(ctx context.Context, args newBookArgs) (*BookResolver, error) {
-	// c := q.Ctx(ctx)\
-	newID := uuid.New().String()
+	c := q.Ctx(ctx)
+	newID := graphql.ID(uuid.New().String())
 
-	book := toStruct(args.Book.bookInput)
-	book, err := loadNewBookData(book)
+	book, err := loadNewBookData(args.Book)
 	if err != nil {
 		return nil, fmt.Errorf("NewBook loadNewBookData: %v", err)
 	}
-	book["id"] = newID
 
-	pages, ok := book["pages"].([]interface{})
-	if !ok {
-		return nil, fmt.Errorf("no pages")
-	}
-	book["page_count"] = len(pages)
-	book, err = makeJSON(book)
-	if err != nil {
-		return nil, fmt.Errorf("NewBook makeJSON: %v", err)
+	if book.File == nil {
+		return nil, fmt.Errorf("a file must be included")
 	}
 
-	query := insert(book, squirrel.Insert("book"))
-	qSQL, qArgs, err := query.ToSql()
+	err = database.Tx(ctx, func(tx *sqlx.Tx) error {
+		_, err := squirrel.
+			Insert("book").
+			Columns("id", "file", "pages", "page_count").
+			Values(newID, book.File, "{}", 0).
+			RunWith(tx).Exec()
+		if err != nil {
+			return err
+		}
+
+		err = updateBook(tx, newID, book.bookInput)
+		if err != nil {
+			return err
+		}
+
+		err = updateUserBook(tx, newID, graphql.ID(c.User.ID.String()), book.userBookInput)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
-	}
-	// fmt.Printf("%#v\n", qArgs)
-	_, err = database.Exec(qSQL, qArgs...)
-	if err != nil {
-		return nil, fmt.Errorf("NewBook exec: %v", err)
 	}
 
 	return q.Book(ctx, bookArgs{ID: graphql.ID(newID)})
@@ -107,112 +112,124 @@ type updateBookArgs struct {
 
 func (q *query) UpdateBook(ctx context.Context, args updateBookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
-	updateBook(args.ID, args.Book.bookInput)
-	updateUserBook(args.ID, graphql.ID(c.User.ID.String()), args.Book.userBookInput)
+	err := database.Tx(ctx, func(tx *sqlx.Tx) error {
+		err := updateBook(tx, args.ID, args.Book.bookInput)
+		if err != nil {
+			return err
+		}
+		err = updateUserBook(tx, args.ID, graphql.ID(c.User.ID.String()), args.Book.userBookInput)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
 	return q.Book(ctx, bookArgs{ID: args.ID})
 }
 
-func updateBook(id graphql.ID, book bookInput) error {
+func updateBook(tx *sqlx.Tx, id graphql.ID, book bookInput) error {
 	m := toStruct(book)
-	query := squirrel.Update("book").Where(squirrel.Eq{"id": id})
-	query = update(m, query)
-	qSQL, qArgs, err := query.ToSql()
+	if len(m) == 0 {
+		return nil
+	}
+	m, err := makeJSON(m)
 	if err != nil {
 		return err
 	}
 
-	_, err = database.Exec(qSQL, qArgs...)
+	if book.Pages != nil {
+		m["page_count"] = len(*book.Pages)
+	}
+
+	query := squirrel.Update("book").Where(squirrel.Eq{"id": id})
+	query = update(m, query)
+	_, err = query.RunWith(tx).Exec()
 	if err != nil {
 		return fmt.Errorf("updateBook exec: %v", err)
 	}
+
 	return nil
 }
 
-func updateUserBook(bookID, userID graphql.ID, book userBookInput) error {
+func updateUserBook(tx *sqlx.Tx, bookID, userID graphql.ID, book userBookInput) error {
 	m := toStruct(book)
+	if len(m) == 0 {
+		return nil
+	}
+	m, err := makeJSON(m)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec("INSERT OR IGNORE INTO user_book (book_id, user_id) VALUES (?, ?)", bookID, userID)
+	if err != nil {
+		return fmt.Errorf("updateBook exec: %v", err)
+	}
 	query := squirrel.Update("user_book").
 		Where(squirrel.Eq{"book_id": bookID}).
 		Where(squirrel.Eq{"user_id": userID})
 	query = update(m, query)
-	qSQL, qArgs, err := query.ToSql()
-	if err != nil {
-		return err
-	}
-
-	_, err = database.Exec(qSQL, qArgs...)
+	_, err = query.RunWith(tx).Exec()
 	if err != nil {
 		return fmt.Errorf("updateUserBook exec: %v", err)
 	}
 	return nil
 }
 
-func loadNewBookData(bookMap map[string]interface{}) (map[string]interface{}, error) {
-	iFile, ok := bookMap["file"]
-	if !ok {
-		return nil, fmt.Errorf("you must have a file in new books")
+func loadNewBookData(book bookUserBookInput) (bookUserBookInput, error) {
+	if book.File == nil {
+		return bookUserBookInput{}, fmt.Errorf("you must have a file in new books")
 	}
-	file := iFile.(string)
-
-	newBookMap := map[string]interface{}{}
-
+	file := *book.File
 	imgs, err := controller.ZippedImages(file)
 	if err != nil {
-		return nil, err
+		return bookUserBookInput{}, err
 	}
 
-	if _, ok := newBookMap["pages"]; !ok {
-		numPages := len(imgs)
-		tmpPages := make([]interface{}, numPages)
-		for i := 0; i < numPages; i++ {
+	if book.Pages == nil {
+		numPages := int32(len(imgs))
+		tmpPages := make([]pageInput, numPages)
+		for i := int32(0); i < numPages; i++ {
 			typ := controller.Story
 			if i == 0 {
 				typ = controller.Cover
 			}
-			tmpPages[i] = &model.Page{
-				FileNumber: int32(i),
+			tmpPages[i] = pageInput{
+				FileNumber: i,
 				Type:       typ,
 			}
 		}
-		newBookMap["pages"] = tmpPages
+		book.Pages = &tmpPages
 	}
 
 	reader, err := zip.OpenReader(file)
 	if err != nil {
-		return nil, err
+		return bookUserBookInput{}, err
 	}
 
-	fNameBookMap, err := parseFileName(file)
+	err = parseFileName(&book)
 	if err != nil {
-		return nil, err
+		return bookUserBookInput{}, err
 	}
-	for key, val := range fNameBookMap {
-		newBookMap[key] = val
-	}
+
 	for _, f := range reader.File {
 		name := f.FileInfo().Name()
 		if name == "book.json" {
-			ciBookMap, err := parseBookJSON(f)
+			err = parseBookJSON(&book, f)
 			if err != nil {
-				return nil, err
-			}
-			for key, val := range ciBookMap {
-				newBookMap[key] = val
+				return bookUserBookInput{}, err
 			}
 		} else if name == "ComicInfo.xml" {
-			ciBookMap, err := parseComicInfoXML(f)
+			err = parseComicInfoXML(&book, f)
 			if err != nil {
-				return nil, err
-			}
-			for key, val := range ciBookMap {
-				newBookMap[key] = val
+				return bookUserBookInput{}, err
 			}
 		}
 	}
-	for key, val := range bookMap {
-		newBookMap[key] = val
-	}
 
-	return newBookMap, nil
+	return book, nil
 }
 
 func fileBytes(f *zip.File) ([]byte, error) {
@@ -229,13 +246,14 @@ func fileBytes(f *zip.File) ([]byte, error) {
 	return b, nil
 }
 
-func parseFileName(path string) (map[string]interface{}, error) {
-	bookMap := map[string]interface{}{}
+func parseFileName(book *bookUserBookInput) error {
+	path := *book.File
+
 	extension := filepath.Ext(path)
 	name := filepath.Base(path[:len(path)-len(extension)])
 	dir := filepath.Base(filepath.Dir(path))
 
-	bookMap["series"] = dir
+	book.Series = &dir
 
 	if strings.HasPrefix(name, dir) {
 		name = name[len(dir):]
@@ -249,46 +267,50 @@ func parseFileName(path string) (map[string]interface{}, error) {
 	chapter, err := strconv.ParseFloat(matches[4], 64)
 	if err == nil {
 		hasInfo = true
-		bookMap["chapter"] = chapter
+		book.Chapter = &chapter
 	}
-	volume, err := strconv.ParseFloat(matches[1], 64)
+	volume64, err := strconv.ParseInt(matches[1], 10, 64)
 	if err == nil {
+		volume := int32(volume64)
 		hasInfo = true
-		bookMap["volume"] = volume
+		book.Volume = &volume
 	}
 	if matches[7] != "" {
 		hasInfo = true
-		bookMap["title"] = matches[7]
+		book.Title = &matches[7]
 	}
 
 	if !hasInfo {
-		bookMap["title"] = name
+		book.Title = &name
 	}
 
-	return bookMap, nil
+	return nil
 }
 
-func parseBookJSON(f *zip.File) (map[string]interface{}, error) {
+func parseBookJSON(bookInput *bookUserBookInput, f *zip.File) error {
 	book := struct {
-		model.Book
+		*bookUserBookInput
 		Author string  `json:"author"`
 		Number float64 `json:"number"`
 	}{}
+
+	book.bookUserBookInput = bookInput
 	b, err := fileBytes(f)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = json.Unmarshal(b, &book)
 	if err != nil {
-		return nil, fmt.Errorf("parsing book.json: %v", err)
+		return fmt.Errorf("parsing book.json: %v", err)
 	}
 
 	if book.Author != "" {
 		if book.Authors == nil {
-			book.Authors = []string{}
+			book.Authors = &[]string{}
 		}
-		book.Authors = append(book.Authors, book.Author)
+		authors := append(*book.Authors, book.Author)
+		book.Authors = &authors
 	}
 	// if author, ok := book["author"]; ok {
 	// 	book["authors"] = []interface{}{author}
@@ -300,32 +322,21 @@ func parseBookJSON(f *zip.File) (map[string]interface{}, error) {
 	// 	bookMap["chapter"] = number
 	// }
 
-	if len(book.Pages) > 0 {
+	if len(*book.Pages) > 0 {
 		allZero := true
-		for _, page := range book.Pages {
+		for _, page := range *book.Pages {
 			if page.FileNumber != 0 {
 				allZero = false
 			}
 		}
 		if allZero {
-			for i := range book.Pages {
-				book.Pages[i].FileNumber = int32(i)
+			for i := range *book.Pages {
+				(*book.Pages)[i].FileNumber = int32(i)
 			}
 		}
-	} else {
-		book.Pages = nil
 	}
-	bookMap := toMap(book)
 
-	delete(bookMap, "author")
-	delete(bookMap, "number")
-
-	for key, value := range bookMap {
-		if IsZero(value) {
-			delete(bookMap, key)
-		}
-	}
-	return bookMap, nil
+	return nil
 }
 
 func toMap(in interface{}) map[string]interface{} {
@@ -350,42 +361,35 @@ func IsZero(v interface{}) bool {
 	return v == reflect.Zero(t).Interface()
 }
 
-func parseComicInfoXML(f *zip.File) (map[string]interface{}, error) {
-	bookMap := map[string]interface{}{}
+func parseComicInfoXML(book *bookUserBookInput, f *zip.File) error {
 	b, err := fileBytes(f)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	crBook := comicrack.Book{}
 	err = xml.Unmarshal(b, &crBook)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	if crBook.Number != 0 {
-		bookMap["chapter"] = crBook.Number
+
+	book.Chapter = crBook.Number
+	book.Volume = crBook.Volume
+	book.Series = crBook.Series
+	book.Summary = crBook.Summary
+	book.Title = crBook.Title
+
+	if crBook.Writer != nil {
+		authors := strings.Split(*crBook.Writer, ", ")
+		book.Authors = &authors
 	}
-	if crBook.Volume != 0 {
-		bookMap["volume"] = crBook.Volume
-	}
-	if crBook.Series != "" {
-		bookMap["series"] = crBook.Series
-	}
-	if crBook.Writer != "" {
-		bookMap["authors"] = strings.Split(crBook.Writer, ", ")
-	}
-	if crBook.Genres != "" {
-		bookMap["genres"] = strings.Split(crBook.Genres, ", ")
-	}
-	if crBook.Summary != "" {
-		bookMap["summary"] = crBook.Summary
-	}
-	if crBook.Title != "" {
-		bookMap["title"] = crBook.Title
+	if crBook.Genres != nil {
+		genres := strings.Split(*crBook.Genres, ", ")
+		book.Genres = &genres
 	}
 
 	if numPages := len(crBook.Pages); numPages != 0 {
-		tmpPages := make([]interface{}, numPages)
+		tmpPages := make([]pageInput, numPages)
 		for i := 0; i < numPages; i++ {
 			var typ string
 			switch crBook.Pages[i].Type {
@@ -398,22 +402,15 @@ func parseComicInfoXML(f *zip.File) (map[string]interface{}, error) {
 			default:
 				typ = controller.Story
 			}
-			img := i
+			img := int32(i)
 			if crBook.Pages[i].Image != nil {
 				img = *crBook.Pages[i].Image
 			}
-			tmpPages[i] = &model.Page{
-				FileNumber: int32(img),
-				Type:       typ,
-			}
+			tmpPages[i].FileNumber = img
+			tmpPages[i].Type = typ
 		}
-		bookMap["pages"] = tmpPages
-	}
-	for key, value := range bookMap {
-		if IsZero(value) {
-			delete(bookMap, key)
-		}
+		book.Pages = &tmpPages
 	}
 
-	return bookMap, nil
+	return nil
 }

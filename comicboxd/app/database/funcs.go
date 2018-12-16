@@ -16,6 +16,23 @@ func debugTime(sTime time.Time, query string) {
 	fmt.Printf("query took %v: %s\n", time.Now().Sub(sTime), query)
 }
 
+func Tx(ctx context.Context, cb func(*sqlx.Tx) error) error {
+	tx, err := BeginTxx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	err = cb(tx)
+	if err != nil {
+		return err
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // sqlx functions
 
 func BeginTxx(ctx context.Context, opts *sql.TxOptions) (*sqlx.Tx, error) {

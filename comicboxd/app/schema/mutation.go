@@ -8,19 +8,6 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-func insert(m map[string]interface{}, query squirrel.InsertBuilder) squirrel.InsertBuilder {
-	cols := []string{}
-	vals := []interface{}{}
-	for col, val := range m {
-		cols = append(cols, col)
-		vals = append(vals, val)
-	}
-	query = query.Columns(cols...)
-	query = query.Values(vals...)
-
-	return query
-}
-
 func update(m map[string]interface{}, query squirrel.UpdateBuilder) squirrel.UpdateBuilder {
 	for col, val := range m {
 		query = query.Set(col, val)
