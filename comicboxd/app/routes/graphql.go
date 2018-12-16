@@ -11,7 +11,6 @@ import (
 	"github.com/zwzn/comicbox/comicboxd/app/controller"
 	"github.com/zwzn/comicbox/comicboxd/app/gql"
 	"github.com/zwzn/comicbox/comicboxd/app/middleware"
-	"github.com/zwzn/comicbox/comicboxd/app/schema"
 	"github.com/zwzn/comicbox/comicboxd/errors"
 )
 
@@ -53,7 +52,6 @@ func GraphQL(r *mux.Router) {
 	gql.GQLHandler = h
 
 	r.Handle("/graphql", middleware.Auth(h))
-	r.Handle("/graphql-new", middleware.Auth(schema.Handler()))
 }
 
 func mergeFields(fieldss ...graphql.Fields) graphql.Fields {
