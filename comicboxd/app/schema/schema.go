@@ -2,7 +2,9 @@ package schema
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -31,7 +33,11 @@ func Handler() http.Handler {
 	for _, file := range files {
 		s += string(data.MustAsset(filepath.Join(dir, file))) + "\n"
 	}
-	schema := graphql.MustParseSchema(s, &query{})
+	schema, err := graphql.ParseSchema(s, &query{})
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		os.Exit(1)
+	}
 
 	return addUser(&relay.Handler{Schema: schema})
 }

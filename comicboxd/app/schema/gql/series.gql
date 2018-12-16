@@ -41,7 +41,7 @@ type Series {
 
 input SeriesInput {
     list: List
-    tags: [String]
+    tags: [String!]
 }
 
 type SeriesQuery {
