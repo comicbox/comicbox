@@ -1,3 +1,4 @@
+import { gql } from 'js/graphql'
 import { Model, prop, table } from 'js/model/model'
 
 @table('users', 'user', 'UserInput!')
@@ -8,7 +9,11 @@ export default class User extends Model {
     }
 
     public static async me(): Promise<User> {
-        return await User.where('me', true).first()
+        return await gql(`me {
+            id
+            name
+            username
+        }`)
     }
 
     @prop('String')

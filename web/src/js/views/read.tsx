@@ -130,7 +130,7 @@ export default class Read extends Page<Props, State> {
     @autobind
     private async loadBookState(id: string) {
         const book = await Book
-            .where('id', '=', id)
+            .where('id', id)
             .first()
 
         this.initBook(book)
@@ -237,10 +237,10 @@ export default class Read extends Page<Props, State> {
         }
         let query = Book.where('series', bk.series)
         if (bk.volume) {
-            query = query.where('volume', '>', bk.volume)
+            query = query.where('volume', `(${bk.volume}:]`)
         }
         if (bk.chapter) {
-            query = query.where('chapter', '>', bk.chapter)
+            query = query.where('chapter', `(${bk.chapter}:]`)
         }
         const book = await query.first()
 

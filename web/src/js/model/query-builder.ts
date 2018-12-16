@@ -7,7 +7,6 @@ export type Operator = '=' | '>' | '<' | '!=' | '~='
 
 interface Where {
     field: string
-    operator: Operator
     value: string | number | boolean
     type: Type
 }
@@ -56,27 +55,14 @@ export class QueryBuilder<T extends Model> {
         return qb
     }
 
-    public where(field: string, value: string | number | boolean): QueryBuilder<T>
-    public where(field: string, operator: Operator, value?: string | number | boolean): QueryBuilder<T>
-    public where(field: string, operator: Operator, value?: string | number | boolean): QueryBuilder<T> {
-        let where: Where
-        if (value === undefined) {
-            where = {
-                field: field,
-                operator: '=',
-                value: operator,
-                type: this.TClass.types[field] || this.TClass.searchTypes[field],
-            }
-        } else {
-            where = {
-                field: field,
-                operator: operator,
-                value: value,
-                type: this.TClass.types[field] || this.TClass.searchTypes[field],
-            }
+    public where(field: string, value: string | number | boolean): QueryBuilder<T> {
+        const where: Where = {
+            field: field,
+            value: value,
+            type: this.TClass.types[field] || this.TClass.searchTypes[field],
         }
+
         if (field === 'search') {
-            where.operator = '='
             where.type = { type: 'String', jsType: undefined }
         }
         this.wheres.push(where)
@@ -116,28 +102,17 @@ export class QueryBuilder<T extends Model> {
 
         for (const where of this.wheres) {
             const field = where.field
-            if (where.type.type === 'String') {
-                types[field] = 'Regex'
-                switch (where.operator) {
-                    case '=':
-                        variables[field] = '^' + where.value + '$'
-                        break
-                    case '!=':
-                        variables[field] = '.+'
-                        break
-                    // case '>':
-                    //     break
-                    // case '<':
-                    //     break
-                    case '~=':
-                        variables[field] = where.value
-                        break
-                    default:
-                        variables[field] = where.value
-                }
-            } else {
-                types[field] = where.type.type
-                variables[field] = where.value
+            variables[field] = where.value
+            switch (where.type.type) {
+                case 'String':
+                    types[field] = 'Regex'
+                    break
+                case 'Int':
+                case 'Float':
+                    types[field] = 'NumberRange'
+                    break
+                default:
+                    types[field] = where.type.type
             }
 
         }
