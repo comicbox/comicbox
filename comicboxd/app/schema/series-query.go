@@ -83,8 +83,7 @@ type SeriesResolver struct {
 }
 
 func (r SeriesResolver) Books(ctx context.Context, args booksArgs) (*BookQueryResolver, error) {
-	name := scalar.Regex("^" + r.s.Name + "$")
-	args.Series = &name
+	args.fastSeries = &r.s.Name
 	return (&query{}).Books(ctx, args)
 }
 

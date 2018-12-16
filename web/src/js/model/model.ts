@@ -1,5 +1,5 @@
 import { gql } from 'js/graphql'
-import { QueryBuilder } from 'js/model/query-builder'
+import { QueryBuilder, Operator } from 'js/model/query-builder'
 
 export interface Type {
     type: string
@@ -30,12 +30,12 @@ export abstract class Model {
     public static where<T extends Model>(
         this: StaticModel<T>,
         field: string,
-        operator: string,
+        operator: Operator,
         value?: string | number | boolean): QueryBuilder<T>
     public static where<T extends Model>(
         this: StaticModel<T>,
         field: string,
-        operator: string,
+        operator: Operator,
         value?: string | number | boolean): QueryBuilder<T> {
 
         return (new QueryBuilder<T>(this)).where(field, operator, value)

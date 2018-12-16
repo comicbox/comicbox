@@ -65,8 +65,8 @@ export default class Book extends Model {
     @prop('Boolean')
     public read: boolean
 
-    @prop('String')
-    public reading_direction: string
+    // @prop('String')
+    // public reading_direction: string
 
     @prop('String')
     public series: string
@@ -80,8 +80,8 @@ export default class Book extends Model {
     @prop('String')
     public title: string
 
-    @prop('String')
-    public type: string
+    // @prop('String')
+    // public type: string
 
     @prop('DateTime')
     public updated_at: Date
@@ -171,11 +171,11 @@ export default class Book extends Model {
             }
         }
 
-        const typeChange = (e: Event) => {
-            if (e.target instanceof HTMLInputElement) {
-                this.type = e.target.value
-            }
-        }
+        // const typeChange = (e: Event) => {
+        //     if (e.target instanceof HTMLInputElement) {
+        //         this.type = e.target.value
+        //     }
+        // }
 
         const volumeChange = (e: Event) => {
             if (e.target instanceof HTMLInputElement) {
@@ -266,12 +266,12 @@ export default class Book extends Model {
                     value={this.title}
                     onChange={titleChange}
                 />
-                <TextField
+                {/* <TextField
                     class={editS.element}
                     label='Type'
                     value={this.type}
                     onChange={typeChange}
-                />
+                /> */}
                 <TextField
                     class={editS.element}
                     label='Volume'

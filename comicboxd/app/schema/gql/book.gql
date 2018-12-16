@@ -36,7 +36,7 @@ input BookInput {
     date_released: Time
     rating: Float
     alternate_series: String
-    reading_direction: String
+    # reading_direction: String
     file: String
     authors: [String!]
     story_arc: String

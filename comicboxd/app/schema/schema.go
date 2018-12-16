@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/zwzn/comicbox/comicboxd/app"
+	"github.com/zwzn/comicbox/comicboxd/app/gql"
 
 	"github.com/zwzn/comicbox/comicboxd/data"
 	"github.com/zwzn/comicbox/comicboxd/errors"
@@ -39,7 +40,9 @@ func Handler() http.Handler {
 		os.Exit(1)
 	}
 
-	return addUser(&relay.Handler{Schema: schema})
+	h := addUser(&relay.Handler{Schema: schema})
+	gql.GQLHandler = h
+	return h
 }
 
 func addUser(next http.Handler) http.Handler {

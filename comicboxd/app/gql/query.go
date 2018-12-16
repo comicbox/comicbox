@@ -7,12 +7,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/zwzn/comicbox/comicboxd/app"
 	"github.com/graphql-go/graphql"
-	"github.com/graphql-go/handler"
+	"github.com/zwzn/comicbox/comicboxd/app"
 )
 
-var GQLHandler *handler.Handler
+var GQLHandler http.Handler
 
 type CloserBuffer struct {
 	*bytes.Buffer

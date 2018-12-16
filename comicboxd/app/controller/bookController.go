@@ -20,12 +20,12 @@ import (
 	"github.com/zwzn/comicbox/comicboxd/j"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/nfnt/resize"
 	"github.com/zwzn/comicbox/comicboxd/app"
 	"github.com/zwzn/comicbox/comicboxd/app/database"
 	"github.com/zwzn/comicbox/comicboxd/app/gql"
 	"github.com/zwzn/comicbox/comicboxd/app/model"
 	"github.com/zwzn/comicbox/comicboxd/errors"
-	"github.com/nfnt/resize"
 )
 
 type book struct{}

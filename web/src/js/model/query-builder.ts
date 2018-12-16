@@ -3,9 +3,11 @@ import { Model, ModelArray, StaticModel, Type } from 'js/model/model'
 import { str_random } from 'js/util'
 import map from 'lodash/map'
 
+export type Operator = '=' | '>' | '<' | '!=' | '~='
+
 interface Where {
     field: string
-    operator: string
+    operator: Operator
     value: string | number | boolean
     type: Type
 }
@@ -55,8 +57,8 @@ export class QueryBuilder<T extends Model> {
     }
 
     public where(field: string, value: string | number | boolean): QueryBuilder<T>
-    public where(field: string, operator: string, value?: string | number | boolean): QueryBuilder<T>
-    public where(field: string, operator: string, value?: string | number | boolean): QueryBuilder<T> {
+    public where(field: string, operator: Operator, value?: string | number | boolean): QueryBuilder<T>
+    public where(field: string, operator: Operator, value?: string | number | boolean): QueryBuilder<T> {
         let where: Where
         if (value === undefined) {
             where = {
@@ -113,9 +115,31 @@ export class QueryBuilder<T extends Model> {
         let selects: string[] = []
 
         for (const where of this.wheres) {
-            const field = where.field + opConv[where.operator]
-            types[field] = where.type.type
-            variables[field] = where.value
+            const field = where.field
+            if (where.type.type === 'String') {
+                types[field] = 'Regex'
+                switch (where.operator) {
+                    case '=':
+                        variables[field] = '^' + where.value + '$'
+                        break
+                    case '!=':
+                        variables[field] = '.+'
+                        break
+                    // case '>':
+                    //     break
+                    // case '<':
+                    //     break
+                    case '~=':
+                        variables[field] = where.value
+                        break
+                    default:
+                        variables[field] = where.value
+                }
+            } else {
+                types[field] = where.type.type
+                variables[field] = where.value
+            }
+
         }
 
         if (this._sort.length > 0) {
@@ -167,11 +191,7 @@ export class QueryBuilder<T extends Model> {
 
         const vars = map(types, (_, key) => `${key.replace(prefix + '_', '')}: $${key}`).join(', ')
         const query = `${this.TClass.table} (${vars}) {
-            page_info {
-                total
-                skip
-                take
-            }
+            total
             results {
                 ${selects.concat(withSelects).join('\n                ')}
             }
@@ -245,6 +265,10 @@ export class QueryBuilder<T extends Model> {
             elements.push(new jsType(element, true))
         }
 
-        return new ModelArray(elements, data.page_info)
+        return new ModelArray(elements, {
+            total: data.total,
+            skip: this._skip,
+            take: this._take,
+        })
     }
 }

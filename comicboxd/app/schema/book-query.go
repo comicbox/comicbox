@@ -70,6 +70,8 @@ type booksArgs struct {
 	Chapter         *scalar.NumberRange `db:"chapter"`
 	Rating          *scalar.NumberRange `db:"rating"`
 	Volume          *scalar.NumberRange `db:"volume"`
+
+	fastSeries *string
 }
 
 func (q *query) Books(ctx context.Context, args booksArgs) (*BookQueryResolver, error) {
@@ -95,6 +97,9 @@ func (q *query) Books(ctx context.Context, args booksArgs) (*BookQueryResolver, 
 
 	query = scalar.Query(query, args)
 
+	if args.fastSeries != nil {
+		query = query.Where("series = ?", args.fastSeries)
+	}
 	return &BookQueryResolver{
 		query: query,
 		skip:  skip,
