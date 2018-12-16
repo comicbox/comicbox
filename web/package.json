@@ -7,12 +7,9 @@
     "scripts": {
         "build": "webpack --progress --display=minimal --mode=development",
         "build-prod": "webpack --progress --mode=production",
-
         "watch": "webpack --watch --progress --display=minimal --mode=development",
         "watch-prod": "webpack --watch --progress --mode=production",
-
         "stats": "webpack --mode=production --profile --json > stats.json && webpack-bundle-analyzer stats.json",
-        
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Adam Bibby",
@@ -64,6 +61,7 @@
         "postcss-loader": "^3.0.0",
         "sass-loader": "^7.1.0",
         "sass-resources-loader": "^2.0.0",
+        "svg2png": "^4.1.1",
         "ts-loader": "^5.3.1",
         "tslint": "^5.11.0",
         "tslint-eslint-rules": "^5.4.0",
