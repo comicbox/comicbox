@@ -100,6 +100,7 @@ func (q *query) Books(ctx context.Context, args booksArgs) (*BookQueryResolver, 
 	if args.fastSeries != nil {
 		query = query.Where("series = ?", args.fastSeries)
 	}
+
 	return &BookQueryResolver{
 		query: query,
 		skip:  skip,

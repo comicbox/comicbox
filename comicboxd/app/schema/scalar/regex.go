@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/Masterminds/squirrel"
 )
@@ -30,5 +31,17 @@ func (r Regex) MarshalJSON() ([]byte, error) {
 }
 
 func (r Regex) Query(query squirrel.SelectBuilder, name string) squirrel.SelectBuilder {
-	return query.Where(fmt.Sprintf("%s regexp ?", name), string(r))
+	regex := string(r)
+
+	if regex == ".+" {
+		return query.Where(fmt.Sprintf("%s != \"\"", name))
+	}
+
+	// checking for exact equals makes things much faster
+	subre := regex[1 : len(regex)-1]
+	if strings.HasPrefix(regex, "^") && strings.HasSuffix(regex, "$") && strings.IndexAny(subre, `[\^$.|?*+()`) == -1 {
+		return query.Where(fmt.Sprintf("%s = ?", name), subre)
+	}
+
+	return query.Where(fmt.Sprintf("%s regexp ?", name), regex)
 }
