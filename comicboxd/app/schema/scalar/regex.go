@@ -33,11 +33,10 @@ func (r Regex) MarshalJSON() ([]byte, error) {
 func (r Regex) Query(query squirrel.SelectBuilder, name string) squirrel.SelectBuilder {
 	regex := string(r)
 
+	// checking for exact equals and != "" makes things much faster
 	if regex == ".+" {
 		return query.Where(fmt.Sprintf("%s != \"\"", name))
 	}
-
-	// checking for exact equals makes things much faster
 	subre := regex[1 : len(regex)-1]
 	if strings.HasPrefix(regex, "^") && strings.HasSuffix(regex, "$") && strings.IndexAny(subre, `[\^$.|?*+()`) == -1 {
 		return query.Where(fmt.Sprintf("%s = ?", name), subre)
