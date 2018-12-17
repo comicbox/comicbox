@@ -1,6 +1,7 @@
 module github.com/zwzn/comicbox
 
 require (
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/Masterminds/squirrel v0.0.0-20181211162353-a8c1880ebb4d
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/fatih/color v1.7.0
@@ -14,7 +15,9 @@ require (
 	github.com/graphql-go/graphql v0.7.7
 	github.com/graphql-go/handler v0.2.2
 	github.com/jmoiron/sqlx v1.2.0
+	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1 // indirect
 	github.com/kardianos/service v0.0.0-20181115005516-4c239ee84e7b
+	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect
@@ -25,4 +28,5 @@ require (
 	github.com/spf13/viper v1.3.1
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 	golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b
+	google.golang.org/appengine v1.3.0 // indirect
 )
