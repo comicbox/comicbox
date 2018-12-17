@@ -1,8 +1,10 @@
 bindata= -o comicboxd/data/bindata.go -pkg data comicboxd/migrations/... web/dist/... comicboxd/app/schema/gql/...
 
+export GO111MODULE=on
+
 all: comicboxd
 	
-comicboxd: bindata
+comicboxd: bindata tidy
 	cd comicboxd; go build -o ../bin/comicboxd
 
 npm:
@@ -20,3 +22,6 @@ bindata-debug:
 get: bindata
 	cd web; npm install
 	go get ./...
+
+tidy: 
+	go mod tidy
