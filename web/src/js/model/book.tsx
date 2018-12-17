@@ -17,7 +17,7 @@ class Page {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-@table('books', 'book', 'BookInput!')
+@table('books', 'update_book', 'BookInput!')
 export default class Book extends Model {
 
     @prop('String')

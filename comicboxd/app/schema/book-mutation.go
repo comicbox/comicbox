@@ -49,14 +49,14 @@ type pageInput struct {
 }
 
 type newBookArgs struct {
-	Book bookUserBookInput
+	Data bookUserBookInput
 }
 
 func (q *query) NewBook(ctx context.Context, args newBookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
 	newID := graphql.ID(uuid.New().String())
 
-	book, err := loadNewBookData(args.Book)
+	book, err := loadNewBookData(args.Data)
 	if err != nil {
 		return nil, fmt.Errorf("NewBook loadNewBookData: %v", err)
 	}
@@ -99,17 +99,17 @@ func (q *query) NewBook(ctx context.Context, args newBookArgs) (*BookResolver, e
 
 type updateBookArgs struct {
 	ID   graphql.ID
-	Book bookUserBookInput
+	Data bookUserBookInput
 }
 
 func (q *query) UpdateBook(ctx context.Context, args updateBookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
 	err := database.Tx(ctx, func(tx *sqlx.Tx) error {
-		err := updateBook(tx, args.ID, args.Book.bookInput)
+		err := updateBook(tx, args.ID, args.Data.bookInput)
 		if err != nil {
 			return err
 		}
-		err = updateUserBook(tx, args.ID, graphql.ID(c.User.ID.String()), args.Book.userBookInput)
+		err = updateUserBook(tx, args.ID, graphql.ID(c.User.ID.String()), args.Data.userBookInput)
 		if err != nil {
 			return err
 		}

@@ -76,7 +76,7 @@ export abstract class Model {
 
         // ${qb.generateGQL(TClass).join(', ')}
         const newData = await gql(`
-            ${mutationName} (${primaryName}: $id ${mutationName}: $data) {
+            ${mutationName} (${primaryName}: $id data: $data) {
                 ${(new QueryBuilder(TClass)).generateGQL(TClass)}
             }
             `, {
@@ -134,7 +134,7 @@ export function table(
     mutationName: string,
     insertType: string,
     primaryName: string = 'id',
-    primaryType: string = 'ID'): any {
+    primaryType: string = 'ID!'): any {
 
     return (target: any) => {
         target.prototype.constructor.table = tableName

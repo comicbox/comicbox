@@ -16,14 +16,14 @@ type seriesInput struct {
 }
 
 type updateSeriesArgs struct {
-	Name   string
-	Series seriesInput
+	Name string
+	Data seriesInput
 }
 
 func (q *query) UpdateSeries(ctx context.Context, args updateSeriesArgs) (*SeriesResolver, error) {
 	c := q.Ctx(ctx)
 	userID := graphql.ID(c.User.ID.String())
-	m := toStruct(args.Series)
+	m := toStruct(args.Data)
 	if len(m) == 0 {
 		return q.Serie(ctx, serieArgs{Name: args.Name})
 	}

@@ -19,10 +19,10 @@ type page_info {
 }
 
 type RootMutation {
-    update_book(id: ID!, book: BookInput!): Book!
-    new_book(book: BookInput!): Book!
+    update_book(id: ID!, data: BookInput!): Book!
+    new_book(data: BookInput!): Book!
     delete_book(id: ID!): Book
-    update_series(name: String!, series: SeriesInput!): Series
+    update_series(name: String!, data: SeriesInput!): Series
 #     user(id: ID, user: UserInput!): User
 }
 
