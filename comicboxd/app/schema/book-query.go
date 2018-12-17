@@ -89,11 +89,13 @@ func (q *query) Books(ctx context.Context, args booksArgs) (*BookQueryResolver, 
 		From("book_user_book").
 		Where(squirrel.Eq{"user_id": c.User.ID})
 
-	query = query.
-		OrderBy("series").
-		OrderBy("volume").
-		OrderBy("chapter").
-		OrderBy("title")
+	if args.Sort == nil {
+		query = query.
+			OrderBy("series").
+			OrderBy("volume").
+			OrderBy("chapter").
+			OrderBy("title")
+	}
 
 	query = scalar.Query(query, args)
 

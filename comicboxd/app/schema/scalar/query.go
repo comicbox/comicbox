@@ -3,6 +3,7 @@ package scalar
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/Masterminds/squirrel"
 )
@@ -39,6 +40,22 @@ func Query(query squirrel.SelectBuilder, args interface{}) squirrel.SelectBuilde
 				}
 			}
 			query = query.Where(squirrel.Or(exprs))
+
+		} else if tField.Name == "Sort" {
+			cols, ok := vField.Interface().(*string)
+			if !ok || cols == nil {
+				continue
+			}
+			for _, col := range strings.Split(*cols, ",") {
+				col = strings.TrimSpace(col)
+				desc := ""
+				if col[0] == '!' {
+					desc = " desc"
+					col = col[1:]
+				}
+
+				query = query.OrderBy(col + desc)
+			}
 		}
 
 		tag, ok := tField.Tag.Lookup("db")
