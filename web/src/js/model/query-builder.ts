@@ -2,6 +2,7 @@ import { gql } from 'js/graphql'
 import { Model, ModelArray, StaticModel, Type } from 'js/model/model'
 import { str_random } from 'js/util'
 import map from 'lodash/map'
+import { first } from 'lodash-es';
 
 interface Where {
     field: string
@@ -101,16 +102,20 @@ export class QueryBuilder<T extends Model> {
         for (const where of this.wheres) {
             const field = where.field
             variables[field] = where.value
-            switch (where.type.type) {
-                case 'String':
-                    types[field] = 'Regex'
-                    break
-                case 'Int':
-                case 'Float':
-                    types[field] = 'NumberRange'
-                    break
-                default:
-                    types[field] = where.type.type
+            if (field === 'search') {
+                types[field] = 'String'
+            } else {
+                switch (where.type.type) {
+                    case 'String':
+                        types[field] = 'Regex'
+                        break
+                    case 'Int':
+                    case 'Float':
+                        types[field] = 'NumberRange'
+                        break
+                    default:
+                        types[field] = where.type.type
+                }
             }
 
         }
