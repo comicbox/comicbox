@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 
-	"github.com/graphql-go/graphql"
+	graphql "github.com/graph-gophers/graphql-go"
+
 	"github.com/zwzn/comicbox/comicboxd/app"
 )
 
@@ -44,38 +46,25 @@ func Query(r *http.Request, query string, vars map[string]interface{}, response 
 
 	GQLHandler.ServeHTTP(resp, newR)
 
-	qr := graphql.Result{}
+	qr := graphql.Response{}
 
-	json.NewDecoder(resp.Body).Decode(&qr)
-	// resp.Body.Close()
+	err = json.NewDecoder(resp.Body).Decode(&qr)
+	if err != nil {
+		return err
+	}
+
 	for _, err := range qr.Errors {
 		return fmt.Errorf("graphql error: %v", err)
 	}
 
-	data, ok := qr.Data.(map[string]interface{})
-	if !ok {
-		return fmt.Errorf("data not a map")
+	// removed the outer object from the json. I can't think of a nicer way of
+	// doing it that doesn't involve moving to and from json a bunch
+	startIndex := strings.Index(string(qr.Data), ":{") + 1
+	newJSON := qr.Data[startIndex : len(qr.Data)-1]
+	err = json.Unmarshal(newJSON, response)
+	if err != nil {
+		return err
 	}
-
-	if len(data) > 1 {
-		return fmt.Errorf("more than one return value")
-	}
-	for _, fieldData := range data {
-		jData, err := json.Marshal(fieldData)
-		if err != nil {
-			return err
-		}
-		if response != nil {
-			err = json.Unmarshal(jData, response)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	// err = mapstructure.Decode(qr.Data, response)
-	// if err != nil {
-	// 	return err
-	// }
 
 	return nil
 }

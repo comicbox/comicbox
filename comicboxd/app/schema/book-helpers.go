@@ -82,9 +82,9 @@ func loadNewBookData(book bookUserBookInput) (bookUserBookInput, error) {
 		numPages := int32(len(imgs))
 		tmpPages := make([]pageInput, numPages)
 		for i := int32(0); i < numPages; i++ {
-			typ := controller.Story
+			typ := "Story"
 			if i == 0 {
-				typ = controller.Cover
+				typ = "FrontCover"
 			}
 			tmpPages[i] = pageInput{
 				FileNumber: i,
@@ -284,13 +284,13 @@ func parseComicInfoXML(book *bookUserBookInput, f *zip.File) error {
 			var typ string
 			switch crBook.Pages[i].Type {
 			case "FrontCover":
-				typ = controller.Cover
+				typ = "FrontCover"
 			case "Story":
-				typ = controller.Story
+				typ = "Story"
 			case "Deleted":
-				typ = controller.Deleted
+				typ = "Deleted"
 			default:
-				typ = controller.Story
+				typ = "Story"
 			}
 			img := int32(i)
 			if crBook.Pages[i].Image != nil {

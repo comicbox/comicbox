@@ -198,7 +198,7 @@ func scan(r *http.Request) {
 			j.Warningf("error adding file '%s': %v", path, err)
 		}
 	}
-
+	i := 0
 	for _, path := range removeFiles {
 		i++
 		if i%100 == 0 {
