@@ -23,7 +23,7 @@ type RootMutation {
     new_book(data: BookInput!): Book!
     delete_book(id: ID!): Book
     update_series(name: String!, data: SeriesInput!): Series
-#     user(id: ID, user: UserInput!): User
+    update_user(id: ID!, data: UserInput!): User
 }
 
 type RootQuery {
@@ -61,7 +61,6 @@ type RootQuery {
         volume: NumberRange
     ): BookQuery
 
-    me: User
     serie(name: String!): Series
     series(
         skip: Int
@@ -78,6 +77,9 @@ type RootQuery {
         total: NumberRange
         read: NumberRange
     ): SeriesQuery
+
+    me: User
+    user(id: ID!): User
     # users(
     #     skip: Int
     #     take: Int!
@@ -85,7 +87,6 @@ type RootQuery {
     #     sort: String
     #     created_at: String
     #     updated_at: String
-    #     me: Boolean
     #     name: Regex
     #     username: Regex
     #     search: Regex
