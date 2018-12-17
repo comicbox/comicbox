@@ -2,7 +2,6 @@ import { gql } from 'js/graphql'
 import { Model, ModelArray, StaticModel, Type } from 'js/model/model'
 import { str_random } from 'js/util'
 import map from 'lodash/map'
-import { first } from 'lodash-es';
 
 interface Where {
     field: string
@@ -14,14 +13,6 @@ export interface GetOptions {
     cache?: boolean
     network?: boolean
     save?: boolean
-}
-
-const opConv: { [key: string]: string } = {
-    '=': '',
-    '!=': '_ne',
-    '>': '_gt',
-    '<': '_lt',
-    '~=': '_co',
 }
 
 export class QueryBuilder<T extends Model> {
