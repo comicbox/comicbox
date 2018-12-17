@@ -118,7 +118,10 @@ func (r *BookResolver) AlternateSeries() string {
 func (r *BookResolver) Authors() []string {
 	data := r.b.AuthorsJSON
 	authors := []string{}
-	json.Unmarshal(data, &authors)
+	err := json.Unmarshal(data, &authors)
+	if err != nil {
+		return []string{}
+	}
 	return authors
 }
 
@@ -160,9 +163,12 @@ func (r *BookResolver) File() string {
 
 func (r *BookResolver) Genres() []string {
 	data := r.b.GenresJSON
-	authors := []string{}
-	json.Unmarshal(data, &authors)
-	return authors
+	genres := []string{}
+	err := json.Unmarshal(data, &genres)
+	if err != nil {
+		return []string{}
+	}
+	return genres
 }
 
 func (r *BookResolver) ID() graphql.ID {
@@ -173,7 +179,10 @@ func (r *BookResolver) LastPageRead() *int32 {
 
 }
 func (r *BookResolver) Pages() []PageResolver {
-	r.b.UnmarshalPages(fmt.Sprintf)
+	err := r.b.UnmarshalPages(fmt.Sprintf)
+	if err != nil {
+		return []PageResolver{}
+	}
 	pages := []PageResolver{}
 	for _, page := range r.b.Pages {
 		pages = append(pages, PageResolver{p: page})

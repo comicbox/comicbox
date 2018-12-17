@@ -12,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/imdario/mergo"
+
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/jmoiron/sqlx"
@@ -178,55 +180,56 @@ func parseFileName(book *bookUserBookInput) error {
 }
 
 func parseBookJSON(bookInput *bookUserBookInput, f *zip.File) error {
-	book := struct {
-		*bookUserBookInput
+	type comboBook struct {
+		bookUserBookInput
 		Author string  `json:"author"`
 		Number float64 `json:"number"`
-	}{}
+	}
+	book := comboBook{}
 
-	book.bookUserBookInput = bookInput
+	book.bookUserBookInput = *bookInput
 	b, err := fileBytes(f)
 	if err != nil {
 		return err
 	}
-
-	err = json.Unmarshal(b, &book)
+	tmpBook := comboBook{}
+	err = json.Unmarshal(b, &tmpBook)
 	if err != nil {
 		return fmt.Errorf("parsing book.json: %v", err)
 	}
 
-	if book.Author != "" {
-		if book.Authors == nil {
-			book.Authors = &[]string{}
+	if tmpBook.Author != "" {
+		if tmpBook.Authors == nil {
+			tmpBook.Authors = &[]string{}
 		}
-		authors := append(*book.Authors, book.Author)
-		book.Authors = &authors
+		authors := append(*tmpBook.Authors, tmpBook.Author)
+		tmpBook.Authors = &authors
 	}
-	// if author, ok := book["author"]; ok {
-	// 	book["authors"] = []interface{}{author}
+	// if author, ok := tmpBook["author"]; ok {
+	// 	tmpBook["authors"] = []interface{}{author}
 	// }
-	if book.Chapter == nil {
-		book.Chapter = &book.Number
+	if tmpBook.Chapter == nil {
+		tmpBook.Chapter = &tmpBook.Number
 	}
 	// if number, ok := bookMap["number"]; ok {
 	// 	bookMap["chapter"] = number
 	// }
 
-	if len(*book.Pages) > 0 {
+	if tmpBook.Pages != nil && len(*tmpBook.Pages) > 0 {
 		allZero := true
-		for _, page := range *book.Pages {
+		for _, page := range *tmpBook.Pages {
 			if page.FileNumber != 0 {
 				allZero = false
 			}
 		}
 		if allZero {
-			for i := range *book.Pages {
-				(*book.Pages)[i].FileNumber = int32(i)
+			for i := range *tmpBook.Pages {
+				(*tmpBook.Pages)[i].FileNumber = int32(i)
 			}
 		}
 	}
 
-	return nil
+	return mergo.Merge(&book, tmpBook)
 }
 
 func toMap(in interface{}) map[string]interface{} {
@@ -251,7 +254,8 @@ func IsZero(v interface{}) bool {
 	return v == reflect.Zero(t).Interface()
 }
 
-func parseComicInfoXML(book *bookUserBookInput, f *zip.File) error {
+func parseComicInfoXML(bk *bookUserBookInput, f *zip.File) error {
+	book := bookUserBookInput{}
 	b, err := fileBytes(f)
 	if err != nil {
 		return err
@@ -302,5 +306,5 @@ func parseComicInfoXML(book *bookUserBookInput, f *zip.File) error {
 		book.Pages = &tmpPages
 	}
 
-	return nil
+	return mergo.Merge(&bk, book)
 }

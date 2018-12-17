@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"sort"
 	"strings"
 
@@ -18,6 +19,7 @@ import (
 	"golang.org/x/image/bmp"
 
 	"github.com/zwzn/comicbox/comicboxd/j"
+	"github.com/zwzn/hidden"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/nfnt/resize"
@@ -136,6 +138,7 @@ func ZippedImages(file string) ([]*zip.File, error) {
 			strings.HasSuffix(lowerName, ".jpeg") ||
 			strings.HasSuffix(lowerName, ".png") ||
 			strings.HasSuffix(lowerName, ".bmp") ||
+			strings.HasSuffix(lowerName, ".gif") ||
 			strings.HasSuffix(lowerName, ".tiff") {
 			imageFiles = append(imageFiles, x)
 		}
@@ -150,7 +153,7 @@ func (b *book) Scan(w http.ResponseWriter, r *http.Request) {
 func scan(r *http.Request) {
 	defer (func() {
 		if err := recover(); err != nil {
-			j.Errorf("error scanning books: %s", err)
+			j.Errorf("error scanning books: %s\n%s", err, debug.Stack())
 			Push.Error("error scanning books: %s", err)
 		}
 	})()
@@ -167,7 +170,14 @@ func scan(r *http.Request) {
 
 	realFiles := []string{}
 	err = filepath.Walk(viper.GetString("dir"), func(path string, info os.FileInfo, err error) error {
-		// err = filepath.Walk("/mnt/public/old_comics", func(path string, info os.FileInfo, err error) error {
+		if info == nil {
+			return fmt.Errorf("the scan path does not exist")
+		}
+
+		if h, _ := hidden.IsHidden(path); h {
+			return nil
+		}
+
 		ext := filepath.Ext(path)
 		if info.IsDir() || (ext != ".cbz" && ext != ".zip") {
 			return nil
@@ -175,7 +185,9 @@ func scan(r *http.Request) {
 		realFiles = append(realFiles, path)
 		return nil
 	})
-	errors.Check(err)
+	if err != nil {
+		panic(fmt.Errorf("error walking files %v", err))
+	}
 
 	addFiles, removeFiles := DiffSlice(realFiles, dbFiles)
 
@@ -188,7 +200,7 @@ func scan(r *http.Request) {
 			Push.Message("Done %.0f%%", float64(i)/float64(addFilesLen+removeFilesLen)*100.0)
 		}
 		err = gql.Query(r, `mutation addBook($file: String) {
-				book(book: { file: $file }) {
+				new_book(data: { file: $file }) {
 				  	id
 				}
 			}`, map[string]interface{}{
@@ -214,7 +226,7 @@ func scan(r *http.Request) {
 
 		for _, id := range ids {
 			err = gql.Query(r, `mutation deleteBook($id: ID!) {
-				deleteBook(id: $id) {
+				delete_book(id: $id) {
 				  	id
 				}
 			}`, map[string]interface{}{
