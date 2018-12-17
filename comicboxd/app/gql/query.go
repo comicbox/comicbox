@@ -57,7 +57,7 @@ func Query(r *http.Request, query string, vars map[string]interface{}, response 
 		return fmt.Errorf("graphql error: %v", err)
 	}
 
-	// removed the outer object from the json. I can't think of a nicer way of
+	// removes the outer object from the json. I can't think of a nicer way of
 	// doing it that doesn't involve moving to and from json a bunch
 	startIndex := strings.Index(string(qr.Data), ":{") + 1
 	newJSON := qr.Data[startIndex : len(qr.Data)-1]

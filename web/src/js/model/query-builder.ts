@@ -3,8 +3,6 @@ import { Model, ModelArray, StaticModel, Type } from 'js/model/model'
 import { str_random } from 'js/util'
 import map from 'lodash/map'
 
-export type Operator = '=' | '>' | '<' | '!=' | '~='
-
 interface Where {
     field: string
     value: string | number | boolean
