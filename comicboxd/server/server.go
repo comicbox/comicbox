@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/zwzn/comicbox/comicboxd/j"
 	"github.com/spf13/viper"
+	"github.com/zwzn/comicbox/comicboxd/app/database"
+	"github.com/zwzn/comicbox/comicboxd/j"
 
 	_ "github.com/golang-migrate/migrate/source/file"
 	"github.com/gorilla/mux"
@@ -23,6 +24,7 @@ type Server struct {
 }
 
 func New() *Server {
+
 	s := &Server{}
 
 	s.Router = mux.NewRouter()
@@ -39,14 +41,19 @@ func New() *Server {
 }
 
 func (s *Server) Start() error {
+	err := database.SetUp()
+	if err != nil {
+		return err
+	}
 	j.Infof("Starting server at http://localhost:%d", viper.GetInt("port"))
 	return s.srv.ListenAndServe()
 }
 
 func (s *Server) Stop() error {
-	// err := s.DB.Close()
-	// if err != nil {
-	// 	return err
-	// }
-	return s.srv.Shutdown(context.TODO())
+	err := database.TearDown()
+	if err != nil {
+		return err
+	}
+
+	return s.srv.Shutdown(context.Background())
 }

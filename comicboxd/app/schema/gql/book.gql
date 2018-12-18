@@ -8,14 +8,14 @@ type Book {
 
     # the date a book was created
     created_at: Time!
-    current_page: Int
+    current_page: Int!
     date_released: Time
     file: String!
     genres: [String!]!
 
     # a unique id for the books
     id: ID!
-    last_page_read: Int
+    last_page_read: Int!
     pages: [Page!]!
     rating: Float
     read: Boolean!

@@ -147,8 +147,11 @@ func (r *BookResolver) CreatedAt() graphql.Time {
 	return graphql.Time{Time: r.b.CreatedAt}
 }
 
-func (r *BookResolver) CurrentPage() *int32 {
-	return r.b.CurrentPage
+func (r *BookResolver) CurrentPage() int32 {
+	if r.b.CurrentPage == nil {
+		return 0
+	}
+	return *r.b.CurrentPage
 
 }
 
@@ -176,8 +179,11 @@ func (r *BookResolver) Genres() []string {
 func (r *BookResolver) ID() graphql.ID {
 	return graphql.ID(r.b.ID.String())
 }
-func (r *BookResolver) LastPageRead() *int32 {
-	return r.b.LastPageRead
+func (r *BookResolver) LastPageRead() int32 {
+	if r.b.LastPageRead == nil {
+		return 0
+	}
+	return *r.b.LastPageRead
 
 }
 func (r *BookResolver) Pages() []PageResolver {
