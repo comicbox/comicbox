@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
-	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -101,20 +100,28 @@ func loadNewBookData(book bookUserBookInput) (bookUserBookInput, error) {
 		return bookUserBookInput{}, err
 	}
 
-	err = parseFileName(&book)
-	if err != nil {
-		return bookUserBookInput{}, err
-	}
+	parseFileName(&book)
 
 	for _, f := range reader.File {
 		name := f.FileInfo().Name()
 		if name == "book.json" {
-			err = parseBookJSON(&book, f)
+			newBook, err := parseBookJSON(f)
 			if err != nil {
 				return bookUserBookInput{}, err
 			}
+
+			err = mergo.Merge(&book, newBook, mergo.WithOverride)
+			if err != nil {
+				return bookUserBookInput{}, err
+			}
+
 		} else if name == "ComicInfo.xml" {
-			err = parseComicInfoXML(&book, f)
+			newBook, err := parseComicInfoXML(f)
+			if err != nil {
+				return bookUserBookInput{}, err
+			}
+
+			err = mergo.Merge(&book, newBook, mergo.WithOverride)
 			if err != nil {
 				return bookUserBookInput{}, err
 			}
@@ -138,7 +145,7 @@ func fileBytes(f *zip.File) ([]byte, error) {
 	return b, nil
 }
 
-func parseFileName(book *bookUserBookInput) error {
+func parseFileName(book *bookUserBookInput) {
 	path := *book.File
 
 	extension := filepath.Ext(path)
@@ -150,52 +157,46 @@ func parseFileName(book *bookUserBookInput) error {
 	if strings.HasPrefix(name, dir) {
 		name = name[len(dir):]
 	}
-	hasInfo := false
+	exp := regexp.MustCompile(`^([vV](?P<volume>[\d]+))? *(#?(?P<chapter>[\d]+(\.[\d]+)?))? *(-)? *(?P<title>.*)$`)
+	matches := exp.FindStringSubmatch(strings.TrimSpace(strings.Replace(name, "_", " ", -1)))
 
-	matches := regexp.
-		MustCompile(`^(?P<volume>[vV][\d]+(\.[\d]+)?)? *(#?(?P<chapter>[\d]+(\.[\d]+)?))? *(-)? *(?P<title>.*)$`).
-		FindStringSubmatch(strings.Replace(name, "_", " ", -1))
+	result := make(map[string]string)
+	for i, name := range exp.SubexpNames() {
+		if i != 0 && name != "" {
+			result[name] = matches[i]
+		}
+	}
 
-	chapter, err := strconv.ParseFloat(matches[4], 64)
+	chapter, err := strconv.ParseFloat(result["chapter"], 64)
 	if err == nil {
-		hasInfo = true
 		book.Chapter = &chapter
 	}
-	volume64, err := strconv.ParseInt(matches[1], 10, 64)
+	volume64, err := strconv.ParseInt(result["volume"], 10, 64)
 	if err == nil {
 		volume := int32(volume64)
-		hasInfo = true
 		book.Volume = &volume
 	}
-	if matches[7] != "" {
-		hasInfo = true
-		book.Title = &matches[7]
+	if result["title"] != "" {
+		title := result["title"]
+		book.Title = &title
 	}
-
-	if !hasInfo {
-		book.Title = &name
-	}
-
-	return nil
 }
 
-func parseBookJSON(bookInput *bookUserBookInput, f *zip.File) error {
+func parseBookJSON(f *zip.File) (bookUserBookInput, error) {
 	type comboBook struct {
 		bookUserBookInput
 		Author string  `json:"author"`
 		Number float64 `json:"number"`
 	}
-	book := comboBook{}
 
-	book.bookUserBookInput = *bookInput
 	b, err := fileBytes(f)
 	if err != nil {
-		return err
+		return bookUserBookInput{}, err
 	}
 	tmpBook := comboBook{}
 	err = json.Unmarshal(b, &tmpBook)
 	if err != nil {
-		return fmt.Errorf("parsing book.json: %v", err)
+		return bookUserBookInput{}, fmt.Errorf("parsing book.json: %v", err)
 	}
 
 	if tmpBook.Author != "" {
@@ -205,15 +206,10 @@ func parseBookJSON(bookInput *bookUserBookInput, f *zip.File) error {
 		authors := append(*tmpBook.Authors, tmpBook.Author)
 		tmpBook.Authors = &authors
 	}
-	// if author, ok := tmpBook["author"]; ok {
-	// 	tmpBook["authors"] = []interface{}{author}
-	// }
+
 	if tmpBook.Chapter == nil {
 		tmpBook.Chapter = &tmpBook.Number
 	}
-	// if number, ok := bookMap["number"]; ok {
-	// 	bookMap["chapter"] = number
-	// }
 
 	if tmpBook.Pages != nil && len(*tmpBook.Pages) > 0 {
 		allZero := true
@@ -228,43 +224,20 @@ func parseBookJSON(bookInput *bookUserBookInput, f *zip.File) error {
 			}
 		}
 	}
-
-	return mergo.Merge(&book, tmpBook)
+	return tmpBook.bookUserBookInput, nil
 }
 
-func toMap(in interface{}) map[string]interface{} {
-	b, err := json.Marshal(in)
-	if err != nil {
-		return nil
-	}
-	outMap := map[string]interface{}{}
-	json.Unmarshal(b, &outMap)
-	return outMap
-}
-
-// from https://stackoverflow.com/a/33116479
-func IsZero(v interface{}) bool {
-	if v == nil {
-		return true
-	}
-	t := reflect.TypeOf(v)
-	if !t.Comparable() {
-		return false
-	}
-	return v == reflect.Zero(t).Interface()
-}
-
-func parseComicInfoXML(bk *bookUserBookInput, f *zip.File) error {
+func parseComicInfoXML(f *zip.File) (bookUserBookInput, error) {
 	book := bookUserBookInput{}
 	b, err := fileBytes(f)
 	if err != nil {
-		return err
+		return book, err
 	}
 
 	crBook := comicrack.Book{}
 	err = xml.Unmarshal(b, &crBook)
 	if err != nil {
-		return err
+		return book, err
 	}
 
 	book.Chapter = crBook.Number
@@ -306,5 +279,5 @@ func parseComicInfoXML(bk *bookUserBookInput, f *zip.File) error {
 		book.Pages = &tmpPages
 	}
 
-	return mergo.Merge(&bk, book)
+	return book, nil
 }

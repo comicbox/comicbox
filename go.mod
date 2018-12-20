@@ -25,6 +25,7 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/opentracing/opentracing-go v1.0.2 // indirect
 	github.com/spf13/viper v1.3.1
+	github.com/stretchr/testify v1.2.2
 	github.com/zwzn/hidden v0.0.0-20181217162026-b4ced36b8f4a
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 	golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b

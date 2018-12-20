@@ -61,10 +61,6 @@ func (q *query) NewBook(ctx context.Context, args newBookArgs) (*BookResolver, e
 		return nil, fmt.Errorf("NewBook loadNewBookData: %v", err)
 	}
 
-	if book.File == nil {
-		return nil, fmt.Errorf("a file must be included")
-	}
-
 	if book.Pages == nil || len(*book.Pages) == 0 {
 		return nil, fmt.Errorf("the book must have pages")
 	}
@@ -94,7 +90,15 @@ func (q *query) NewBook(ctx context.Context, args newBookArgs) (*BookResolver, e
 		return nil, err
 	}
 
-	return q.Book(ctx, bookArgs{ID: graphql.ID(newID)})
+	r, err := q.Book(ctx, bookArgs{ID: graphql.ID(newID)})
+	fmt.Printf("%#v\n", r == nil)
+	if err != nil {
+		return nil, err
+	}
+	if r == nil {
+		return nil, fmt.Errorf("error creating book")
+	}
+	return r, nil
 }
 
 type updateBookArgs struct {
