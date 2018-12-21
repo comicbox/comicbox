@@ -45,12 +45,6 @@ func (a *user) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 // from https://gowebexamples.com/password-hashing/
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	return string(bytes), err
-}
-
-// from https://gowebexamples.com/password-hashing/
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil

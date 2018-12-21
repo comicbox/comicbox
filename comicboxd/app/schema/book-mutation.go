@@ -13,7 +13,7 @@ import (
 	graphql "github.com/graph-gophers/graphql-go"
 )
 
-type bookInput struct {
+type BookInput struct {
 	Chapter          *float64      `db:"chapter"`
 	Summary          *string       `db:"summary"`
 	Series           *string       `db:"series"`
@@ -32,15 +32,15 @@ type bookInput struct {
 	Pages            *[]pageInput  `db:"pages"`
 }
 
-type userBookInput struct {
+type UserBookInput struct {
 	LastPageRead *int32   `db:"last_page_read"`
 	CurrentPage  *int32   `db:"current_page"`
 	Rating       *float64 `db:"rating"`
 }
 
-type bookUserBookInput struct {
-	bookInput
-	userBookInput
+type BookUserBookInput struct {
+	BookInput
+	UserBookInput
 }
 
 type pageInput struct {
@@ -48,11 +48,11 @@ type pageInput struct {
 	Type       string `json:"type"`
 }
 
-type newBookArgs struct {
-	Data bookUserBookInput
+type NewBookArgs struct {
+	Data BookUserBookInput
 }
 
-func (q *query) NewBook(ctx context.Context, args newBookArgs) (*BookResolver, error) {
+func (q *query) NewBook(ctx context.Context, args NewBookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
 	newID := graphql.ID(uuid.New().String())
 
@@ -75,12 +75,12 @@ func (q *query) NewBook(ctx context.Context, args newBookArgs) (*BookResolver, e
 			return err
 		}
 
-		err = updateBook(tx, newID, book.bookInput)
+		err = updateBook(tx, newID, book.BookInput)
 		if err != nil {
 			return err
 		}
 
-		err = updateUserBook(tx, newID, graphql.ID(c.User.ID.String()), book.userBookInput)
+		err = updateUserBook(tx, newID, graphql.ID(c.User.ID.String()), book.UserBookInput)
 		if err != nil {
 			return err
 		}
@@ -90,30 +90,22 @@ func (q *query) NewBook(ctx context.Context, args newBookArgs) (*BookResolver, e
 		return nil, err
 	}
 
-	r, err := q.Book(ctx, bookArgs{ID: graphql.ID(newID)})
-	fmt.Printf("%#v\n", r == nil)
-	if err != nil {
-		return nil, err
-	}
-	if r == nil {
-		return nil, fmt.Errorf("error creating book")
-	}
-	return r, nil
+	return q.Book(ctx, BookArgs{ID: graphql.ID(newID)})
 }
 
-type updateBookArgs struct {
+type UpdateBookArgs struct {
 	ID   graphql.ID
-	Data bookUserBookInput
+	Data BookUserBookInput
 }
 
-func (q *query) UpdateBook(ctx context.Context, args updateBookArgs) (*BookResolver, error) {
+func (q *query) UpdateBook(ctx context.Context, args UpdateBookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
 	err := database.Tx(ctx, func(tx *sqlx.Tx) error {
-		err := updateBook(tx, args.ID, args.Data.bookInput)
+		err := updateBook(tx, args.ID, args.Data.BookInput)
 		if err != nil {
 			return err
 		}
-		err = updateUserBook(tx, args.ID, graphql.ID(c.User.ID.String()), args.Data.userBookInput)
+		err = updateUserBook(tx, args.ID, graphql.ID(c.User.ID.String()), args.Data.UserBookInput)
 		if err != nil {
 			return err
 		}
@@ -122,16 +114,16 @@ func (q *query) UpdateBook(ctx context.Context, args updateBookArgs) (*BookResol
 	if err != nil {
 		return nil, err
 	}
-	return q.Book(ctx, bookArgs{ID: args.ID})
+	return q.Book(ctx, BookArgs{ID: args.ID})
 }
 
-type deleteBookArgs struct {
+type DeleteBookArgs struct {
 	ID graphql.ID
 }
 
-func (q *query) DeleteBook(ctx context.Context, args deleteBookArgs) (*BookResolver, error) {
+func (q *query) DeleteBook(ctx context.Context, args DeleteBookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
-	book, err := q.Book(ctx, bookArgs{ID: args.ID})
+	book, err := q.Book(ctx, BookArgs{ID: args.ID})
 	if err != nil {
 		return nil, err
 	}

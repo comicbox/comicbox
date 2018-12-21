@@ -5,13 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/zwzn/comicbox/comicboxd/app/controller"
-
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/jmoiron/sqlx"
 	"github.com/zwzn/comicbox/comicboxd/app/database"
 	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (q *query) Me(ctx context.Context) (*UserResolver, error) {
@@ -23,17 +22,17 @@ func (q *query) Me(ctx context.Context) (*UserResolver, error) {
 	return &UserResolver{u: *user}, nil
 }
 
-type userInput struct {
+type UserInput struct {
 	Name     *string `db:"name"`
 	Username *string `db:"username"`
 	Password *string `db:"password"`
 }
 
-type userArgs struct {
+type UserArgs struct {
 	ID graphql.ID
 }
 
-func (q *query) User(ctx context.Context, args userArgs) (*UserResolver, error) {
+func (q *query) User(ctx context.Context, args UserArgs) (*UserResolver, error) {
 	// c := q.Ctx(ctx)
 	user := model.User{}
 	qSQL, qArgs, err := squirrel.
@@ -54,18 +53,20 @@ func (q *query) User(ctx context.Context, args userArgs) (*UserResolver, error) 
 	return &UserResolver{u: user}, nil
 }
 
-type updateUserArgs struct {
+type UpdateUserArgs struct {
 	ID   graphql.ID
-	Data userInput
+	Data UserInput
 }
 
-func (q *query) UpdateUser(ctx context.Context, args updateUserArgs) (*UserResolver, error) {
+func (q *query) UpdateUser(ctx context.Context, args UpdateUserArgs) (*UserResolver, error) {
 	// c := q.Ctx(ctx)
 	if args.Data.Password != nil {
-		pass, err := controller.HashPassword(*args.Data.Password)
+
+		b, err := bcrypt.GenerateFromPassword([]byte(*args.Data.Password), 14)
 		if err != nil {
 			return nil, err
 		}
+		pass := string(b)
 		args.Data.Password = &pass
 	}
 	m := toStruct(args.Data)
@@ -87,7 +88,7 @@ func (q *query) UpdateUser(ctx context.Context, args updateUserArgs) (*UserResol
 	if err != nil {
 		return nil, err
 	}
-	return q.User(ctx, userArgs{ID: args.ID})
+	return q.User(ctx, UserArgs{ID: args.ID})
 }
 
 type UserResolver struct {

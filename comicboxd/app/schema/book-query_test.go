@@ -298,7 +298,7 @@ func TestBookQuery(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			args := newBookArgs{}
+			args := NewBookArgs{}
 			if test.in != nil {
 				args.Data.File = strptr(test.in.(string))
 			}

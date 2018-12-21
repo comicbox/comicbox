@@ -10,22 +10,22 @@ import (
 	"github.com/zwzn/comicbox/comicboxd/app/database"
 )
 
-type seriesInput struct {
+type SeriesInput struct {
 	List *string   `db:"list"`
 	Tags *[]string `db:"tags"`
 }
 
-type updateSeriesArgs struct {
+type UpdateSeriesArgs struct {
 	Name string
-	Data seriesInput
+	Data SeriesInput
 }
 
-func (q *query) UpdateSeries(ctx context.Context, args updateSeriesArgs) (*SeriesResolver, error) {
+func (q *query) UpdateSeries(ctx context.Context, args UpdateSeriesArgs) (*SeriesResolver, error) {
 	c := q.Ctx(ctx)
 	userID := graphql.ID(c.User.ID.String())
 	m := toStruct(args.Data)
 	if len(m) == 0 {
-		return q.Serie(ctx, serieArgs{Name: args.Name})
+		return q.Serie(ctx, SerieArgs{Name: args.Name})
 	}
 
 	err := database.Tx(ctx, func(tx *sqlx.Tx) error {
@@ -48,5 +48,5 @@ func (q *query) UpdateSeries(ctx context.Context, args updateSeriesArgs) (*Serie
 	if err != nil {
 		return nil, err
 	}
-	return q.Serie(ctx, serieArgs{Name: args.Name})
+	return q.Serie(ctx, SerieArgs{Name: args.Name})
 }

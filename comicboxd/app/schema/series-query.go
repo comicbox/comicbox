@@ -13,11 +13,11 @@ import (
 	"github.com/zwzn/comicbox/comicboxd/app/model"
 )
 
-type serieArgs struct {
+type SerieArgs struct {
 	Name string
 }
 
-func (q *query) Serie(ctx context.Context, args serieArgs) (*SeriesResolver, error) {
+func (q *query) Serie(ctx context.Context, args SerieArgs) (*SeriesResolver, error) {
 	c := q.Ctx(ctx)
 	serie := model.Series{}
 	sqll, opts, err := squirrel.
@@ -38,7 +38,7 @@ func (q *query) Serie(ctx context.Context, args serieArgs) (*SeriesResolver, err
 	return &SeriesResolver{s: serie}, nil
 }
 
-type seriesArgs struct {
+type SeriesArgs struct {
 	Skip *int32
 	Take int32
 
@@ -54,7 +54,7 @@ type seriesArgs struct {
 	Read  *scalar.NumberRange `db:"read"`
 }
 
-func (q *query) Series(ctx context.Context, args seriesArgs) (*SeriesQueryResolver, error) {
+func (q *query) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryResolver, error) {
 	c := q.Ctx(ctx)
 	skip := int32(0)
 	if args.Skip != nil {
@@ -82,7 +82,7 @@ type SeriesResolver struct {
 	s model.Series
 }
 
-func (r SeriesResolver) Books(ctx context.Context, args booksArgs) (*BookQueryResolver, error) {
+func (r SeriesResolver) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
 	args.fastSeries = &r.s.Name
 	return (&query{}).Books(ctx, args)
 }

@@ -16,11 +16,11 @@ import (
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/jmoiron/sqlx"
-	"github.com/zwzn/comicbox/comicboxd/app/controller"
 	"github.com/zwzn/comicbox/comicboxd/app/schema/comicrack"
+	"github.com/zwzn/comicbox/comicboxd/cbz"
 )
 
-func updateBook(tx *sqlx.Tx, id graphql.ID, book bookInput) error {
+func updateBook(tx *sqlx.Tx, id graphql.ID, book BookInput) error {
 	m := toStruct(book)
 	if len(m) == 0 {
 		return nil
@@ -44,7 +44,7 @@ func updateBook(tx *sqlx.Tx, id graphql.ID, book bookInput) error {
 	return nil
 }
 
-func updateUserBook(tx *sqlx.Tx, bookID, userID graphql.ID, book userBookInput) error {
+func updateUserBook(tx *sqlx.Tx, bookID, userID graphql.ID, book UserBookInput) error {
 	m := toStruct(book)
 	if len(m) == 0 {
 		return nil
@@ -69,14 +69,14 @@ func updateUserBook(tx *sqlx.Tx, bookID, userID graphql.ID, book userBookInput) 
 	return nil
 }
 
-func loadNewBookData(book bookUserBookInput) (bookUserBookInput, error) {
+func loadNewBookData(book BookUserBookInput) (BookUserBookInput, error) {
 	if book.File == nil {
-		return bookUserBookInput{}, fmt.Errorf("you must have a file in new books")
+		return BookUserBookInput{}, fmt.Errorf("you must have a file in new books")
 	}
 	file := *book.File
-	imgs, err := controller.ZippedImages(file)
+	imgs, err := cbz.ZippedImages(file)
 	if err != nil {
-		return bookUserBookInput{}, err
+		return BookUserBookInput{}, err
 	}
 
 	if book.Pages == nil {
@@ -97,7 +97,7 @@ func loadNewBookData(book bookUserBookInput) (bookUserBookInput, error) {
 
 	reader, err := zip.OpenReader(file)
 	if err != nil {
-		return bookUserBookInput{}, err
+		return BookUserBookInput{}, err
 	}
 
 	parseFileName(&book)
@@ -107,23 +107,23 @@ func loadNewBookData(book bookUserBookInput) (bookUserBookInput, error) {
 		if name == "book.json" {
 			newBook, err := parseBookJSON(f)
 			if err != nil {
-				return bookUserBookInput{}, err
+				return BookUserBookInput{}, err
 			}
 
 			err = mergo.Merge(&book, newBook, mergo.WithOverride)
 			if err != nil {
-				return bookUserBookInput{}, err
+				return BookUserBookInput{}, err
 			}
 
 		} else if name == "ComicInfo.xml" {
 			newBook, err := parseComicInfoXML(f)
 			if err != nil {
-				return bookUserBookInput{}, err
+				return BookUserBookInput{}, err
 			}
 
 			err = mergo.Merge(&book, newBook, mergo.WithOverride)
 			if err != nil {
-				return bookUserBookInput{}, err
+				return BookUserBookInput{}, err
 			}
 		}
 	}
@@ -145,7 +145,7 @@ func fileBytes(f *zip.File) ([]byte, error) {
 	return b, nil
 }
 
-func parseFileName(book *bookUserBookInput) {
+func parseFileName(book *BookUserBookInput) {
 	path := *book.File
 
 	extension := filepath.Ext(path)
@@ -182,21 +182,21 @@ func parseFileName(book *bookUserBookInput) {
 	}
 }
 
-func parseBookJSON(f *zip.File) (bookUserBookInput, error) {
+func parseBookJSON(f *zip.File) (BookUserBookInput, error) {
 	type comboBook struct {
-		bookUserBookInput
+		BookUserBookInput
 		Author string  `json:"author"`
 		Number float64 `json:"number"`
 	}
 
 	b, err := fileBytes(f)
 	if err != nil {
-		return bookUserBookInput{}, err
+		return BookUserBookInput{}, err
 	}
 	tmpBook := comboBook{}
 	err = json.Unmarshal(b, &tmpBook)
 	if err != nil {
-		return bookUserBookInput{}, fmt.Errorf("parsing book.json: %v", err)
+		return BookUserBookInput{}, fmt.Errorf("parsing book.json: %v", err)
 	}
 
 	if tmpBook.Author != "" {
@@ -224,11 +224,11 @@ func parseBookJSON(f *zip.File) (bookUserBookInput, error) {
 			}
 		}
 	}
-	return tmpBook.bookUserBookInput, nil
+	return tmpBook.BookUserBookInput, nil
 }
 
-func parseComicInfoXML(f *zip.File) (bookUserBookInput, error) {
-	book := bookUserBookInput{}
+func parseComicInfoXML(f *zip.File) (BookUserBookInput, error) {
+	book := BookUserBookInput{}
 	b, err := fileBytes(f)
 	if err != nil {
 		return book, err

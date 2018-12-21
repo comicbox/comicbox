@@ -15,11 +15,11 @@ import (
 	"github.com/zwzn/comicbox/comicboxd/app/schema/scalar"
 )
 
-type bookArgs struct {
+type BookArgs struct {
 	ID graphql.ID
 }
 
-func (q *query) Book(ctx context.Context, args bookArgs) (*BookResolver, error) {
+func (q *query) Book(ctx context.Context, args BookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
 	book := model.BookUserBook{}
 	sqll, opts, err := squirrel.Select("*").
@@ -39,7 +39,7 @@ func (q *query) Book(ctx context.Context, args bookArgs) (*BookResolver, error) 
 	return &BookResolver{b: book}, nil
 }
 
-type booksArgs struct {
+type BooksArgs struct {
 	Skip *int32
 	Take int32
 
@@ -74,7 +74,7 @@ type booksArgs struct {
 	fastSeries *string
 }
 
-func (q *query) Books(ctx context.Context, args booksArgs) (*BookQueryResolver, error) {
+func (q *query) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
 	c := q.Ctx(ctx)
 	skip := int32(0)
 	if args.Skip != nil {
