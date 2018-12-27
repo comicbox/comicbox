@@ -17,16 +17,20 @@ import (
 
 var db *sqlx.DB
 
-func SetUp() error {
-	var err error
-	var regex = func(re, s string) (bool, error) {
-		return regexp.MatchString(re, s)
+func init() {
+	var regex = func(query, field string) (bool, error) {
+		return regexp.MatchString(query, field)
 	}
 	sql.Register("sqlite3_regex", &sqlite3Driver.SQLiteDriver{
 		ConnectHook: func(conn *sqlite3Driver.SQLiteConn) error {
 			return conn.RegisterFunc("regexp", regex, true)
 		},
 	})
+
+}
+
+func SetUp() error {
+	var err error
 
 	db, err = sqlx.Connect("sqlite3_regex", viper.GetString("db"))
 	if err != nil {

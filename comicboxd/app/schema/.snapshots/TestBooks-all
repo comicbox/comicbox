@@ -1,0 +1,89 @@
+([]*schema.BookResolver) (len=2) {
+  (*schema.BookResolver)({
+    b: (model.BookUserBook) {
+      Book: (model.Book) {
+        Model: (model.Model) {
+          ID: (uuid.UUID) (len=16) 3874f414-02a8-4c99-b4ce-2bb8cee65ff4,
+          CreatedAt: (time.Time) 2018-11-26 00:51:23 +0000 UTC,
+          UpdatedAt: (time.Time) 2018-11-26 00:51:23 +0000 UTC
+        },
+        Series: (string) "",
+        Summary: (string) "",
+        StoryArc: (string) "",
+        AuthorsJSON: ([]uint8) {
+        },
+        Authors: ([]string) <nil>,
+        Web: (string) "",
+        GenresJSON: ([]uint8) {
+        },
+        Genres: ([]string) <nil>,
+        AlternateSeries: (string) "",
+        ReadingDirection: (string) "",
+        MediaType: (string) "",
+        File: (string) (len=13) "/path/to/file",
+        Title: (string) "",
+        Volume: (*int32)(<nil>),
+        CommunityRating: (*float64)(<nil>),
+        Chapter: (*float64)(<nil>),
+        DateReleased: (*time.Time)(<nil>),
+        PagesJSON: ([]uint8) (len=2) {
+          00000000  5b 5d                                             |[]|
+        },
+        PageCount: (int) 0,
+        Pages: ([]*model.Page) <nil>
+      },
+      UserBook: (model.UserBook) {
+        UserID: (*uuid.UUID)((len=16) 00000000-0000-0000-0000-000000000000),
+        BookID: (*uuid.UUID)((len=16) 3874f414-02a8-4c99-b4ce-2bb8cee65ff4),
+        CurrentPage: (*int32)(<nil>),
+        LastPageRead: (*int32)(<nil>),
+        Rating: (*float64)(<nil>)
+      },
+      Read: (bool) false
+    }
+  }),
+  (*schema.BookResolver)({
+    b: (model.BookUserBook) {
+      Book: (model.Book) {
+        Model: (model.Model) {
+          ID: (uuid.UUID) (len=16) 30e43719-a5f4-4961-a75a-74f4082c3a14,
+          CreatedAt: (time.Time) 2018-11-26 00:51:23 +0000 UTC,
+          UpdatedAt: (time.Time) 2018-11-26 00:51:23 +0000 UTC
+        },
+        Series: (string) (len=2) "s1",
+        Summary: (string) "",
+        StoryArc: (string) "",
+        AuthorsJSON: ([]uint8) {
+        },
+        Authors: ([]string) <nil>,
+        Web: (string) "",
+        GenresJSON: ([]uint8) {
+        },
+        Genres: ([]string) <nil>,
+        AlternateSeries: (string) "",
+        ReadingDirection: (string) "",
+        MediaType: (string) "",
+        File: (string) (len=13) "/path/to/file",
+        Title: (string) (len=12) "a book title",
+        Volume: (*int32)(<nil>),
+        CommunityRating: (*float64)(<nil>),
+        Chapter: (*float64)(1),
+        DateReleased: (*time.Time)(<nil>),
+        PagesJSON: ([]uint8) (len=2) {
+          00000000  5b 5d                                             |[]|
+        },
+        PageCount: (int) 0,
+        Pages: ([]*model.Page) <nil>
+      },
+      UserBook: (model.UserBook) {
+        UserID: (*uuid.UUID)((len=16) 00000000-0000-0000-0000-000000000000),
+        BookID: (*uuid.UUID)((len=16) 30e43719-a5f4-4961-a75a-74f4082c3a14),
+        CurrentPage: (*int32)(<nil>),
+        LastPageRead: (*int32)(<nil>),
+        Rating: (*float64)(<nil>)
+      },
+      Read: (bool) false
+    }
+  })
+}
+(int32) 2

@@ -46,7 +46,7 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if _, err := os.Stat(book.File()); os.IsNotExist(err) {
-		c.Response = fmt.Errorf("can't find file '%s'", book.File)
+		c.Response = fmt.Errorf("can't find file '%s'", book.File())
 		return
 	}
 
