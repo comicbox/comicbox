@@ -22,15 +22,13 @@ type BookArgs struct {
 func (q *query) Book(ctx context.Context, args BookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
 	book := model.BookUserBook{}
-	sqll, opts, err := squirrel.Select("*").
+	qSQL, qArgs := squirrel.Select("*").
 		From("book_user_book").
 		Where(squirrel.Eq{"id": args.ID}).
 		Where(squirrel.Eq{"user_id": c.User.ID}).
-		ToSql()
-	if err != nil {
-		return nil, err
-	}
-	err = database.Get(&book, sqll, opts...)
+		MustSql()
+
+	err := database.Get(&book, qSQL, qArgs...)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {

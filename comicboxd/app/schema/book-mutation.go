@@ -127,6 +127,9 @@ func (q *query) DeleteBook(ctx context.Context, args DeleteBookArgs) (*BookResol
 	if err != nil {
 		return nil, err
 	}
+	if book == nil {
+		return nil, fmt.Errorf("no book with id %s", args.ID)
+	}
 
 	err = database.Tx(ctx, func(tx *sqlx.Tx) error {
 		_, err := squirrel.Delete("book").

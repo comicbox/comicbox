@@ -1,0 +1,2 @@
+(*schema.BookResolver)(<nil>)
+(*errors.errorString)(NewBook loadNewBookData: EOF)

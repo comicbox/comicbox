@@ -1,0 +1,2 @@
+(*schema.BookResolver)(<nil>)
+(*errors.errorString)(NewBook loadNewBookData: error opening zip: open /not/a/file/path: no such file or directory)
