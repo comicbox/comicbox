@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"path/filepath"
 	"regexp"
 
 	"github.com/spf13/viper"
@@ -32,6 +34,7 @@ func init() {
 func SetUp() error {
 	var err error
 
+	os.MkdirAll(filepath.Dir(viper.GetString("db")), 0777)
 	db, err = sqlx.Connect("sqlite3_regex", viper.GetString("db"))
 	if err != nil {
 		return err
