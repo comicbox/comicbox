@@ -17,9 +17,9 @@ func Query(r *http.Request) *PublicQuery {
 		ctx: context.WithValue(r.Context(), appCtx, app.Ctx(r)),
 	}
 }
-func QueryCtx(ctx context.Context) *PublicQuery {
+func QueryCtx(r *http.Request, ctx context.Context) *PublicQuery {
 	return &PublicQuery{
-		ctx: ctx,
+		ctx: context.WithValue(ctx, appCtx, app.Ctx(r)),
 	}
 }
 

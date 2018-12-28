@@ -253,12 +253,11 @@ export default class Settings extends Component<{}, State> {
     private async btnAddUser() {
         // Returns whats in the top block (id,name,username)
         const response = await gql(`
-        user(user: $user) {
-          id
-          name
-          username
-        }
-      `, {
+            new_user(data: $user) {
+                id
+                name
+                username
+            }`, {
                 user: 'UserInput!',
             }, {
                 user: {

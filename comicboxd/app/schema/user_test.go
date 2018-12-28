@@ -3,6 +3,7 @@ package schema
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"testing"
 	"time"
 
@@ -19,7 +20,7 @@ func TestMe(t *testing.T) {
 		cupaloy.SnapshotT(t, r, err)
 	})
 	t.Run("no user", func(t *testing.T) {
-		r, err := QueryCtx(context.Background()).Me()
+		r, err := QueryCtx(&http.Request{}, context.Background()).Me()
 		cupaloy.SnapshotT(t, r, err)
 	})
 }

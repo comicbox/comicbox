@@ -3,6 +3,7 @@ package schema
 import (
 	"context"
 	"log"
+	"net/http"
 
 	"github.com/zwzn/comicbox/comicboxd/app/schema/scalar"
 
@@ -33,7 +34,14 @@ func userCtx() context.Context {
 }
 
 func userQuery() *PublicQuery {
-	return QueryCtx(userCtx())
+	r := &http.Request{}
+	app.CtxSet(r, &app.Context{
+		User: &model.User{
+			Name:     "Test User",
+			Username: "test",
+		},
+	})
+	return Query(r)
 }
 
 func tearDownDB() {
