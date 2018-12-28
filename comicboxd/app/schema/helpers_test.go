@@ -32,6 +32,10 @@ func userCtx() context.Context {
 	return context.WithValue(context.Background(), appCtx, c)
 }
 
+func userQuery() *PublicQuery {
+	return QueryCtx(userCtx())
+}
+
 func tearDownDB() {
 	database.TearDown()
 }
@@ -65,6 +69,17 @@ var testBookIDs = map[string]string{
 	"s3b1": "271cecab-2d3b-4742-83a3-85bb9a61ccb1",
 
 	"s4b1": "9b8b01dd-2e49-4df0-bc47-9fd51e81ed4b",
+}
+
+var testUserIDs = map[string]string{
+	"normal": "00401511-db31-4722-bc39-832ac34783f7",
+	"t1":     "ac5e5d22-4dbf-4914-8f75-0d135db29eb0",
+	"t2":     "93797790-4f39-4c80-aec9-4f312d4897d1",
+	"t3":     "cd301e7e-c23f-46ca-82b9-045d1cc23797",
+	"t4":     "506e2afe-2628-4851-82d9-2fa7a206483f",
+	"t5":     "23d95f71-7681-43b1-9f00-0ae13711d706",
+	"t6":     "6dce3c74-d198-431f-929b-90ead0ecd897",
+	"t7":     "f0cd3ea1-e873-40f2-a3e6-f437451e1ec7",
 }
 
 func insertTestBooks() {
@@ -197,6 +212,79 @@ func insertTestBooks() {
 		}
 		for _, book := range books {
 			_, err := db.Insert("book").SetMap(book).Exec()
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		users := []map[string]interface{}{
+			{
+				"id":         testUserIDs["normal"],
+				"created_at": "2018-11-26 00:51:23",
+				"updated_at": "2018-11-26 00:51:23",
+				"name":       "Normal User",
+				"username":   "normy",
+				"password":   "pass",
+			},
+			{
+				"id":         testUserIDs["t1"],
+				"created_at": "2018-11-26 00:51:23",
+				"updated_at": "2018-11-26 00:51:23",
+				"name":       "Normal User",
+				"username":   "t1",
+				"password":   "pass",
+			},
+			{
+				"id":         testUserIDs["t2"],
+				"created_at": "2018-11-26 00:51:23",
+				"updated_at": "2018-11-26 00:51:23",
+				"name":       "Normal User",
+				"username":   "t2",
+				"password":   "pass",
+			},
+			{
+				"id":         testUserIDs["t3"],
+				"created_at": "2018-11-26 00:51:23",
+				"updated_at": "2018-11-26 00:51:23",
+				"name":       "Normal User",
+				"username":   "t3",
+				"password":   "pass",
+			},
+			{
+				"id":         testUserIDs["t4"],
+				"created_at": "2018-11-26 00:51:23",
+				"updated_at": "2018-11-26 00:51:23",
+				"name":       "Normal User",
+				"username":   "t4",
+				"password":   "pass",
+			},
+			{
+				"id":         testUserIDs["t5"],
+				"created_at": "2018-11-26 00:51:23",
+				"updated_at": "2018-11-26 00:51:23",
+				"name":       "Normal User",
+				"username":   "t5",
+				"password":   "pass",
+			},
+			{
+				"id":         testUserIDs["t6"],
+				"created_at": "2018-11-26 00:51:23",
+				"updated_at": "2018-11-26 00:51:23",
+				"name":       "Normal User",
+				"username":   "t6",
+				"password":   "pass",
+			},
+			{
+				"id":         testUserIDs["t7"],
+				"created_at": "2018-11-26 00:51:23",
+				"updated_at": "2018-11-26 00:51:23",
+				"name":       "Normal User",
+				"username":   "t7",
+				"password":   "pass",
+			},
+		}
+		for _, user := range users {
+			_, err := db.Insert("user").SetMap(user).Exec()
 			if err != nil {
 				log.Fatal(err)
 			}

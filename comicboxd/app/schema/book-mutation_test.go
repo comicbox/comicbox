@@ -57,7 +57,7 @@ func TestNewBook(t *testing.T) {
 				args.Data.File = strptr(test.filePath)
 			}
 
-			r, err := (&query{}).NewBook(userCtx(), args)
+			r, err := userQuery().NewBook(args)
 
 			if r != nil {
 				// reset values that change per run
@@ -102,7 +102,7 @@ func TestUpdateBook(t *testing.T) {
 			}
 			args.ID = graphql.ID(test.id)
 
-			r, err := (&query{}).UpdateBook(userCtx(), args)
+			r, err := userQuery().UpdateBook(args)
 
 			if r != nil {
 				// reset values that change per run
@@ -137,7 +137,7 @@ func TestDeleteBook(t *testing.T) {
 
 			args.ID = graphql.ID(test.id)
 
-			r, err := (&query{}).DeleteBook(userCtx(), args)
+			r, err := userQuery().DeleteBook(args)
 
 			if test.err != nil {
 				assert.EqualError(t, err, test.err.Error())

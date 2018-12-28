@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/zwzn/comicbox/comicboxd/j"
+
 	"github.com/zwzn/comicbox/comicboxd/app/schema/scalar"
 
 	"github.com/Masterminds/squirrel"
@@ -100,7 +102,11 @@ func (r SeriesResolver) Read() int32 {
 func (r SeriesResolver) Tags() []string {
 	data := r.s.TagsJSON
 	tags := []string{}
-	json.Unmarshal(data, &tags)
+	err := json.Unmarshal(data, &tags)
+	if err != nil {
+		j.Warning(err)
+		return []string{}
+	}
 	return tags
 }
 func (r SeriesResolver) Total() int32 {
@@ -114,16 +120,11 @@ type SeriesQueryResolver struct {
 }
 
 func (r SeriesQueryResolver) Total() (int32, error) {
-	sqll, args, err := r.query.Columns("count(*)").ToSql()
-	if err != nil {
-		return 0, err
-	}
+	qSQL, qArgs := r.query.Columns("count(*)").MustSql()
 
 	var count int32
-	err = database.Get(&count, sqll, args...)
-	if err == sql.ErrNoRows {
-		return 0, nil
-	} else if err != nil {
+	err := database.Get(&count, qSQL, qArgs...)
+	if err != nil {
 		return 0, err
 	}
 

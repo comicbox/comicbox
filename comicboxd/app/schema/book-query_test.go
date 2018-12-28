@@ -220,12 +220,12 @@ func TestBook(t *testing.T) {
 	}
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			r, err := (&query{}).Book(userCtx(), BookArgs{ID: graphql.ID(test.id)})
-			if test.err == nil {
-				assert.NoError(t, err)
-			} else {
+			r, err := userQuery().Book(BookArgs{ID: graphql.ID(test.id)})
+			if test.err != nil {
 				assert.EqualError(t, err, test.err.Error())
+				return
 			}
+			assert.NoError(t, err)
 			cupaloy.SnapshotT(t, r)
 		})
 	}
@@ -276,7 +276,7 @@ func TestBooks(t *testing.T) {
 	}
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			r, err := (&query{}).Books(userCtx(), test.args)
+			r, err := userQuery().Books(test.args)
 
 			if test.err != nil {
 				assert.EqualError(t, err, test.err.Error())
