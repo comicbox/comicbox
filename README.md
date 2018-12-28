@@ -6,9 +6,9 @@ ComicBox is a web based comic reader.
 
 Building this project requires the following:
  * [go](https://golang.org/)
- * [Cordova](https://cordova.apache.org/)
  * [go-bindata](https://github.com/zwzn/go-bindata)
- * [Android Studio](https://developer.android.com/studio/) - if you'd like to build the frontend into an app.
+ * [nodejs](https://nodejs.org/en/)
+ * [npm](https://www.npmjs.com/)
 
 Each of these dependencies can be installed in their own way depending on platform, follow the instructions that match your environment.
 
