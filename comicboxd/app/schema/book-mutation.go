@@ -65,6 +65,10 @@ func (q *query) NewBook(ctx context.Context, args NewBookArgs) (*BookResolver, e
 		return nil, fmt.Errorf("the book must have pages")
 	}
 
+	if book.File == nil || *book.File == "" {
+		return nil, fmt.Errorf("you must set a file")
+	}
+
 	err = database.Tx(ctx, func(tx *sqlx.Tx) error {
 		_, err := squirrel.
 			Insert("book").

@@ -100,7 +100,15 @@ func loadNewBookData(book BookUserBookInput) (BookUserBookInput, error) {
 		return BookUserBookInput{}, err
 	}
 
-	parseFileName(&book)
+	newBook := parseFileName(file)
+	if err != nil {
+		return BookUserBookInput{}, err
+	}
+
+	err = mergo.Merge(&book, newBook, mergo.WithOverride)
+	if err != nil {
+		return BookUserBookInput{}, err
+	}
 
 	for _, f := range reader.File {
 		name := f.FileInfo().Name()
@@ -145,9 +153,8 @@ func fileBytes(f *zip.File) ([]byte, error) {
 	return b, nil
 }
 
-func parseFileName(book *BookUserBookInput) {
-	path := *book.File
-
+func parseFileName(path string) BookUserBookInput {
+	book := BookUserBookInput{}
 	extension := filepath.Ext(path)
 	name := filepath.Base(path[:len(path)-len(extension)])
 	dir := filepath.Base(filepath.Dir(path))
@@ -180,6 +187,7 @@ func parseFileName(book *BookUserBookInput) {
 		title := result["title"]
 		book.Title = &title
 	}
+	return book
 }
 
 func parseBookJSON(f *zip.File) (BookUserBookInput, error) {
@@ -224,6 +232,7 @@ func parseBookJSON(f *zip.File) (BookUserBookInput, error) {
 			}
 		}
 	}
+	tmpBook.File = nil
 	return tmpBook.BookUserBookInput, nil
 }
 
