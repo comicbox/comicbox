@@ -17,6 +17,7 @@ bindata: npm
 	go-bindata $(bindata)
 
 bindata-debug:
+	mkdir -p web/dist
 	go-bindata -debug $(bindata)
 
 get: bindata-debug
