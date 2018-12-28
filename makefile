@@ -19,7 +19,7 @@ bindata: npm
 bindata-debug:
 	go-bindata -debug $(bindata)
 
-get: bindata
+get: bindata-debug
 	cd web; npm install
 	go get ./...
 

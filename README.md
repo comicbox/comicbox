@@ -15,39 +15,29 @@ Each of these dependencies can be installed in their own way depending on platfo
 For `go-bindata`, run the command `go get github.com/zwzn/go-bindata/go-bindata`.
 
 
-1. Clone the repository to `$GOPATH/src/github.com/zwzn/comicbox`.
+1. Clone the repository.
 ```
-$ git clone git@github.com:abibby/comicbox.git $(go env GOPATH)/src/github.com/zwzn/comicbox
-```
-
-2. Initialize the frontend and download the dependencies.
-```
-$ cd $(go env GOPATH)/src/github.com/zwzn/comicbox/cordova
-$ npm install
-$ mkdir www
+$ git clone https://github.com/zwzn/comicbox.git
 ```
 
-3. Initialize the backand and download the dependencies.
+2. Download the dependencies.
 ```
-$ cd ../comicboxd
-$ make data
-$ go get ./...
+$ make get
 ```
 
-4. Build the project
+3. Build the project
 ```
-$ cd ..
-$ make dev
+$ make
 ```
 
-5. (**Optional**) Create a configuration file for the server.
+4. (**Optional**) Create a configuration file for the server.
 ```
 $ cat > config.yml
 port: 8080 # Port the server will listen on (default=8080)
 dir: /path/to/your/comics # Path to the directory containing your comics (default=/home/<your user>/comics/)
 ```
 
-6. Run the server
+5. Run the server
 ```
 $ ./bin/comicboxd
 Using config file: /home/<your user>/go/src/github.com/zwzn/comicbox/config.yml
