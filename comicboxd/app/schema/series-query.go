@@ -6,9 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/zwzn/comicbox/comicboxd/j"
-
 	"github.com/zwzn/comicbox/comicboxd/app/schema/scalar"
+	"github.com/zwzn/comicbox/comicboxd/j"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/zwzn/comicbox/comicboxd/app/database"
@@ -102,9 +101,12 @@ func (r SeriesResolver) Read() int32 {
 func (r SeriesResolver) Tags() []string {
 	data := r.s.TagsJSON
 	tags := []string{}
+	if data == nil {
+		return []string{}
+	}
 	err := json.Unmarshal(data, &tags)
 	if err != nil {
-		j.Warning(err)
+		j.Warningf("error loading series tags: %v", err)
 		return []string{}
 	}
 	return tags

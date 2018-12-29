@@ -51,7 +51,7 @@ func (n *NumberRange) UnmarshalGraphQL(input interface{}) error {
 			n.max = &max
 		}
 
-		n.maxEqual = parts[4] == "]"
+		n.maxEqual = parts[6] == "]"
 	default:
 		err = errors.New("wrong type")
 	}
