@@ -216,6 +216,7 @@ export default class Read extends Page<Props, State> {
 
     @autobind
     private async next() {
+<<<<<<< HEAD
         if (!this.state.book) { return }
 
         const book = await this.state.book.next()
@@ -224,6 +225,18 @@ export default class Read extends Page<Props, State> {
             route('/book/' + book.id, true)
         } else {
             route('/series/' + this.state.book.series)
+=======
+        const bk = this.state.book
+        if (!bk) {
+            return
+        }
+        let query = Book.where('series', bk.series)
+        if (bk.volume) {
+            query = query.where('volume', `(${bk.volume}:]`)
+        }
+        if (bk.chapter) {
+            query = query.where('chapter', `(${bk.chapter}:]`)
+>>>>>>> master
         }
     }
     @autobind
