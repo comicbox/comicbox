@@ -48,7 +48,8 @@
       LastPageRead: (*int32)(<nil>),
       Rating: (*float64)(<nil>)
     },
-    Read: (bool) false
+    Read: (bool) false,
+    Sort: (string) (len=38) "test_books-9999999999-0000000000-book1"
   }
 })
 (interface {}) <nil>

@@ -38,6 +38,7 @@
       LastPageRead: (*int32)(<nil>),
       Rating: (*float64)(<nil>)
     },
-    Read: (bool) false
+    Read: (bool) false,
+    Sort: (string) (len=23) "-9999999999-0000000000-"
   }
 })

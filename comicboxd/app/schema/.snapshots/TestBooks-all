@@ -39,7 +39,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=23) "-9999999999-0000000000-"
     }
   }),
   (*schema.BookResolver)({
@@ -82,7 +83,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=37) "s1-9999999999-0000001000-a book title"
     }
   }),
   (*schema.BookResolver)({
@@ -125,7 +127,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=25) "s1-9999999999-0000002000-"
     }
   }),
   (*schema.BookResolver)({
@@ -168,7 +171,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=42) "s2-0000000001-0000001000-a different title"
     }
   }),
   (*schema.BookResolver)({
@@ -211,7 +215,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=48) "s2-0000000001-0000002000-another different title"
     }
   }),
   (*schema.BookResolver)({
@@ -254,7 +259,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=25) "s2-0000000002-0000003000-"
     }
   }),
   (*schema.BookResolver)({
@@ -297,7 +303,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=25) "s2-0000000002-0000004000-"
     }
   }),
   (*schema.BookResolver)({
@@ -340,7 +347,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=25) "s2-0000000003-0000005000-"
     }
   }),
   (*schema.BookResolver)({
@@ -383,7 +391,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=25) "s3-0000000001-0000000000-"
     }
   }),
   (*schema.BookResolver)({
@@ -426,7 +435,8 @@
         LastPageRead: (*int32)(<nil>),
         Rating: (*float64)(<nil>)
       },
-      Read: (bool) false
+      Read: (bool) false,
+      Sort: (string) (len=39) "s4-9999999999-0000000000-Series 4 title"
     }
   })
 }
