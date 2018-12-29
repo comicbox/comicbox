@@ -279,10 +279,10 @@ export default class Book extends Model {
 
         let query = Book.where('series', this.series)
         if (this.volume) {
-            query = query.where('volume', '>', this.volume)
+            query = query.where('volume', `(${this.volume}:]`)
         }
         if (this.chapter) {
-            query = query.where('chapter', '>', this.chapter)
+            query = query.where('chapter', `(${this.chapter}:]`)
         }
 
         return await query.first()
@@ -292,10 +292,10 @@ export default class Book extends Model {
 
         let query = Book.where('series', this.series)
         if (this.volume) {
-            query = query.where('volume', '<', this.volume)
+            query = query.where('volume', `[:${this.volume})`)
         }
         if (this.chapter) {
-            query = query.where('chapter', '<', this.chapter)
+            query = query.where('chapter', `[:${this.chapter})`)
         }
         query.sort('!volume', '!chapter')
 
