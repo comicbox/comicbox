@@ -292,4 +292,31 @@ export default class Book extends Model {
             </Modal.Actions>
         </Modal.Surface>)
     }
+
+    public async next() {
+
+        let query = Book.where('series', this.series)
+        if (this.volume) {
+            query = query.where('volume', '>', this.volume)
+        }
+        if (this.chapter) {
+            query = query.where('chapter', '>', this.chapter)
+        }
+
+        return await query.first()
+    }
+
+    public async previous() {
+
+        let query = Book.where('series', this.series)
+        if (this.volume) {
+            query = query.where('volume', '<', this.volume)
+        }
+        if (this.chapter) {
+            query = query.where('chapter', '<', this.chapter)
+        }
+        query.sort('!volume', '!chapter')
+
+        return await query.first()
+    }
 }
