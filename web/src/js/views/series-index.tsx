@@ -9,9 +9,8 @@ export default class SeriesIndex extends Component {
     public render() {
         const series = Series
             .select('name', 'read', 'total')
-            .where('name', '!=', '')
+            .where('name', '.+')
             .with(Book.take(1).select('cover'))
-            // .get()
 
         return <Layout backLink='/'>
             <h1>Series</h1>

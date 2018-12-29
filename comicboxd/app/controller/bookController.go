@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"archive/zip"
 	"bytes"
+	"context"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -11,21 +11,21 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"sort"
-	"strings"
+	"runtime/debug"
 
-	"github.com/spf13/viper"
-	"golang.org/x/image/bmp"
-
-	"github.com/zwzn/comicbox/comicboxd/j"
+	graphql "github.com/graph-gophers/graphql-go"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/nfnt/resize"
+	"github.com/spf13/viper"
 	"github.com/zwzn/comicbox/comicboxd/app"
 	"github.com/zwzn/comicbox/comicboxd/app/database"
-	"github.com/zwzn/comicbox/comicboxd/app/gql"
-	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/zwzn/comicbox/comicboxd/app/schema"
+	"github.com/zwzn/comicbox/comicboxd/cbz"
 	"github.com/zwzn/comicbox/comicboxd/errors"
-	"github.com/nfnt/resize"
+	"github.com/zwzn/comicbox/comicboxd/j"
+	"github.com/zwzn/hidden"
+	"golang.org/x/image/bmp"
 )
 
 type book struct{}
@@ -36,34 +36,26 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 	c := app.Ctx(r)
 	bookID := c.Var("id")
 	pageNum := int(c.VarInt64("page"))
-	book := model.BookUserBook{}
-	err := gql.Query(r, `query getBook($id:ID!) {
-		book(id: $id){
-			file
-			pages {
-				file_number
-				type
-			}
-		}
-	}`, map[string]interface{}{"id": bookID}, &book)
+
+	book, err := schema.Query(r).Book(schema.BookArgs{ID: graphql.ID(bookID)})
 	errors.Check(err)
 
-	pages := book.Pages
+	pages := book.Pages()
 	if pageNum < 0 || pageNum >= len(pages) {
 		c.Response = errors.HTTP(404)
 		return
 	}
-	if _, err := os.Stat(book.File); os.IsNotExist(err) {
-		c.Response = fmt.Errorf("can't find file '%s'", book.File)
+	if _, err := os.Stat(book.File()); os.IsNotExist(err) {
+		c.Response = fmt.Errorf("can't find file '%s'", book.File())
 		return
 	}
 
-	imageFiles, err := ZippedImages(book.File)
+	imageFiles, err := cbz.ZippedImages(book.File())
 	errors.Check(err)
 
-	page := book.Pages[pageNum]
+	page := book.Pages()[pageNum]
 
-	rc, err := imageFiles[page.FileNumber].Open()
+	rc, err := imageFiles[page.FileNumber()].Open()
 	if err != nil {
 		c.Response = err
 		return
@@ -118,31 +110,6 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ZippedImages(file string) ([]*zip.File, error) {
-	// Open a zip archive for reading.
-	reader, err := zip.OpenReader(file)
-	if err != nil {
-		return nil, fmt.Errorf("error opening zip: %v", err)
-	}
-
-	sort.Slice(reader.File, func(i, j int) bool {
-		return strings.Compare(reader.File[i].Name, reader.File[j].Name) < 0
-	})
-
-	imageFiles := reader.File[:0]
-	for _, x := range reader.File {
-		lowerName := strings.ToLower(x.Name)
-		if strings.HasSuffix(lowerName, ".jpg") ||
-			strings.HasSuffix(lowerName, ".jpeg") ||
-			strings.HasSuffix(lowerName, ".png") ||
-			strings.HasSuffix(lowerName, ".bmp") ||
-			strings.HasSuffix(lowerName, ".tiff") {
-			imageFiles = append(imageFiles, x)
-		}
-	}
-	return imageFiles, nil
-}
-
 func (b *book) Scan(w http.ResponseWriter, r *http.Request) {
 	go scan(r)
 }
@@ -150,15 +117,14 @@ func (b *book) Scan(w http.ResponseWriter, r *http.Request) {
 func scan(r *http.Request) {
 	defer (func() {
 		if err := recover(); err != nil {
-			j.Errorf("error scanning books: %s", err)
+			j.Errorf("error scanning books: %s\n%s", err, debug.Stack())
 			Push.Error("error scanning books: %s", err)
 		}
 	})()
 
 	Push.Message("Starting book scan")
 	dbFiles := []string{}
-	// addFiles := []string{}
-	// removeFiles := []string{}
+
 	sql, args, err := sq.Select("file").From("book").OrderBy("file").ToSql()
 	errors.Check(err)
 
@@ -167,7 +133,14 @@ func scan(r *http.Request) {
 
 	realFiles := []string{}
 	err = filepath.Walk(viper.GetString("dir"), func(path string, info os.FileInfo, err error) error {
-		// err = filepath.Walk("/mnt/public/old_comics", func(path string, info os.FileInfo, err error) error {
+		if info == nil {
+			return fmt.Errorf("the scan path does not exist")
+		}
+
+		if h, _ := hidden.IsHidden(path); h {
+			return nil
+		}
+
 		ext := filepath.Ext(path)
 		if info.IsDir() || (ext != ".cbz" && ext != ".zip") {
 			return nil
@@ -175,30 +148,30 @@ func scan(r *http.Request) {
 		realFiles = append(realFiles, path)
 		return nil
 	})
-	errors.Check(err)
+	if err != nil {
+		panic(fmt.Errorf("error walking files %v", err))
+	}
 
 	addFiles, removeFiles := DiffSlice(realFiles, dbFiles)
 
 	Push.Message("Started Add")
 
+	q := schema.QueryCtx(r, context.Background())
 	addFilesLen := len(addFiles)
 	removeFilesLen := len(removeFiles)
 	for i, path := range addFiles {
 		if i%100 == 0 {
 			Push.Message("Done %.0f%%", float64(i)/float64(addFilesLen+removeFilesLen)*100.0)
 		}
-		err = gql.Query(r, `mutation addBook($file: String) {
-				book(book: { file: $file }) {
-				  	id
-				}
-			}`, map[string]interface{}{
-			"file": path,
-		}, nil)
+
+		args := schema.NewBookArgs{}
+		args.Data.File = &path
+		_, err := q.NewBook(args)
 		if err != nil {
 			j.Warningf("error adding file '%s': %v", path, err)
 		}
 	}
-
+	i := 0
 	for _, path := range removeFiles {
 		i++
 		if i%100 == 0 {
@@ -213,13 +186,7 @@ func scan(r *http.Request) {
 		errors.Check(err)
 
 		for _, id := range ids {
-			err = gql.Query(r, `mutation deleteBook($id: ID!) {
-				deleteBook(id: $id) {
-				  	id
-				}
-			}`, map[string]interface{}{
-				"id": id,
-			}, nil)
+			_, err := q.DeleteBook(schema.DeleteBookArgs{ID: graphql.ID(id)})
 			if err != nil {
 				j.Warningf("error adding file '%s': %v", path, err)
 			}

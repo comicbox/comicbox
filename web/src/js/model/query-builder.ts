@@ -5,7 +5,6 @@ import map from 'lodash/map'
 
 interface Where {
     field: string
-    operator: string
     value: string | number | boolean
     type: Type
 }
@@ -14,14 +13,6 @@ export interface GetOptions {
     cache?: boolean
     network?: boolean
     save?: boolean
-}
-
-const opConv: { [key: string]: string } = {
-    '=': '',
-    '!=': '_ne',
-    '>': '_gt',
-    '<': '_lt',
-    '~=': '_co',
 }
 
 export class QueryBuilder<T extends Model> {
@@ -54,27 +45,14 @@ export class QueryBuilder<T extends Model> {
         return qb
     }
 
-    public where(field: string, value: string | number | boolean): QueryBuilder<T>
-    public where(field: string, operator: string, value?: string | number | boolean): QueryBuilder<T>
-    public where(field: string, operator: string, value?: string | number | boolean): QueryBuilder<T> {
-        let where: Where
-        if (value === undefined) {
-            where = {
-                field: field,
-                operator: '=',
-                value: operator,
-                type: this.TClass.types[field] || this.TClass.searchTypes[field],
-            }
-        } else {
-            where = {
-                field: field,
-                operator: operator,
-                value: value,
-                type: this.TClass.types[field] || this.TClass.searchTypes[field],
-            }
+    public where(field: string, value: string | number | boolean): QueryBuilder<T> {
+        const where: Where = {
+            field: field,
+            value: value,
+            type: this.TClass.types[field] || this.TClass.searchTypes[field],
         }
+
         if (field === 'search') {
-            where.operator = '='
             where.type = { type: 'String', jsType: undefined }
         }
         this.wheres.push(where)
@@ -113,9 +91,24 @@ export class QueryBuilder<T extends Model> {
         let selects: string[] = []
 
         for (const where of this.wheres) {
-            const field = where.field + opConv[where.operator]
-            types[field] = where.type.type
+            const field = where.field
             variables[field] = where.value
+            if (field === 'search') {
+                types[field] = 'String'
+            } else {
+                switch (where.type.type) {
+                    case 'String':
+                        types[field] = 'Regex'
+                        break
+                    case 'Int':
+                    case 'Float':
+                        types[field] = 'NumberRange'
+                        break
+                    default:
+                        types[field] = where.type.type
+                }
+            }
+
         }
 
         if (this._sort.length > 0) {
@@ -167,11 +160,7 @@ export class QueryBuilder<T extends Model> {
 
         const vars = map(types, (_, key) => `${key.replace(prefix + '_', '')}: $${key}`).join(', ')
         const query = `${this.TClass.table} (${vars}) {
-            page_info {
-                total
-                skip
-                take
-            }
+            total
             results {
                 ${selects.concat(withSelects).join('\n                ')}
             }
@@ -245,6 +234,10 @@ export class QueryBuilder<T extends Model> {
             elements.push(new jsType(element, true))
         }
 
-        return new ModelArray(elements, data.page_info)
+        return new ModelArray(elements, {
+            total: data.total,
+            skip: this._skip,
+            take: this._take,
+        })
     }
 }

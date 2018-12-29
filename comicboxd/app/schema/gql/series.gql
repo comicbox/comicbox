@@ -1,0 +1,58 @@
+
+type Series {
+    books(
+        skip: Int
+        take: Int!
+        
+        search: String
+        sort: String
+
+        id: ID
+        read: Boolean
+
+        # created_at: Regex
+        # updated_at: Regex
+        # date_released: Regex
+        file: Regex
+        web: Regex
+        title: Regex
+        story_arc: Regex
+        genres: Regex
+        current_page: Regex
+        type: Regex
+        alternate_series: Regex
+        authors: Regex
+        summary: Regex
+
+        last_page_read: NumberRange
+        page_count: NumberRange
+        community_rating: NumberRange
+        chapter: NumberRange
+        rating: NumberRange
+        volume: NumberRange
+    ): BookQuery
+        
+    list: List
+    name: String!
+    read: Int!
+    tags: [String!]!
+    total: Int!
+}
+
+input SeriesInput {
+    list: List
+    tags: [String!]
+}
+
+type SeriesQuery {
+    total: Int!
+    results: [Series!]!
+}
+
+enum List {
+    DROPPED
+    PLANNING
+    READING
+    COMPLETED
+    PAUSED
+}

@@ -1,6 +1,7 @@
+import { gql } from 'js/graphql'
 import { Model, prop, table } from 'js/model/model'
 
-@table('users', 'user', 'UserInput!')
+@table('users', 'update_user', 'UserInput!')
 export default class User extends Model {
 
     public static searchTypes = {
@@ -8,7 +9,11 @@ export default class User extends Model {
     }
 
     public static async me(): Promise<User> {
-        return await User.where('me', true).first()
+        return new User(await gql(`me {
+            id
+            name
+            username
+        }`), true)
     }
 
     @prop('String')

@@ -1,0 +1,47 @@
+([]*schema.SeriesResolver) (len=4) {
+  (*schema.SeriesResolver)({
+    s: (model.Series) {
+      Name: (string) (len=2) "s1",
+      Total: (int32) 2,
+      Read: (int32) 0,
+      UserID: (uuid.UUID) (len=16) 00000000-0000-0000-0000-000000000000,
+      List: (*string)(<nil>),
+      TagsJSON: ([]uint8) <nil>,
+      Tags: ([]string) <nil>
+    }
+  }),
+  (*schema.SeriesResolver)({
+    s: (model.Series) {
+      Name: (string) (len=2) "s2",
+      Total: (int32) 5,
+      Read: (int32) 0,
+      UserID: (uuid.UUID) (len=16) 00000000-0000-0000-0000-000000000000,
+      List: (*string)(<nil>),
+      TagsJSON: ([]uint8) <nil>,
+      Tags: ([]string) <nil>
+    }
+  }),
+  (*schema.SeriesResolver)({
+    s: (model.Series) {
+      Name: (string) (len=2) "s3",
+      Total: (int32) 1,
+      Read: (int32) 0,
+      UserID: (uuid.UUID) (len=16) 00000000-0000-0000-0000-000000000000,
+      List: (*string)(<nil>),
+      TagsJSON: ([]uint8) <nil>,
+      Tags: ([]string) <nil>
+    }
+  }),
+  (*schema.SeriesResolver)({
+    s: (model.Series) {
+      Name: (string) (len=2) "s4",
+      Total: (int32) 1,
+      Read: (int32) 0,
+      UserID: (uuid.UUID) (len=16) 00000000-0000-0000-0000-000000000000,
+      List: (*string)(<nil>),
+      TagsJSON: ([]uint8) <nil>,
+      Tags: ([]string) <nil>
+    }
+  })
+}
+(int32) 5

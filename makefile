@@ -1,4 +1,6 @@
-bindata= -o comicboxd/data/bindata.go -pkg data comicboxd/migrations/... web/dist/...
+bindata= -o comicboxd/data/bindata.go -pkg data comicboxd/migrations/... web/dist/... comicboxd/app/schema/gql/...
+
+export GO111MODULE=on
 
 export GO111MODULE=on
 
@@ -17,11 +19,15 @@ bindata: npm
 	go-bindata $(bindata)
 
 bindata-debug:
+	mkdir -p web/dist
 	go-bindata -debug $(bindata)
 
-get: bindata
+get: bindata-debug
 	cd web; npm install
 	go get ./...
 
 tidy: 
 	go mod tidy
+
+test:
+	go test ./...

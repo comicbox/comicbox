@@ -1,0 +1,13 @@
+(*schema.UserResolver)({
+  u: (model.User) {
+    Model: (model.Model) {
+      ID: (uuid.UUID) (len=16) ac5e5d22-4dbf-4914-8f75-0d135db29eb0,
+      CreatedAt: (time.Time) 2018-11-26 00:51:23 +0000 UTC,
+      UpdatedAt: (time.Time) 0001-01-01 00:00:00 +0000 UTC
+    },
+    Name: (string) (len=8) "new name",
+    Username: (string) (len=2) "t1",
+    Password: (string) (len=4) "pass"
+  }
+})
+(interface {}) <nil>

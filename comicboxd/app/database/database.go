@@ -1,37 +1,60 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
-	"log"
 	"os"
+	"path/filepath"
+	"regexp"
+
+	"github.com/spf13/viper"
 
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/sqlite3"
 	bindata "github.com/golang-migrate/migrate/source/go_bindata"
 	"github.com/jmoiron/sqlx"
+	sqlite3Driver "github.com/mattn/go-sqlite3"
 	"github.com/zwzn/comicbox/comicboxd/data"
-	"github.com/zwzn/comicbox/comicboxd/j"
 )
 
 var db *sqlx.DB
 
 func init() {
+	var regex = func(query, field string) (bool, error) {
+		return regexp.MatchString(query, field)
+	}
+	sql.Register("sqlite3_regex", &sqlite3Driver.SQLiteDriver{
+		ConnectHook: func(conn *sqlite3Driver.SQLiteConn) error {
+			return conn.RegisterFunc("regexp", regex, true)
+		},
+	})
+
+}
+
+func SetUp() error {
 	var err error
-	db, err = sqlx.Connect("sqlite3", "test.sqlite")
+
+	os.MkdirAll(filepath.Dir(viper.GetString("db")), 0777)
+	db, err = sqlx.Connect("sqlite3_regex", viper.GetString("db"))
 	if err != nil {
-		j.Error(err)
-		os.Exit(1)
+		return err
 	}
 
 	m, err := getMigrate()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	err = m.Up()
 	if err != nil && err != migrate.ErrNoChange {
-		log.Fatal(err)
+		return err
 	}
+	return nil
+}
+
+func TearDown() error {
+	db.Close()
+	return nil
 }
 
 func getMigrate() (*migrate.Migrate, error) {
