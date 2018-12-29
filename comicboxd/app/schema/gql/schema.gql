@@ -39,6 +39,9 @@ type RootQuery {
         id: ID
         read: Boolean
 
+        after: ID
+        before: ID
+        
         # created_at: Regex
         # updated_at: Regex
         # date_released: Regex

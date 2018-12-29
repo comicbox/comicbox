@@ -47,6 +47,8 @@ type BooksArgs struct {
 	ID   *graphql.ID `db:"id"`
 	Read *bool       `db:"read"`
 
+	After  *graphql.ID
+	Before *graphql.ID
 	// CreatedAt       *scalar.TimeRange
 	// UpdatedAt       *scalar.TimeRange
 	// DateReleased    *scalar.TimeRange
@@ -85,14 +87,32 @@ func (q *query) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, 
 		From("book_user_book").
 		Where(squirrel.Eq{"user_id": c.User.ID})
 
-	if args.Sort == nil {
+	sorted := false
+	if args.After != nil {
+		book, err := q.Book(ctx, BookArgs{ID: *args.After})
+		if err != nil {
+			return nil, err
+		}
+		sorted = true
 		query = query.
-			OrderBy("series").
-			OrderBy("volume").
-			OrderBy("chapter").
-			OrderBy("title")
+			OrderBy("sort").
+			Where("sort > ?", book.b.Sort)
 	}
 
+	if args.Before != nil {
+		book, err := q.Book(ctx, BookArgs{ID: *args.Before})
+		if err != nil {
+			return nil, err
+		}
+		sorted = true
+		query = query.
+			OrderBy("sort desc").
+			Where("sort < ?", book.b.Sort)
+	}
+
+	if args.Sort == nil && !sorted {
+		query = query.OrderBy("sort")
+	}
 	query = scalar.Query(query, args)
 
 	return &BookQueryResolver{

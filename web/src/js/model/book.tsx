@@ -276,29 +276,16 @@ export default class Book extends Model {
     }
 
     public async next() {
-
-        let query = Book.where('series', this.series)
-        if (this.volume) {
-            query = query.where('volume', `(${this.volume}:]`)
-        }
-        if (this.chapter) {
-            query = query.where('chapter', `(${this.chapter}:]`)
-        }
-
-        return await query.first()
+        return await Book
+            .where('series', this.series)
+            .where('after', this.id)
+            .first()
     }
 
     public async previous() {
-
-        let query = Book.where('series', this.series)
-        if (this.volume) {
-            query = query.where('volume', `[:${this.volume})`)
-        }
-        if (this.chapter) {
-            query = query.where('chapter', `[:${this.chapter})`)
-        }
-        query.sort('!volume', '!chapter')
-
-        return await query.first()
+        return await Book
+            .where('series', this.series)
+            .where('before', this.id)
+            .first()
     }
 }

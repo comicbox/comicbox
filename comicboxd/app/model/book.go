@@ -43,7 +43,8 @@ type UserBook struct {
 type BookUserBook struct {
 	Book
 	UserBook
-	Read bool `json:"read" db:"read"`
+	Read bool   `json:"read" db:"read"`
+	Sort string `json:"sort" db:"sort"`
 }
 
 type Page struct {
