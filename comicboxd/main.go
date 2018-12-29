@@ -12,12 +12,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/zwzn/comicbox/comicboxd/app/routes"
-	"github.com/zwzn/comicbox/comicboxd/j"
-	"github.com/zwzn/comicbox/comicboxd/server"
 	"github.com/kardianos/service"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
+	"github.com/zwzn/comicbox/comicboxd/app/routes"
+	"github.com/zwzn/comicbox/comicboxd/j"
+	"github.com/zwzn/comicbox/comicboxd/server"
 )
 
 var logger service.Logger
@@ -64,6 +64,7 @@ func init() {
 
 	viper.SetDefault("port", 8080)
 	viper.SetDefault("dir", filepath.Join(home(), "comics"))
+	viper.SetDefault("db", filepath.Join(home(), ".comicbox", "database.sqlite"))
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())

@@ -1,0 +1,22 @@
+
+type User {
+    # the date a book was created
+    created_at: Time!
+
+    # a unique id for the books
+    id: ID!
+    name: String!
+    updated_at: Time!
+    username: String!
+}
+
+input UserInput {
+    name: String
+    username: String
+    password: String
+}
+
+type UserQuery {
+    total: Int!
+    results: [User!]!
+}

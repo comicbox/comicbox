@@ -9,7 +9,7 @@ import TextField from 'preact-material-components/TextField'
 
 export type List = 'PLANNING' | 'READING' | 'COMPLETED' | 'PAUSED' | 'DROPPED'
 
-@table('series', 'series', 'SeriesInput!', 'name', 'String!')
+@table('series', 'update_series', 'SeriesInput!', 'name', 'String!')
 export default class Series extends Model {
 
     @prop('[Book]', { jsType: Book })

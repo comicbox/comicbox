@@ -1,0 +1,2 @@
+(*schema.BookResolver)(<nil>)
+(*errors.errorString)(NewBook loadNewBookData: you must have a file in new books)

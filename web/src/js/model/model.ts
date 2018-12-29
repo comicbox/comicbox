@@ -26,19 +26,9 @@ export abstract class Model {
     public static where<T extends Model>(
         this: StaticModel<T>,
         field: string,
-        value: string | number | boolean): QueryBuilder<T>
-    public static where<T extends Model>(
-        this: StaticModel<T>,
-        field: string,
-        operator: string,
-        value?: string | number | boolean): QueryBuilder<T>
-    public static where<T extends Model>(
-        this: StaticModel<T>,
-        field: string,
-        operator: string,
-        value?: string | number | boolean): QueryBuilder<T> {
+        value: string | number | boolean): QueryBuilder<T> {
 
-        return (new QueryBuilder<T>(this)).where(field, operator, value)
+        return (new QueryBuilder<T>(this)).where(field, value)
     }
 
     public static select<T extends Model>(this: StaticModel<T>, ...args: string[]): QueryBuilder<T> {
@@ -86,7 +76,7 @@ export abstract class Model {
 
         // ${qb.generateGQL(TClass).join(', ')}
         const newData = await gql(`
-            ${mutationName} (${primaryName}: $id ${mutationName}: $data) {
+            ${mutationName} (${primaryName}: $id data: $data) {
                 ${(new QueryBuilder(TClass)).generateGQL(TClass)}
             }
             `, {
@@ -144,7 +134,7 @@ export function table(
     mutationName: string,
     insertType: string,
     primaryName: string = 'id',
-    primaryType: string = 'ID'): any {
+    primaryType: string = 'ID!'): any {
 
     return (target: any) => {
         target.prototype.constructor.table = tableName

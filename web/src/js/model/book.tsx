@@ -17,7 +17,7 @@ class Page {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-@table('books', 'book', 'BookInput!')
+@table('books', 'update_book', 'BookInput!')
 export default class Book extends Model {
 
     @prop('String')
@@ -66,9 +66,6 @@ export default class Book extends Model {
     public read: boolean
 
     @prop('String')
-    public reading_direction: string
-
-    @prop('String')
     public series: string
 
     @prop('String')
@@ -79,9 +76,6 @@ export default class Book extends Model {
 
     @prop('String')
     public title: string
-
-    @prop('String')
-    public type: string
 
     @prop('DateTime')
     public updated_at: Date
@@ -168,12 +162,6 @@ export default class Book extends Model {
         const summaryChange = (e: Event) => {
             if (e.target instanceof HTMLInputElement) {
                 this.summary = e.target.value
-            }
-        }
-
-        const typeChange = (e: Event) => {
-            if (e.target instanceof HTMLInputElement) {
-                this.type = e.target.value
             }
         }
 
@@ -265,12 +253,6 @@ export default class Book extends Model {
                     label='Title'
                     value={this.title}
                     onChange={titleChange}
-                />
-                <TextField
-                    class={editS.element}
-                    label='Type'
-                    value={this.type}
-                    onChange={typeChange}
                 />
                 <TextField
                     class={editS.element}

@@ -95,7 +95,6 @@ export default class Read extends Page<Props, State> {
                 onClick={this.clickPage}
             />
 
-
             <ReadOverlay
                 show={this.state.modalOpen}
 
@@ -113,7 +112,7 @@ export default class Read extends Page<Props, State> {
     @autobind
     private async loadBookState(id: string) {
         const book = await Book
-            .where('id', '=', id)
+            .where('id', id)
             .first()
 
         this.initBook(book)

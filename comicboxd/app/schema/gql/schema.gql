@@ -1,0 +1,95 @@
+schema {
+    query: RootQuery
+    mutation: RootMutation
+}
+
+# The `Time` scalar type represents a DateTime. The DateTime is serialized as an RFC 3339 quoted string
+scalar Time
+
+# The `NumberRange` scalar represents a range of numbers with the format eg [1:1] is x = 1
+# and (1:10] is 1 < x <= 10 and [:10] is x <= 10
+scalar NumberRange
+
+scalar Regex
+
+type page_info {
+    skip: Int
+    take: Int
+    total: Int
+}
+
+type RootMutation {
+    update_book(id: ID!, data: BookInput!): Book!
+    new_book(data: BookInput!): Book!
+    delete_book(id: ID!): Book
+    update_series(name: String!, data: SeriesInput!): Series
+    update_user(id: ID!, data: UserInput!): User
+    new_user(data: UserInput!): User
+}
+
+type RootQuery {
+    book(id: ID!): Book
+    books(
+        skip: Int
+        take: Int!
+        
+        search: String
+        sort: String
+
+        id: ID
+        read: Boolean
+
+        # created_at: Regex
+        # updated_at: Regex
+        # date_released: Regex
+        file: Regex
+        web: Regex
+        series: Regex
+        title: Regex
+        story_arc: Regex
+        genres: Regex
+        current_page: Regex
+        type: Regex
+        alternate_series: Regex
+        authors: Regex
+        summary: Regex
+
+        last_page_read: NumberRange
+        page_count: NumberRange
+        community_rating: NumberRange
+        chapter: NumberRange
+        rating: NumberRange
+        volume: NumberRange
+    ): BookQuery
+
+    serie(name: String!): Series
+    series(
+        skip: Int
+        take: Int!
+
+        search: String
+        
+        sort: String
+        list: List
+
+        name: Regex
+        tags: Regex
+        
+        total: NumberRange
+        read: NumberRange
+    ): SeriesQuery
+
+    me: User
+    user(id: ID!): User
+    # users(
+    #     skip: Int
+    #     take: Int!
+    #     id: ID
+    #     sort: String
+    #     created_at: String
+    #     updated_at: String
+    #     name: Regex
+    #     username: Regex
+    #     search: Regex
+    # ): UserQuery
+}

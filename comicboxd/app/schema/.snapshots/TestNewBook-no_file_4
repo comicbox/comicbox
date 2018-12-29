@@ -1,0 +1,2 @@
+(*schema.BookResolver)(<nil>)
+(*errors.errorString)(NewBook loadNewBookData: parsing book.json: invalid character 'g' looking for beginning of value)
