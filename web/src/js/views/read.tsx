@@ -100,7 +100,7 @@ export default class Read extends Page<Props, State> {
 
         return <div className={s.reader}>
             <img
-                src={page.url + '?height=500'}
+                src={page.url}
                 className={s.imgResponsive}
                 useMap='#image-map'
                 ref={e => this.img = e}
