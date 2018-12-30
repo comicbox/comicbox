@@ -54,18 +54,18 @@ export default class Read extends Page<Props, State> {
                 }
 
                 if (changed.clientX > touch.clientX) {
-                    this.stepPage(-1)()
+                    this.stepPage(-1)
                 } else if (changed.clientX < touch.clientX) {
-                    this.stepPage(1)()
+                    this.stepPage(1)
                 }
             }
         }
 
         const press = (e: any) => {
             if (e.code === 'ArrowRight') {
-                this.stepPage(1)()
+                this.stepPage(1)
             } else if (e.code === 'ArrowLeft') {
-                this.stepPage(-1)()
+                this.stepPage(-1)
             }
         }
 
@@ -124,9 +124,9 @@ export default class Read extends Page<Props, State> {
             const per = e.x / e.target.getBoundingClientRect().width
 
             if (per < 1 / 3) {
-                this.stepPage(-1)()
+                this.stepPage(-1)
             } else if (per > 2 / 3) {
-                this.stepPage(1)()
+                this.stepPage(1)
             } else {
                 this.toggleModal()
             }
@@ -183,34 +183,31 @@ export default class Read extends Page<Props, State> {
     }
 
     @autobind
-    private stepPage(step: number): () => void {
+    private stepPage(step: number): void {
         if (this.state.book === null) {
-            return () => null
+            return
+        }
+        const book = this.state.book
+
+        if (!book) {
+            return
         }
 
-        return () => {
-            const book = this.state.book
+        const dst = this.state.current + step
+        if (dst < book.pages.length && dst > -1) {
+            book.current_page = dst
+            this.save()
 
-            if (!book) {
-                return
-            }
-
-            const dst = this.state.current + step
-            if (dst < book.pages.length && dst > -1) {
-                book.current_page = dst
-                this.save()
-
-                this.setState({
-                    current: dst,
-                    book: book,
-                    width: 0,
-                    height: 0,
-                })
-            } else if (dst === book.pages.length) {
-                this.next()
-            } else if (dst === -1) {
-                this.previous()
-            }
+            this.setState({
+                current: dst,
+                book: book,
+                width: 0,
+                height: 0,
+            })
+        } else if (dst === book.pages.length) {
+            this.next()
+        } else if (dst <= -1) {
+            this.previous()
         }
     }
 
