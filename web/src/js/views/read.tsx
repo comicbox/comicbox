@@ -4,7 +4,7 @@ import Page from 'js/components/page'
 import ReadOverlay from 'js/components/read-overlay'
 import Book from 'js/model/book'
 import User from 'js/model/user'
-import { debounce } from 'js/util'
+import { debounce, emptyImage } from 'js/util'
 import { Component, h } from 'preact'
 import { route } from 'preact-router'
 
@@ -64,8 +64,8 @@ export default class Read extends Page<Props, State> {
         }
 
         const page = this.state.book.pages[this.state.current]
-        const nextPage = this.state.book.pages[this.state.current + 1] || {}
-        const previousPage = this.state.book.pages[this.state.current - 1] || {}
+        const nextPage = this.state.book.pages[this.state.current + 1] || { url: emptyImage }
+        const previousPage = this.state.book.pages[this.state.current - 1] || { url: emptyImage }
 
         return <div className={s.reader}>
             <img

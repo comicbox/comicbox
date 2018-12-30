@@ -17,11 +17,13 @@ export function isString(value: any) {
 export function debounce(fn: (...args: any[]) => any, delay: number) {
     let timer: any = null
     return (...args: any[]) => {
-      // const context = this
-      clearTimeout(timer)
-      timer = setTimeout(() => {
-        fn.call(this, args)
-        // fn.apply(context, args)
-      }, delay)
+        // const context = this
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+            fn.call(this, args)
+            // fn.apply(context, args)
+        }, delay)
     }
-  }
+}
+
+export const emptyImage = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
