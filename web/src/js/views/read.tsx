@@ -15,8 +15,6 @@ interface Props {
 interface State {
     book: Book | null
     current: number
-    width: number
-    height: number
     modalOpen: boolean
 
     toNext: boolean
@@ -33,8 +31,6 @@ export default class Read extends Page<Props, State> {
         this.state = {
             book: null,
             current: 0,
-            width: 0,
-            height: 0,
             modalOpen: false,
 
             toNext: false,
@@ -175,8 +171,6 @@ export default class Read extends Page<Props, State> {
             this.setState({
                 current: dst,
                 book: book,
-                width: 0,
-                height: 0,
             })
         }
 
@@ -201,8 +195,6 @@ export default class Read extends Page<Props, State> {
             this.setState({
                 current: dst,
                 book: book,
-                width: 0,
-                height: 0,
             })
         } else if (dst === book.pages.length) {
             this.next()
