@@ -38,27 +38,6 @@ export default class Read extends Page<Props, State> {
             toNext: false,
         }
 
-        let touch: any = null
-
-        const save = (e: any) => {
-            touch = e.changedTouches[0]
-        }
-        const move = (e: any) => {
-            if (!this.state.modalOpen) {
-                const changed = e.changedTouches[0]
-                const delta = Math.abs(touch.clientX - changed.clientX)
-                if (delta < 50) {
-                    return
-                }
-
-                if (changed.clientX > touch.clientX) {
-                    this.stepPage(-1)
-                } else if (changed.clientX < touch.clientX) {
-                    this.stepPage(1)
-                }
-            }
-        }
-
         window.addEventListener('touchstart', this.touchstart)
         window.addEventListener('touchmove', this.touchmove)
         window.addEventListener('touchend', this.touchend)
@@ -69,6 +48,7 @@ export default class Read extends Page<Props, State> {
     public componentWillUnmount() {
         window.removeEventListener('touchstart', this.touchstart)
         window.removeEventListener('touchend', this.touchend)
+        window.removeEventListener('touchmove', this.touchmove)
         window.removeEventListener('keyup', this.keyup)
     }
 
@@ -283,6 +263,11 @@ export default class Read extends Page<Props, State> {
     private touchend(e: TouchEvent) {
         const touchCurrent = e.changedTouches[0]
         const diff = touchCurrent.clientX - this.touchDown!.clientX
+        if (Math.abs(diff) < 100) {
+            this.img.classList.remove(s.previous)
+            this.img.classList.remove(s.next)
+            this.img.classList.add(s.current)
+        }
 
         this.img.classList.remove(s.moving)
         this.img.style.left = null

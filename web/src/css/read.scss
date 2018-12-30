@@ -52,11 +52,13 @@
         width: 100%;
         object-fit: contain;
     }
-
-    .next ~ .previous-page{
+    .current~.previous-page {
+        clip-path: inset(0 50% 0 0);
+    }
+    .next~.previous-page {
         display: none;
     }
-    .previous ~ .next-page{
+    .previous~.next-page {
         display: none;
     }
 }
