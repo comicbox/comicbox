@@ -24,6 +24,8 @@ export default class Read extends Page<Props, State> {
     private img: HTMLImageElement
     private user: User | null = null
 
+    private touchDown: Touch | null = null
+
     constructor(props: Props) {
         super(props)
         User.me().then(me => this.user = me)
@@ -57,18 +59,17 @@ export default class Read extends Page<Props, State> {
             }
         }
 
-        const press = (e: any) => {
-            if (e.code === 'ArrowRight') {
-                this.stepPage(1)
-            } else if (e.code === 'ArrowLeft') {
-                this.stepPage(-1)
-            }
-        }
+        window.addEventListener('touchstart', this.touchstart)
+        window.addEventListener('touchmove', this.touchmove)
+        window.addEventListener('touchend', this.touchend)
 
-        window.addEventListener('touchstart', save.bind(this), false)
-        window.addEventListener('touchend', move.bind(this), false)
+        window.addEventListener('keyup', this.keyup)
+    }
 
-        window.addEventListener('keyup', press.bind(this), false)
+    public componentWillUnmount() {
+        window.removeEventListener('touchstart', this.touchstart)
+        window.removeEventListener('touchend', this.touchend)
+        window.removeEventListener('keyup', this.keyup)
     }
 
     public pageLoad() {
@@ -83,12 +84,23 @@ export default class Read extends Page<Props, State> {
         }
 
         const page = this.state.book.pages[this.state.current]
+        const nextPage = this.state.book.pages[this.state.current + 1] || {}
+        const previousPage = this.state.book.pages[this.state.current - 1] || {}
 
         return <div className={s.reader}>
             <img
                 src={page.url}
                 className={s.imgResponsive}
+                ref={e => this.img = e}
                 onClick={this.clickPage}
+            />
+            <img
+                src={nextPage.url}
+                className={s.nextPage}
+            />
+            <img
+                src={previousPage.url}
+                className={s.previousPage}
             />
 
             <ReadOverlay
@@ -234,4 +246,57 @@ export default class Read extends Page<Props, State> {
             this.state.book.save()
         }
     }
+
+    @autobind
+    private keyup(e: any) {
+        if (e.code === 'ArrowRight') {
+            this.stepPage(1)
+        } else if (e.code === 'ArrowLeft') {
+            this.stepPage(-1)
+        }
+    }
+
+    @autobind
+    private touchstart(e: TouchEvent) {
+        this.touchDown = e.changedTouches[0]
+
+        this.img.classList.add(s.moving)
+    }
+    @autobind
+    private touchmove(e: TouchEvent) {
+        const touchCurrent = e.changedTouches[0]
+        const diff = touchCurrent.clientX - this.touchDown!.clientX
+        this.img.style.left = diff + 'px'
+
+        this.img.classList.remove(s.previous)
+        this.img.classList.remove(s.next)
+        this.img.classList.remove(s.current)
+        if (diff > 0) {
+            this.img.classList.add(s.previous)
+        } else if (diff < 0) {
+            this.img.classList.add(s.next)
+        } else {
+            this.img.classList.add(s.current)
+        }
+    }
+    @autobind
+    private touchend(e: TouchEvent) {
+        const touchCurrent = e.changedTouches[0]
+        const diff = touchCurrent.clientX - this.touchDown!.clientX
+
+        this.img.classList.remove(s.moving)
+        this.img.style.left = null
+        setTimeout(() => {
+            if (this.img.classList.contains(s.next)) {
+                this.stepPage(1)
+            }
+            if (this.img.classList.contains(s.previous)) {
+                this.stepPage(-1)
+            }
+            this.img.classList.remove(s.previous)
+            this.img.classList.remove(s.next)
+            this.img.classList.remove(s.current)
+        }, 500)
+    }
+
 }

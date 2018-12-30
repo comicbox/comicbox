@@ -8,18 +8,55 @@
     height: 100%;
     background: black;
 
+    overflow: hidden;
+
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    user-select: none;
-
-    .img-responsive{
+    user-select: none; // position: relative;
+    .img-responsive {
         background-color: black;
         margin: auto;
         height: 100%;
         width: 100%;
         object-fit: contain;
+
+        z-index: 1;
+
+        transition: left 500ms;
+        position: relative;
+
+        &.moving {
+            transition: left 0ms;
+        }
+        &.next {
+            left: -100vw;
+        }
+        &.previous {
+            left: 100vw;
+        }
+        &.current {
+            left: 0;
+        }
+    }
+
+    .next-page,
+    .previous-page {
+        position: absolute;
+        left: 0;
+        top: 0; // background-color: black;
+        // margin: auto;
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+    }
+
+    .next ~ .previous-page{
+        display: none;
+    }
+    .previous ~ .next-page{
+        display: none;
     }
 }
