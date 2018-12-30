@@ -15,8 +15,6 @@ interface Props {
 interface State {
     book: Book | null
     current: number
-    width: number
-    height: number
     modalOpen: boolean
 
     toNext: boolean
@@ -33,8 +31,6 @@ export default class Read extends Page<Props, State> {
         this.state = {
             book: null,
             current: 0,
-            width: 0,
-            height: 0,
             modalOpen: false,
 
             toNext: false,
@@ -54,18 +50,18 @@ export default class Read extends Page<Props, State> {
                 }
 
                 if (changed.clientX > touch.clientX) {
-                    this.stepPage(-1)()
+                    this.stepPage(-1)
                 } else if (changed.clientX < touch.clientX) {
-                    this.stepPage(1)()
+                    this.stepPage(1)
                 }
             }
         }
 
         const press = (e: any) => {
             if (e.code === 'ArrowRight') {
-                this.stepPage(1)()
+                this.stepPage(1)
             } else if (e.code === 'ArrowLeft') {
-                this.stepPage(-1)()
+                this.stepPage(-1)
             }
         }
 
@@ -73,9 +69,6 @@ export default class Read extends Page<Props, State> {
         window.addEventListener('touchend', move.bind(this), false)
 
         window.addEventListener('keyup', press.bind(this), false)
-
-        window.addEventListener('resize', debounce(this.adjustAreaRegions, 250))
-        this.adjustAreaRegions()
     }
 
     public pageLoad() {
@@ -91,27 +84,12 @@ export default class Read extends Page<Props, State> {
 
         const page = this.state.book.pages[this.state.current]
 
-        const width = this.state.width
-        const height = this.state.height
-
-        const leftBox = '0,0,' + Math.floor(width / 3) + ',' + height
-        const rightBox = 2 * Math.floor(width / 3) + ',0,' + width + ',' + height
-        const centerBox = Math.floor(width / 3) + ',0,' + 2 * Math.floor(width / 3) + ',' + height
-
         return <div className={s.reader}>
             <img
-                src={page.url + '?height=500'}
+                src={page.url}
                 className={s.imgResponsive}
-                useMap='#image-map'
-                ref={e => this.img = e}
-                onLoad={this.adjustAreaRegions}
+                onClick={this.clickPage}
             />
-
-            <map name='image-map'>
-                <area target='' onClick={this.stepPage(-1)} alt='left' coords={leftBox} shape='rect' />
-                <area target='' onClick={this.toggleModal} alt='center' coords={centerBox} shape='rect' />
-                <area target='' onClick={this.stepPage(1)} alt='right' coords={rightBox} shape='rect' />
-            </map>
 
             <ReadOverlay
                 show={this.state.modalOpen}
@@ -134,6 +112,21 @@ export default class Read extends Page<Props, State> {
             .first()
 
         this.initBook(book)
+    }
+
+    @autobind
+    private async clickPage(e: MouseEvent) {
+        if (e.target instanceof HTMLElement) {
+            const per = e.x / e.target.getBoundingClientRect().width
+
+            if (per < 1 / 3) {
+                this.stepPage(-1)
+            } else if (per > 2 / 3) {
+                this.stepPage(1)
+            } else {
+                this.toggleModal()
+            }
+        }
     }
 
     @autobind
@@ -164,20 +157,6 @@ export default class Read extends Page<Props, State> {
     }
 
     @autobind
-    private adjustAreaRegions() {
-        if (this.img === undefined) {
-            return
-        }
-        const width = this.img.width
-        const height = this.img.height
-
-        this.setState({
-            width: width,
-            height: height,
-        })
-    }
-
-    @autobind
     private changePage(dst: number) {
         const book = this.state.book
         if (book === null) {
@@ -192,62 +171,60 @@ export default class Read extends Page<Props, State> {
             this.setState({
                 current: dst,
                 book: book,
-                width: 0,
-                height: 0,
             })
         }
 
     }
 
     @autobind
-    private stepPage(step: number): () => void {
+    private stepPage(step: number): void {
         if (this.state.book === null) {
-            return () => null
+            return
+        }
+        const book = this.state.book
+
+        if (!book) {
+            return
         }
 
-        return () => {
-            const book = this.state.book
+        const dst = this.state.current + step
+        if (dst < book.pages.length && dst > -1) {
+            book.current_page = dst
+            this.save()
 
-            if (!book) {
-                return
-            }
-
-            const dst = this.state.current + step
-            if (dst < book.pages.length && dst > -1) {
-                book.current_page = dst
-                this.save()
-
-                this.setState({
-                    current: dst,
-                    book: book,
-                    width: 0,
-                    height: 0,
-                })
-            } else if (dst === book.pages.length) {
-                this.next()
-            }
+            this.setState({
+                current: dst,
+                book: book,
+            })
+        } else if (dst === book.pages.length) {
+            this.next()
+        } else if (dst <= -1) {
+            this.previous()
         }
     }
 
     @autobind
     private async next() {
-        const bk = this.state.book
-        if (!bk) {
-            return
-        }
-        let query = Book.where('series', bk.series)
-        if (bk.volume) {
-            query = query.where('volume', `(${bk.volume}:]`)
-        }
-        if (bk.chapter) {
-            query = query.where('chapter', `(${bk.chapter}:]`)
-        }
-        const book = await query.first()
+        if (!this.state.book) { return }
+
+        const book = await this.state.book.next()
 
         if (book != null) {
             route('/book/' + book.id, true)
         } else {
-            route('/series/' + bk.series)
+            route('/series/' + this.state.book.series)
+        }
+    }
+    @autobind
+    private async previous() {
+        if (!this.state.book) { return }
+
+        const book = await this.state.book.previous()
+
+        if (book != null) {
+            route('/book/' + book.id, true)
+        } else {
+            route('/series/' + this.state.book.series)
         }
     }
 

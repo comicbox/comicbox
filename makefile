@@ -31,3 +31,8 @@ tidy:
 
 test:
 	go test ./...
+
+migration:
+	touch comicboxd/migrations/$$(date +%s)_.up.sql
+	touch comicboxd/migrations/$$(date +%s)_.down.sql
+	

@@ -274,4 +274,18 @@ export default class Book extends Model {
             </Modal.Actions>
         </Modal.Surface>)
     }
+
+    public async next() {
+        return await Book
+            .where('series', this.series)
+            .where('after', this.id)
+            .first()
+    }
+
+    public async previous() {
+        return await Book
+            .where('series', this.series)
+            .where('before', this.id)
+            .first()
+    }
 }

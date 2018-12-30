@@ -49,7 +49,8 @@
       LastPageRead: (*int32)(<nil>),
       Rating: (*float64)(<nil>)
     },
-    Read: (bool) false
+    Read: (bool) false,
+    Sort: (string) (len=49) "test series-0000000010-0000011500-with json title"
   }
 })
 (interface {}) <nil>

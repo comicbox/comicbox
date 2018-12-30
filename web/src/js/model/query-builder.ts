@@ -55,6 +55,9 @@ export class QueryBuilder<T extends Model> {
         if (field === 'search') {
             where.type = { type: 'String', jsType: undefined }
         }
+        if (field === 'before' || field === 'after') {
+            where.type = { type: 'ID', jsType: undefined }
+        }
         this.wheres.push(where)
         return this.clone()
     }
