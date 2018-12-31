@@ -25,32 +25,3 @@ export function debounce(fn: (...args: any[]) => any, delay: number) {
         }, delay)
     }
 }
-
-export function escapeRegex(str: string) {
-    const specials = [
-        // order matters for these
-        '-',
-        '[',
-        ']',
-        // order doesn't matter for any of these
-        '/',
-        '{',
-        '}',
-        '(',
-        ')',
-        '*',
-        '+',
-        '?',
-        '.',
-        '\\',
-        '^',
-        '$',
-        '|',
-    ]
-
-    // I choose to escape every character with '\'
-    // even though only some strictly require it when inside of []
-    const regex = RegExp('[' + specials.join('\\') + ']', 'g')
-
-    return str.replace(regex, '\\$&')
-}
