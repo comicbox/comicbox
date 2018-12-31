@@ -238,12 +238,16 @@ export default class Read extends Page<Props, State> {
 
     @autobind
     private touchstart(e: TouchEvent) {
+        if (this.state.modalOpen) { return }
+
         this.touchDown = e.changedTouches[0]
 
         this.img.classList.add(s.moving)
     }
     @autobind
     private touchmove(e: TouchEvent) {
+        if (this.touchDown === null) { return }
+
         const touchCurrent = e.changedTouches[0]
         const diff = touchCurrent.clientX - this.touchDown!.clientX
         this.img.style.left = diff + 'px'
@@ -261,6 +265,8 @@ export default class Read extends Page<Props, State> {
     }
     @autobind
     private touchend(e: TouchEvent) {
+        if (this.touchDown === null) { return }
+
         const touchCurrent = e.changedTouches[0]
         const diff = touchCurrent.clientX - this.touchDown!.clientX
         if (Math.abs(diff) < 100) {
@@ -282,6 +288,8 @@ export default class Read extends Page<Props, State> {
             this.img.classList.remove(s.next)
             this.img.classList.remove(s.current)
         }, 500)
+
+        this.touchDown = null
     }
 
 }
