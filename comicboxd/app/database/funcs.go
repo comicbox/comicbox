@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"flag"
 	"fmt"
 	"time"
 
@@ -11,6 +12,10 @@ import (
 )
 
 var debug = false
+
+func init() {
+	flag.BoolVar(&debug, "debug", false, "prints query timings")
+}
 
 func debugTime(sTime time.Time, query string) {
 	fmt.Printf("query took %v: %s\n", time.Now().Sub(sTime), query)
@@ -30,6 +35,7 @@ func Tx(ctx context.Context, cb func(*sqlx.Tx) error) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 

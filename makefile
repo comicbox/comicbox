@@ -13,7 +13,7 @@ npm:
 	cd web; npm run build-prod
 
 run: bindata-debug
-	go run comicboxd/main.go
+	go run comicboxd/main.go $(ARGS)
 
 bindata: npm
 	go-bindata $(bindata)
