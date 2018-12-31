@@ -161,6 +161,7 @@ module.exports = (env, argv) => {
                 background_color: '#f5f5f5',
                 start_url: '/',
                 display: 'fullscreen',
+                orientation: 'any',
                 fingerprints: !devMode,
                 icons: [
                     {
