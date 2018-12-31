@@ -1,17 +1,9 @@
-.parallax-wrap {
-    height: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    perspective: 1px;
-
-    .parallax {
-        overflow: hidden;
-        img {
-            position: relative;
-            width: 100%; // top: calc(var(--scroll-px) / 2);
-            height: 100%;
-            object-fit: cover;
-            transform: translateZ(-1px) scale(2);
-        }
+.parallax {
+    overflow: hidden;
+    img {
+        position: relative;
+        width: 100%; // top: calc(var(--scroll-px) / 2);
+        height: 100%;
+        object-fit: cover;
     }
 }
