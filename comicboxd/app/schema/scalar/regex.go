@@ -40,30 +40,40 @@ func (r Regex) Query(query squirrel.SelectBuilder, name string) squirrel.SelectB
 
 	tmpRegex := regex
 
+	// check if you need wildcards at the begining or end of the query
 	fixStart := false
 	fixEnd := false
 	if strings.HasPrefix(tmpRegex, "^") {
+		// remove the ^ from the begining of the regex
 		tmpRegex = tmpRegex[1:]
 		fixStart = true
 	}
 	if strings.HasSuffix(tmpRegex, "$") {
+		// remove the $ from the end of the regex
 		tmpRegex = tmpRegex[:len(tmpRegex)-1]
 		fixEnd = true
 	}
 
 	text := ""
-	lastChar := rune(0)
+	escaped := false
 	// loop through the regex to see if it has any fancy regex stuff in it
 	for _, c := range tmpRegex {
-		if strings.IndexRune(`[^$.|?*+()`, c) != -1 {
-			if lastChar != '\\' {
+		// if the character is a special character check if the last character was an escape
+		if strings.IndexRune(`[\^$.|?*+()`, c) != -1 {
+			// if the last character wasn't an escape and this one is a backslash move to the next character
+			if !escaped && c == '\\' {
+				escaped = true
+				continue
+			}
+			// if the last character wasn't an escape and this one is a spacial character you need to run the regex
+			// query
+			if !escaped {
 				return query.Where(fmt.Sprintf("%s regexp ?", name), regex)
 			}
-			text += string(c)
-		} else if c != '\\' {
-			text += string(c)
 		}
-		lastChar = c
+
+		text += string(c)
+		escaped = false
 	}
 
 	if !fixStart {
