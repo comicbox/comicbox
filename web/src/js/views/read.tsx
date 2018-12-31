@@ -4,7 +4,7 @@ import Page from 'js/components/page'
 import ReadOverlay from 'js/components/read-overlay'
 import Book from 'js/model/book'
 import User from 'js/model/user'
-import { debounce } from 'js/util'
+import { debounce, emptyImage } from 'js/util'
 import { Component, h } from 'preact'
 import { route } from 'preact-router'
 
@@ -24,6 +24,8 @@ export default class Read extends Page<Props, State> {
     private img: HTMLImageElement
     private user: User | null = null
 
+    private touchDown: Touch | null = null
+
     constructor(props: Props) {
         super(props)
         User.me().then(me => this.user = me)
@@ -36,39 +38,18 @@ export default class Read extends Page<Props, State> {
             toNext: false,
         }
 
-        let touch: any = null
+        window.addEventListener('touchstart', this.touchstart)
+        window.addEventListener('touchmove', this.touchmove)
+        window.addEventListener('touchend', this.touchend)
 
-        const save = (e: any) => {
-            touch = e.changedTouches[0]
-        }
-        const move = (e: any) => {
-            if (!this.state.modalOpen) {
-                const changed = e.changedTouches[0]
-                const delta = Math.abs(touch.clientX - changed.clientX)
-                if (delta < 50) {
-                    return
-                }
+        window.addEventListener('keyup', this.keyup)
+    }
 
-                if (changed.clientX > touch.clientX) {
-                    this.stepPage(-1)
-                } else if (changed.clientX < touch.clientX) {
-                    this.stepPage(1)
-                }
-            }
-        }
-
-        const press = (e: any) => {
-            if (e.code === 'ArrowRight') {
-                this.stepPage(1)
-            } else if (e.code === 'ArrowLeft') {
-                this.stepPage(-1)
-            }
-        }
-
-        window.addEventListener('touchstart', save.bind(this), false)
-        window.addEventListener('touchend', move.bind(this), false)
-
-        window.addEventListener('keyup', press.bind(this), false)
+    public componentWillUnmount() {
+        window.removeEventListener('touchstart', this.touchstart)
+        window.removeEventListener('touchend', this.touchend)
+        window.removeEventListener('touchmove', this.touchmove)
+        window.removeEventListener('keyup', this.keyup)
     }
 
     public pageLoad() {
@@ -83,12 +64,23 @@ export default class Read extends Page<Props, State> {
         }
 
         const page = this.state.book.pages[this.state.current]
+        const nextPage = this.state.book.pages[this.state.current + 1] || { url: emptyImage }
+        const previousPage = this.state.book.pages[this.state.current - 1] || { url: emptyImage }
 
         return <div className={s.reader}>
             <img
                 src={page.url}
                 className={s.imgResponsive}
+                ref={e => this.img = e}
                 onClick={this.clickPage}
+            />
+            <img
+                src={nextPage.url}
+                className={s.nextPage}
+            />
+            <img
+                src={previousPage.url}
+                className={s.previousPage}
             />
 
             <ReadOverlay
@@ -234,4 +226,70 @@ export default class Read extends Page<Props, State> {
             this.state.book.save()
         }
     }
+
+    @autobind
+    private keyup(e: any) {
+        if (e.code === 'ArrowRight') {
+            this.stepPage(1)
+        } else if (e.code === 'ArrowLeft') {
+            this.stepPage(-1)
+        }
+    }
+
+    @autobind
+    private touchstart(e: TouchEvent) {
+        if (this.state.modalOpen) { return }
+
+        this.touchDown = e.changedTouches[0]
+
+        this.img.classList.add(s.moving)
+    }
+    @autobind
+    private touchmove(e: TouchEvent) {
+        if (this.touchDown === null) { return }
+
+        const touchCurrent = e.changedTouches[0]
+        const diff = touchCurrent.clientX - this.touchDown!.clientX
+        this.img.style.left = diff + 'px'
+
+        this.img.classList.remove(s.previous)
+        this.img.classList.remove(s.next)
+        this.img.classList.remove(s.current)
+        if (diff > 0) {
+            this.img.classList.add(s.previous)
+        } else if (diff < 0) {
+            this.img.classList.add(s.next)
+        } else {
+            this.img.classList.add(s.current)
+        }
+    }
+    @autobind
+    private touchend(e: TouchEvent) {
+        if (this.touchDown === null) { return }
+
+        const touchCurrent = e.changedTouches[0]
+        const diff = touchCurrent.clientX - this.touchDown!.clientX
+        if (Math.abs(diff) < 100) {
+            this.img.classList.remove(s.previous)
+            this.img.classList.remove(s.next)
+            this.img.classList.add(s.current)
+        }
+
+        this.img.classList.remove(s.moving)
+        this.img.style.left = null
+        setTimeout(() => {
+            if (this.img.classList.contains(s.next)) {
+                this.stepPage(1)
+            }
+            if (this.img.classList.contains(s.previous)) {
+                this.stepPage(-1)
+            }
+            this.img.classList.remove(s.previous)
+            this.img.classList.remove(s.next)
+            this.img.classList.remove(s.current)
+        }, 500)
+
+        this.touchDown = null
+    }
+
 }

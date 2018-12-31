@@ -8,6 +8,8 @@
     height: 100%;
     background: black;
 
+    overflow: hidden;
+
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -15,11 +17,49 @@
     -ms-user-select: none;
     user-select: none;
 
-    .img-responsive{
+    .img-responsive {
         background-color: black;
         margin: auto;
         height: 100%;
         width: 100%;
         object-fit: contain;
+
+        z-index: 1;
+
+        transition: left 500ms;
+        position: relative;
+
+        &.moving {
+            transition: left 0ms;
+        }
+        &.next {
+            left: -100vw;
+        }
+        &.previous {
+            left: 100vw;
+        }
+        &.current {
+            left: 0;
+        }
+    }
+
+    .next-page,
+    .previous-page {
+        position: absolute;
+        left: 0;
+        top: 0;
+        
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+    }
+    .current~.previous-page {
+        clip-path: inset(0 50% 0 0);
+    }
+    .next~.previous-page {
+        display: none;
+    }
+    .previous~.next-page {
+        display: none;
     }
 }
