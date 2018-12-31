@@ -1,6 +1,5 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/layout.scss'
-import { ParallaxWrap } from 'js/components/parallax'
 import { endBottomBar, startBottomBar } from 'js/components/snack'
 import TopBar from 'js/components/top-bar'
 import { historyPop, historyPrevious } from 'js/history'
@@ -64,11 +63,9 @@ export default class Layout extends Component<Props> {
 
             <TopBar backLink={this.props.backLink} clear={this.props.clearTopBar} />
 
-            <ParallaxWrap id='parallax-wrap'>
-                <main class={s.main}>
-                    {this.props.children}
-                </main>
-            </ParallaxWrap>
+            <main class={s.main}>
+                {this.props.children}
+            </main>
 
             <div class={s.bottomBar}>
                 {this.menu.map((item, i) => (

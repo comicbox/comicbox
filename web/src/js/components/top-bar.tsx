@@ -7,7 +7,6 @@ import { route } from 'preact-router'
 
 interface Props {
     backLink: string
-    scroller?: HTMLElement
     clear?: boolean
 }
 
@@ -17,7 +16,6 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
 
     private searchInput: HTMLInputElement
 
-    private scroller: HTMLElement
     private header: HTMLElement
 
     private offset: number = 1
@@ -25,8 +23,6 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
 
     public componentDidMount() {
         setTimeout(() => {
-            this.scroller = document.getElementById('parallax-wrap') as HTMLElement
-
             window.requestAnimationFrame(this.frame)
         })
     }
@@ -51,12 +47,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
 
     @autobind
     private frame() {
-        if (!this.scroller) {
-            this.header.style.top = '0px'
-            return
-        }
-
-        const scrollTop = this.scroller.scrollTop
+        const scrollTop = document.documentElement!.scrollTop
 
         if (this.lastScrollTop !== scrollTop && this.header) {
             this.offset = clamp(this.offset + this.lastScrollTop - scrollTop, -headerHeight, 0)
