@@ -1,6 +1,7 @@
 import { gql } from 'js/graphql'
 import { Model, ModelArray, StaticModel, Type } from 'js/model/model'
 import { str_random } from 'js/util'
+import escapeRegExp from 'lodash/escapeRegExp'
 import map from 'lodash/map'
 
 interface Where {
@@ -45,7 +46,12 @@ export class QueryBuilder<T extends Model> {
         return qb
     }
 
-    public where(field: string, value: string | number | boolean): QueryBuilder<T> {
+    public where(field: string, value: string | number | boolean | RegExp): QueryBuilder<T> {
+        if (value instanceof RegExp) {
+            value = value.source
+        } else if (typeof value === 'string') {
+            value = '^' + escapeRegExp(value) + '$'
+        }
         const where: Where = {
             field: field,
             value: value,

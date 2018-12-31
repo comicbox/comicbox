@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var debug = false
+var debug = true
 
 func debugTime(sTime time.Time, query string) {
 	fmt.Printf("query took %v: %s\n", time.Now().Sub(sTime), query)

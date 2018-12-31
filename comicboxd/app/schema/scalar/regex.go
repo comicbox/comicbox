@@ -37,10 +37,40 @@ func (r Regex) Query(query squirrel.SelectBuilder, name string) squirrel.SelectB
 	if regex == ".+" {
 		return query.Where(fmt.Sprintf("%s != \"\"", name))
 	}
-	subre := regex[1 : len(regex)-1]
-	if strings.HasPrefix(regex, "^") && strings.HasSuffix(regex, "$") && strings.IndexAny(subre, `[\^$.|?*+()`) == -1 {
-		return query.Where(fmt.Sprintf("%s = ?", name), subre)
+
+	tmpRegex := regex
+
+	fixStart := false
+	fixEnd := false
+	if strings.HasPrefix(tmpRegex, "^") {
+		tmpRegex = tmpRegex[1:]
+		fixStart = true
+	}
+	if strings.HasSuffix(tmpRegex, "$") {
+		tmpRegex = tmpRegex[:len(tmpRegex)-1]
+		fixEnd = true
 	}
 
-	return query.Where(fmt.Sprintf("%s regexp ?", name), regex)
+	text := ""
+	lastChar := rune(0)
+	// loop through the regex to see if it has any fancy regex stuff in it
+	for _, c := range tmpRegex {
+		if strings.IndexRune(`[^$.|?*+()`, c) != -1 {
+			if lastChar != '\\' {
+				return query.Where(fmt.Sprintf("%s regexp ?", name), regex)
+			}
+			text += string(c)
+		} else if c != '\\' {
+			text += string(c)
+		}
+		lastChar = c
+	}
+
+	if !fixStart {
+		text = "%" + text
+	}
+	if !fixEnd {
+		text = text + "%"
+	}
+	return query.Where(fmt.Sprintf("%s like ?", name), text)
 }

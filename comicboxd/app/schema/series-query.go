@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"regexp"
 
 	"github.com/zwzn/comicbox/comicboxd/app/schema/scalar"
 	"github.com/zwzn/comicbox/comicboxd/j"
@@ -84,7 +85,7 @@ type SeriesResolver struct {
 }
 
 func (r SeriesResolver) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
-	name := "^" + r.s.Name + "$"
+	name := "^" + regexp.QuoteMeta(r.s.Name) + "$"
 	args.Series = (*scalar.Regex)(&name)
 	return (&query{}).Books(ctx, args)
 }
