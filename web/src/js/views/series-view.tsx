@@ -104,7 +104,7 @@ export default class SeriesView extends Component<Props, State> {
 
             </div>
             <ModelList
-                items={Book.where('series', `^${series}$`)}
+                items={Book.where('series', series)}
                 key={series + 'books'}
             />
         </Layout >
@@ -134,16 +134,16 @@ export default class SeriesView extends Component<Props, State> {
 
         const [serie, current, first] = await Promise.all([
 
-            Series.where('name', `^${series}$`)
+            Series.where('name', series)
                 .select('name', 'list', 'tags')
                 .first(),
 
-            Book.where('series', `^${series}$`)
+            Book.where('series', series)
                 .where('read', false)
                 .select('id', 'series', 'cover', 'chapter', 'volume', 'title', 'summary', 'rating', 'community_rating')
                 .first(),
 
-            Book.where('series', `^${series}$`)
+            Book.where('series', series)
                 .select('series', 'cover', 'chapter', 'volume', 'title', 'summary')
                 .first(),
         ])

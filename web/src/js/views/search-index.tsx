@@ -9,12 +9,12 @@ export default class SearchIndex extends Component<any> {
     public render() {
         const query = this.props.matches.query
         const series = Series
-            .where('search', query)
+            .where('search', new RegExp(query))
             .with(Book.take(1))
             .take(10)
             .get()
         const books = Book
-            .where('search', query)
+            .where('search', new RegExp(query))
             .take(20)
             .get()
 

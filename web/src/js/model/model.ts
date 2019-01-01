@@ -26,7 +26,7 @@ export abstract class Model {
     public static where<T extends Model>(
         this: StaticModel<T>,
         field: string,
-        value: string | number | boolean): QueryBuilder<T> {
+        value: string | number | boolean | RegExp): QueryBuilder<T> {
 
         return (new QueryBuilder<T>(this)).where(field, value)
     }
