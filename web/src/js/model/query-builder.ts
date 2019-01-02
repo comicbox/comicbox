@@ -47,15 +47,16 @@ export class QueryBuilder<T extends Model> {
     }
 
     public where(field: string, value: string | number | boolean | RegExp): QueryBuilder<T> {
+        const type: Type = this.TClass.types[field] || this.TClass.searchTypes[field]
         if (value instanceof RegExp) {
             value = value.source
-        } else if (typeof value === 'string') {
+        } else if (typeof value === 'string' && type.type === 'Regex') {
             value = '^' + escapeRegExp(value) + '$'
         }
         const where: Where = {
             field: field,
             value: value,
-            type: this.TClass.types[field] || this.TClass.searchTypes[field],
+            type: type,
         }
 
         if (field === 'search') {
