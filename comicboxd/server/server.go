@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/zwzn/comicbox/comicboxd/app/database"
 	"github.com/zwzn/comicbox/comicboxd/j"
+	"github.com/zwzn/comicbox/comicboxd/tls"
 
 	_ "github.com/golang-migrate/migrate/source/file"
 	"github.com/gorilla/mux"
@@ -37,6 +38,12 @@ func New() *Server {
 		ReadTimeout:  30 * time.Second,
 	}
 
+	if viper.GetBool("https") {
+		if err := tls.ConfigureTLS(s.srv); err != nil {
+			j.Errorf("Error configuring TLS: %s", err)
+		}
+	}
+
 	return s
 }
 
@@ -45,6 +52,12 @@ func (s *Server) Start() error {
 	if err != nil {
 		return err
 	}
+
+	if viper.GetBool("https") {
+		j.Infof("Starting server at https://localhost:%d", viper.GetInt("port"))
+		return s.srv.ListenAndServeTLS(viper.GetString("tls-cert"), viper.GetString("tls-key"))
+	}
+
 	j.Infof("Starting server at http://localhost:%d", viper.GetInt("port"))
 	return s.srv.ListenAndServe()
 }

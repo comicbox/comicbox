@@ -63,8 +63,13 @@ func init() {
 	}
 
 	viper.SetDefault("port", 8080)
+
 	viper.SetDefault("dir", filepath.Join(home(), "comics"))
 	viper.SetDefault("db", filepath.Join(home(), ".comicbox", "database.sqlite"))
+
+	viper.SetDefault("https", false)
+	viper.SetDefault("tls-cert", filepath.Join(home(), ".comicbox", "certs", "cert.pem"))
+	viper.SetDefault("tls-key", filepath.Join(home(), ".comicbox", "certs", "key.pem"))
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
