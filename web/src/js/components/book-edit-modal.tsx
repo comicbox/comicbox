@@ -4,8 +4,13 @@ import Book from 'js/model/book'
 import { Component, h } from 'preact'
 import TabBar from 'preact-material-components/TabBar'
 import TextField from 'preact-material-components/TextField'
+import LazyImg from './lazy-img'
 import Modal from './modal'
-import TabContainer from './tab-container';
+import TabContainer from './tab-container'
+
+interface TEvent extends KeyboardEvent {
+    target: HTMLInputElement
+}
 
 interface Props {
     book: Book
@@ -26,82 +31,85 @@ export default class BookEditModal extends Component<Props> {
                             class={s.element}
                             label='Alternate Series'
                             value={book.alternate_series}
-                            onChange={this.alternateSeriesChange}
+                            onKeyUp={this.alternateSeriesChange}
                         />
                         <TextField
                             class={s.element}
                             label='Authors'
                             value={book.authors.join(', ')}
-                            onChange={this.authorsChange}
+                            onKeyUp={this.authorsChange}
                         />
                         <TextField
                             class={s.element}
                             label='Chapter'
                             type='number'
                             value={book.chapter + ''}
-                            onChange={this.chapterChange}
+                            onKeyUp={this.chapterChange}
                         />
                         <TextField
                             class={s.element}
                             label='Community Rating'
                             type='number'
                             value={book.community_rating + ''}
-                            onChange={this.communityRatingChange}
+                            onKeyUp={this.communityRatingChange}
                         />
                         <TextField
                             class={s.element}
                             label='Date Released'
                             type='date'
                             value={book.date_released ? book.date_released.toISOString() : ''}
-                            onChange={this.dateReleasedChange}
+                            onKeyUp={this.dateReleasedChange}
                         />
                         <TextField
                             class={s.element}
                             label='Genres'
                             value={book.genres.join(', ')}
-                            onChange={this.genresChange}
+                            onKeyUp={this.genresChange}
                         />
                         <TextField
                             class={s.element}
                             label='Rating'
                             type='number'
                             value={book.rating + ''}
-                            onChange={this.ratingChange}
+                            onKeyUp={this.ratingChange}
                         />
                         <TextField
                             class={s.element}
                             label='Story Arc'
                             value={book.story_arc}
-                            onChange={this.storyArcChange}
+                            onKeyUp={this.storyArcChange}
                         />
                         <TextField
                             class={s.element}
                             label='Summary'
                             value={book.summary}
-                            onChange={this.summaryChange}
+                            onKeyUp={this.summaryChange}
                         />
                         <TextField
                             class={s.element}
                             label='Title'
                             value={book.title}
-                            onChange={this.titleChange}
+                            onKeyUp={this.titleChange}
                         />
                         <TextField
                             class={s.element}
                             label='Volume'
                             type='number'
                             value={book.volume + ''}
-                            onChange={this.volumeChange}
+                            onKeyUp={this.volumeChange}
                         />
                         <TextField
                             class={s.element}
                             label='Web'
                             value={book.web}
-                            onChange={this.webChange}
+                            onKeyUp={this.webChange}
                         />
                     </div>
-                    <div title='Pages'>
-                        pages
+                    <div title='Pages' class={s.pageList}>
+
+                        {book.pages.map(page => <div key={page.file_number} class={s.page}>
+                            <LazyImg src={page.url + '?height=150'} />
+                        </div>)}
                     </div>
                 </TabContainer>
             </Modal.Body>
@@ -113,12 +121,12 @@ export default class BookEditModal extends Component<Props> {
     }
 
     @autobind
-    private alternateSeriesChange(e: TEvent<HTMLInputElement>) {
+    private alternateSeriesChange(e: TEvent) {
         this.props.book.alternate_series = e.target.value
     }
 
     @autobind
-    private authorsChange(e: TEvent<HTMLInputElement>) {
+    private authorsChange(e: TEvent) {
         if (e.target.value === '') {
             this.props.book.authors = []
         } else {
@@ -127,7 +135,7 @@ export default class BookEditModal extends Component<Props> {
     }
 
     @autobind
-    private chapterChange(e: TEvent<HTMLInputElement>) {
+    private chapterChange(e: TEvent) {
         if (e.target.value === '') {
             this.props.book.chapter = null
         } else {
@@ -136,17 +144,17 @@ export default class BookEditModal extends Component<Props> {
     }
 
     @autobind
-    private communityRatingChange(e: TEvent<HTMLInputElement>) {
+    private communityRatingChange(e: TEvent) {
         this.props.book.community_rating = Number(e.target.value)
     }
 
     @autobind
-    private dateReleasedChange(e: TEvent<HTMLInputElement>) {
+    private dateReleasedChange(e: TEvent) {
         this.props.book.date_released = new Date(e.target.value)
     }
 
     @autobind
-    private genresChange(e: TEvent<HTMLInputElement>) {
+    private genresChange(e: TEvent) {
         if (e.target.value === '') {
             this.props.book.genres = []
         } else {
@@ -155,27 +163,27 @@ export default class BookEditModal extends Component<Props> {
     }
 
     @autobind
-    private ratingChange(e: TEvent<HTMLInputElement>) {
+    private ratingChange(e: TEvent) {
         this.props.book.rating = Number(e.target.value)
     }
 
     @autobind
-    private storyArcChange(e: TEvent<HTMLInputElement>) {
+    private storyArcChange(e: TEvent) {
         this.props.book.story_arc = e.target.value
     }
 
     @autobind
-    private titleChange(e: TEvent<HTMLInputElement>) {
+    private titleChange(e: TEvent) {
         this.props.book.title = e.target.value
     }
 
     @autobind
-    private summaryChange(e: TEvent<HTMLInputElement>) {
+    private summaryChange(e: TEvent) {
         this.props.book.summary = e.target.value
     }
 
     @autobind
-    private volumeChange(e: TEvent<HTMLInputElement>) {
+    private volumeChange(e: TEvent) {
         if (e.target.value === '') {
             this.props.book.volume = null
         } else {
@@ -185,7 +193,7 @@ export default class BookEditModal extends Component<Props> {
     }
 
     @autobind
-    private webChange(e: TEvent<HTMLInputElement>) {
+    private webChange(e: TEvent) {
         this.props.book.web = e.target.value
     }
 
