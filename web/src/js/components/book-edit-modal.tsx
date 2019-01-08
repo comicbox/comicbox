@@ -2,11 +2,15 @@ import autobind from 'autobind-decorator'
 import * as s from 'css/edit.scss'
 import Book from 'js/model/book'
 import { Component, h } from 'preact'
-import TabBar from 'preact-material-components/TabBar'
+import CheckBox from 'preact-material-components/Checkbox'
+import FormField from 'preact-material-components/FormField'
+import Radio from 'preact-material-components/Radio'
+import Switch from 'preact-material-components/Switch'
 import TextField from 'preact-material-components/TextField'
 import LazyImg from './lazy-img'
 import Modal from './modal'
 import TabContainer from './tab-container'
+import { getFormData } from 'js/util';
 
 interface TEvent extends KeyboardEvent {
     target: HTMLInputElement
@@ -107,8 +111,20 @@ export default class BookEditModal extends Component<Props> {
                     </div>
                     <div title='Pages' class={s.pageList}>
 
-                        {book.pages.map(page => <div key={page.file_number} class={s.page}>
+                        {book.pages.map((page, i) => <div key={page.file_number} class={s.page}>
                             <LazyImg src={page.url + '?height=150'} />
+                            {/* <RadioGroup name={`page-${i}`} value={page.type} class={s.radio}>
+                                <RadioOption value='FrontCover'>Cover</RadioOption>
+                                <RadioOption value='Story'>Story</RadioOption>
+                                <RadioOption value='Deleted'>Deleted</RadioOption>
+                            </RadioGroup> */}
+                            <div>
+                                <input type='hidden' name={`pages[${i}][file_number]`} value={page.file_number} />
+                                <FormField>
+                                    <CheckBox name={`pages[${i}][deleted]`} id={`deleted-${i}`} />
+                                    <label for={`deleted-${i}`}>Deleted</label>
+                                </FormField>
+                            </div>
                         </div>)}
                     </div>
                 </TabContainer>
@@ -198,7 +214,19 @@ export default class BookEditModal extends Component<Props> {
     }
 
     @autobind
-    private async formSubmit() {
-        await this.props.book.save()
+    private async formSubmit(e: Event) {
+        const formData = new FormData(e.target as any)
+
+        // for (const [name, d] of data.entries()) {
+        //     console.log(name, d)
+        // }
+        const data = Array.from(formData.entries()).reduce((memo, [key, value]) => ({
+            ...memo,
+            [key]: value,
+        }), {})
+
+        console.log(data)
+
+        // await this.props.book.save()
     }
 }
