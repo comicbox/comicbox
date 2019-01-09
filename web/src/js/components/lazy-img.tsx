@@ -16,7 +16,7 @@ const lazyImageObserver = new IntersectionObserver((entries, observer) => {
                     lazyImage.srcset = lazyImage.dataset.srcset
                 }
 
-                observer.unobserve(lazyImage)
+                lazyImageObserver.unobserve(lazyImage)
             }
         }
     })
@@ -40,7 +40,10 @@ export default class LazyImg extends Component<JSX.HTMLAttributes, State> {
         delete notSrcProps.src
         delete notSrcProps.srcset
 
-        return <img {...notSrcProps as any} ref={e => this.img = e} />
+        return <img
+            {...notSrcProps as any}
+            ref={e => this.img = e}
+        />
     }
 
 }
