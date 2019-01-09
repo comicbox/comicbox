@@ -24,7 +24,7 @@ export default class BookEditModal extends Component<Props> {
 
     public render() {
         const book = this.props.book
-        return <Modal.Surface formSubmit={this.formSubmit}>
+        return <Modal.Surface formSubmit={this.formSubmit} key={book.id}>
             <Modal.Title>
                 Edit {book.title}
             </Modal.Title>
@@ -168,7 +168,7 @@ export default class BookEditModal extends Component<Props> {
                 return {
                     file_number: Number(page.file_number),
                     type: type,
-                    // url: '',
+                    url: '',
                 }
             })
         } else {
@@ -185,7 +185,7 @@ export default class BookEditModal extends Component<Props> {
             this.props.book.volume = Number(data.volume)
             this.props.book.web = data.web
         }
-        console.log(this.props.book)
+
         await this.props.book.save()
     }
 }
