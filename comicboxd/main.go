@@ -32,11 +32,16 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
-	p.server = server.New()
+	var err error
+	p.server, err = server.New()
+	if err != nil {
+		j.Errorf("error starting server: %v", err)
+		os.Exit(1)
+	}
 
 	routes.Web(p.server)
 
-	err := p.server.Start()
+	err = p.server.Start()
 	if err != nil {
 		j.Errorf("error starting server: %v", err)
 		os.Exit(1)
@@ -62,9 +67,15 @@ func init() {
 		viper.SetConfigName("config")
 	}
 
-	viper.SetDefault("port", 8080)
+	viper.SetDefault("http-port", 8080)
+	viper.SetDefault("https-port", 8081)
+
 	viper.SetDefault("dir", filepath.Join(home(), "comics"))
 	viper.SetDefault("db", filepath.Join(home(), ".comicbox", "database.sqlite"))
+
+	viper.SetDefault("https", false)
+	viper.SetDefault("tls-cert", filepath.Join(home(), ".comicbox", "certs", "cert.pem"))
+	viper.SetDefault("tls-key", filepath.Join(home(), ".comicbox", "certs", "key.pem"))
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
