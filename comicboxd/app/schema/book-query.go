@@ -152,6 +152,11 @@ func (r *BookResolver) Cover() *PageResolver {
 	if len(pages) == 0 {
 		return nil
 	}
+	for _, page := range pages {
+		if page.Type() == "FrontCover" {
+			return &page
+		}
+	}
 	return &pages[0]
 }
 

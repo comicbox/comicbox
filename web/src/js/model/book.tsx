@@ -1,16 +1,17 @@
 import autobind from 'autobind-decorator'
 import BookEditModal from 'js/components/book-edit-modal'
-import Modal, { OpenModal } from 'js/components/modal'
+import { OpenModal } from 'js/components/modal'
 import { Model, prop, table } from 'js/model/model'
 import { h } from 'preact'
-import TextField from 'preact-material-components/TextField'
+
+export type PageType = 'FrontCover' | 'Story' | 'Deleted'
 
 class Page {
     @prop('Int')
     public file_number: number
 
     @prop('PageType')
-    public type: string
+    public type: PageType
 
     @prop('String')
     public url: string

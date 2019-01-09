@@ -1,6 +1,7 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/edit.scss'
-import Book from 'js/model/book'
+import serialize from 'form-serialize'
+import Book, { PageType } from 'js/model/book'
 import { Component, h } from 'preact'
 import CheckBox from 'preact-material-components/Checkbox'
 import FormField from 'preact-material-components/FormField'
@@ -10,7 +11,6 @@ import TextField from 'preact-material-components/TextField'
 import LazyImg from './lazy-img'
 import Modal from './modal'
 import TabContainer from './tab-container'
-import { getFormData } from 'js/util';
 
 interface TEvent extends KeyboardEvent {
     target: HTMLInputElement
@@ -35,78 +35,78 @@ export default class BookEditModal extends Component<Props> {
                             class={s.element}
                             label='Alternate Series'
                             value={book.alternate_series}
-                            onKeyUp={this.alternateSeriesChange}
+                            name='alternate_series'
                         />
                         <TextField
                             class={s.element}
                             label='Authors'
                             value={book.authors.join(', ')}
-                            onKeyUp={this.authorsChange}
+                            name='authors'
                         />
                         <TextField
                             class={s.element}
                             label='Chapter'
                             type='number'
                             value={book.chapter + ''}
-                            onKeyUp={this.chapterChange}
+                            name='chapter'
                         />
                         <TextField
                             class={s.element}
                             label='Community Rating'
                             type='number'
                             value={book.community_rating + ''}
-                            onKeyUp={this.communityRatingChange}
+                            name='community_rating'
                         />
                         <TextField
                             class={s.element}
                             label='Date Released'
                             type='date'
                             value={book.date_released ? book.date_released.toISOString() : ''}
-                            onKeyUp={this.dateReleasedChange}
+                            name='date_released'
                         />
                         <TextField
                             class={s.element}
                             label='Genres'
                             value={book.genres.join(', ')}
-                            onKeyUp={this.genresChange}
+                            name='genres'
                         />
                         <TextField
                             class={s.element}
                             label='Rating'
                             type='number'
                             value={book.rating + ''}
-                            onKeyUp={this.ratingChange}
+                            name='rating'
                         />
                         <TextField
                             class={s.element}
                             label='Story Arc'
                             value={book.story_arc}
-                            onKeyUp={this.storyArcChange}
+                            name='story_arc'
                         />
                         <TextField
                             class={s.element}
                             label='Summary'
                             value={book.summary}
-                            onKeyUp={this.summaryChange}
+                            name='summary'
                         />
                         <TextField
                             class={s.element}
                             label='Title'
                             value={book.title}
-                            onKeyUp={this.titleChange}
+                            name='title'
                         />
                         <TextField
                             class={s.element}
                             label='Volume'
                             type='number'
                             value={book.volume + ''}
-                            onKeyUp={this.volumeChange}
+                            name='volume'
                         />
                         <TextField
                             class={s.element}
                             label='Web'
                             value={book.web}
-                            onKeyUp={this.webChange}
+                            name='web'
                         />
                     </div>
                     <div title='Pages' class={s.pageList}>
@@ -137,96 +137,55 @@ export default class BookEditModal extends Component<Props> {
     }
 
     @autobind
-    private alternateSeriesChange(e: TEvent) {
-        this.props.book.alternate_series = e.target.value
-    }
-
-    @autobind
-    private authorsChange(e: TEvent) {
-        if (e.target.value === '') {
-            this.props.book.authors = []
-        } else {
-            this.props.book.authors = e.target.value.split(',').map(tag => tag.trim().replace(/ /g, '_'))
-        }
-    }
-
-    @autobind
-    private chapterChange(e: TEvent) {
-        if (e.target.value === '') {
-            this.props.book.chapter = null
-        } else {
-            this.props.book.chapter = Number(e.target.value)
-        }
-    }
-
-    @autobind
-    private communityRatingChange(e: TEvent) {
-        this.props.book.community_rating = Number(e.target.value)
-    }
-
-    @autobind
-    private dateReleasedChange(e: TEvent) {
-        this.props.book.date_released = new Date(e.target.value)
-    }
-
-    @autobind
-    private genresChange(e: TEvent) {
-        if (e.target.value === '') {
-            this.props.book.genres = []
-        } else {
-            this.props.book.genres = e.target.value.split(',').map(tag => tag.trim().replace(/ /g, '_'))
-        }
-    }
-
-    @autobind
-    private ratingChange(e: TEvent) {
-        this.props.book.rating = Number(e.target.value)
-    }
-
-    @autobind
-    private storyArcChange(e: TEvent) {
-        this.props.book.story_arc = e.target.value
-    }
-
-    @autobind
-    private titleChange(e: TEvent) {
-        this.props.book.title = e.target.value
-    }
-
-    @autobind
-    private summaryChange(e: TEvent) {
-        this.props.book.summary = e.target.value
-    }
-
-    @autobind
-    private volumeChange(e: TEvent) {
-        if (e.target.value === '') {
-            this.props.book.volume = null
-        } else {
-            this.props.book.volume = Number(e.target.value)
-        }
-
-    }
-
-    @autobind
-    private webChange(e: TEvent) {
-        this.props.book.web = e.target.value
-    }
-
-    @autobind
     private async formSubmit(e: Event) {
-        const formData = new FormData(e.target as any)
+        const data: {
+            pages: Array<{
+                file_number: string,
+                deleted?: 'on',
+            }>,
+            alternate_series: string,
+            authors: string,
+            chapter: string,
+            community_rating: string,
+            date_released: string,
+            genres: string,
+            rating: string,
+            story_arc: string,
+            summary: string,
+            title: string,
+            volume: string,
+            web: string,
+        } = serialize(e.target as any, { hash: true, empty: true })
 
-        // for (const [name, d] of data.entries()) {
-        //     console.log(name, d)
-        // }
-        const data = Array.from(formData.entries()).reduce((memo, [key, value]) => ({
-            ...memo,
-            [key]: value,
-        }), {})
-
-        console.log(data)
-
-        // await this.props.book.save()
+        let hadCover = false
+        if (data.pages) {
+            this.props.book.pages = data.pages.map(page => {
+                let type: PageType = page.deleted ? 'Deleted' : 'Story'
+                if (!page.deleted && !hadCover) {
+                    hadCover = true
+                    type = 'FrontCover'
+                }
+                return {
+                    file_number: Number(page.file_number),
+                    type: type,
+                    // url: '',
+                }
+            })
+        } else {
+            this.props.book.alternate_series = data.alternate_series
+            this.props.book.authors = data.authors.split(',')
+            this.props.book.chapter = Number(data.chapter)
+            this.props.book.community_rating = Number(data.community_rating)
+            this.props.book.date_released = new Date(data.date_released)
+            this.props.book.genres = data.genres.split(',')
+            this.props.book.rating = Number(data.rating)
+            this.props.book.story_arc = data.story_arc
+            this.props.book.summary = data.summary
+            this.props.book.title = data.title
+            this.props.book.volume = Number(data.volume)
+            this.props.book.web = data.web
+        }
+        console.log(this.props.book)
+        await this.props.book.save()
     }
 }

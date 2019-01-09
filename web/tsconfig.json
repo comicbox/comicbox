@@ -11,14 +11,16 @@
         "jsxFactory": "h",
         "paths": {
             "*": [
-                "types/*"
+                "types/*",
+                "src/lib/*",
+                "src/*"
             ],
-            "js/*": [
-                "src/js/*"
-            ],
-            "css/*": [
-                "src/css/*"
-            ],
+            // "js/*": [
+            //     "src/js/*"
+            // ],
+            // "css/*": [
+            //     "src/css/*"
+            // ],
             "lodash/*": [
                 "node_modules/@types/lodash-es/*"
             ]
