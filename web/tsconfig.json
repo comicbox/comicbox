@@ -3,7 +3,6 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "moduleResolution": "node",
-        "module": "esnext",
         "target": "esnext",
         "baseUrl": "./",
         // "jsx": "preserve",
@@ -15,12 +14,6 @@
                 "src/lib/*",
                 "src/*"
             ],
-            // "js/*": [
-            //     "src/js/*"
-            // ],
-            // "css/*": [
-            //     "src/css/*"
-            // ],
             "lodash/*": [
                 "node_modules/@types/lodash-es/*"
             ]
