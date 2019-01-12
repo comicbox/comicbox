@@ -6,7 +6,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: calc(100vh - 56px);
+    min-height: calc(100vh - 56px);
 
     @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
         top: 56px;
@@ -14,7 +14,7 @@
 
     .main {
         margin-top: 56px;
-        padding: 15px;
+        padding: $padding;
 
         @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
             $desktopMargin: 10%;

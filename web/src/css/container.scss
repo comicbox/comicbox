@@ -1,0 +1,21 @@
+@import '@material/layout-grid/_variables.scss';
+@import '@material/layout-grid/_mixins.scss';
+@import "@material/elevation/mdc-elevation";
+
+.container {
+    width: 100%;
+    max-width: 600px;
+
+    position: relative;
+    left: calc(50% + #{$padding});
+    transform: translate(-50%);
+
+    padding: $padding;
+    margin-left: -$padding;
+    margin-right: -$padding;
+
+    &.background {
+        @include mdc-elevation(2);
+        background-color: $mdc-theme-surface;
+    }
+}

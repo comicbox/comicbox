@@ -1,15 +1,17 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/settings.scss'
 import { logout, user } from 'js/auth'
+import { Container } from 'js/components/container'
+import { OpenForm } from 'js/components/modal'
 import { gql } from 'js/graphql'
 import User from 'js/model/user'
 import url from 'js/url'
 import Layout from 'js/views/layout'
-import { Component, h } from 'preact'
+import { Component, FunctionalComponent, h } from 'preact'
 import Button from 'preact-material-components/Button'
+import Select from 'preact-material-components/Select'
 import TextField from 'preact-material-components/TextField'
 import { Link } from 'preact-router'
-import { OpenForm } from 'js/components/modal';
 
 /**
  * Things settings will do.
@@ -45,6 +47,11 @@ interface State {
     userToRevokeAdmin: string
 }
 
+const SettingRow: FunctionalComponent<{ title: string }> = props => <div class={s.row}>
+    <div class={s.title}>{props.title}</div>
+    <div class={s.action}>{props.children}</div>
+</div>
+
 export default class Settings extends Component<{}, State> {
 
     public componentDidMount() {
@@ -60,14 +67,42 @@ export default class Settings extends Component<{}, State> {
     public render() {
 
         return <Layout backLink='/'>
-            <h1>Settings</h1>
-            <Button onClick={this.btnTest}>Test</Button>
+            <Container>
+                <h2>Settings</h2>
+            </Container>
+            <Container background>
+                <SettingRow title='Scan'>
+                    <Button onClick={this.btnScan}>Run</Button>
+                </SettingRow>
+                <SettingRow title='User'>
+                    <Button onClick={this.btnUpdateUser}>Update</Button>
+                </SettingRow>
+                <SettingRow title='Password'>
+                    <Button onClick={this.btnTest}>Update</Button>
+                </SettingRow>
+            </Container>
+            <Container>
+                <h2>Different Settings</h2>
+            </Container>
+            <Container background>
+                <SettingRow title='Test'>
+                    <Select hintText='Select an option'>
+                        <Select.Item>opt1</Select.Item>
+                        <Select.Item>opt2</Select.Item>
+                        <Select.Item>opt3</Select.Item>
+                        <Select.Item>opt4</Select.Item>
+                    </Select>
+                </SettingRow>
+                <SettingRow title='Test'>
+                    <Button onClick={this.btnTest}>Test</Button>
+                </SettingRow>
+            </Container>
         </Layout >
     }
 
     @autobind
     private async btnTest() {
-        const data = OpenForm({ title: 'Username' }, <div>
+        const data = await OpenForm({ title: 'Username' }, <div>
             <TextField label='Username' />
         </div>)
         console.log(data)
@@ -75,10 +110,21 @@ export default class Settings extends Component<{}, State> {
 
     @autobind
     private async btnUpdateUser() {
+        const data = await OpenForm({ title: 'Username' }, <div>
+            <TextField
+                label='Username'
+                name='username'
+            />
+            <TextField
+                label='Name'
+                name='name'
+            />
+        </div>)
+
         const me = this.state.me
 
-        me.name = this.state.name
-        me.username = this.state.username
+        me.name = data.name
+        me.username = data.username
 
         await me.save()
 

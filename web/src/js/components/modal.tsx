@@ -1,7 +1,7 @@
 import { MDCDialog } from '@material/dialog'
 import autobind from 'autobind-decorator'
 import { Component, h } from 'preact'
-import Form from './form';
+import Form from './form'
 
 let dialog: MDCDialog & { open: () => void }
 let modal: Modal
@@ -157,7 +157,7 @@ interface ModalFormOptions {
     cancelText?: string
 }
 
-export function OpenForm(options: ModalFormOptions, form: JSX.Element) {
+export function OpenForm(options: ModalFormOptions, form: JSX.Element): Promise<any> {
     return new Promise(async resolve => {
         options = {
             ...options,
@@ -166,8 +166,6 @@ export function OpenForm(options: ModalFormOptions, form: JSX.Element) {
                 cancelText: 'Cancel',
             },
         }
-        const cancel = () => resolve(undefined)
-        const save = resolve
 
         let title: JSX.Element | null = null
         if (options.title) {
@@ -183,12 +181,12 @@ export function OpenForm(options: ModalFormOptions, form: JSX.Element) {
                     {form}
                 </Modal.Body>
                 <Modal.Actions>
-                    <Modal.Button action='no' onClick={cancel}>{options.cancelText}</Modal.Button>
-                    <Modal.Button action='yes' onClick={save}>{options.saveText}</Modal.Button>
+                    <Modal.Button action='no'>{options.cancelText}</Modal.Button>
+                    <Modal.Button action='yes' submit>{options.saveText}</Modal.Button>
                 </Modal.Actions>
             </Form>
         </Modal.Surface>)
 
-        cancel()
+        resolve(undefined)
     })
 }
