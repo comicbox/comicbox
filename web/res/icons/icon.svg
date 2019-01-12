@@ -16,9 +16,9 @@
     </style>
     <defs>
         <g id="back">
-            <circle cx="0" cy="0" r="22"/>
+            <!-- <circle cx="0" cy="0" r="22"/> -->
             <!-- <rect x="-19" y="-19" width="38" height="38" rx="2" ry="2"/> -->
-            <!-- <rect x="-24" y="-24" width="48" height="48"/> -->
+            <rect x="-24" y="-24" width="48" height="48"/>
         </g>
         <mask id="back-mask">
             <g fill="white">

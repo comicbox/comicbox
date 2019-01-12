@@ -1,6 +1,7 @@
 import { MDCDialog } from '@material/dialog'
 import autobind from 'autobind-decorator'
 import { Component, h } from 'preact'
+import Form from './form';
 
 let dialog: MDCDialog & { open: () => void }
 let modal: Modal
@@ -129,11 +130,11 @@ export async function OpenModal(jsx: JSX.Element) {
 }
 
 export function OpenYesNo(title: string, body: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const yes = () => resolve(true)
         const no = () => resolve(false)
-        dialog.listen('MDCDialog:closed', no)
-        OpenModal(<Modal.Surface>
+
+        await OpenModal(<Modal.Surface>
             <Modal.Title>
                 {title}
             </Modal.Title>
@@ -145,5 +146,49 @@ export function OpenYesNo(title: string, body: string): Promise<boolean> {
                 <Modal.Button action='yes' onClick={yes}>Yes</Modal.Button>
             </Modal.Actions>
         </Modal.Surface>)
+
+        no()
+    })
+}
+
+interface ModalFormOptions {
+    title?: string
+    saveText?: string
+    cancelText?: string
+}
+
+export function OpenForm(options: ModalFormOptions, form: JSX.Element) {
+    return new Promise(async resolve => {
+        options = {
+            ...options,
+            ...{
+                saveText: 'Save',
+                cancelText: 'Cancel',
+            },
+        }
+        const cancel = () => resolve(undefined)
+        const save = resolve
+
+        let title: JSX.Element | null = null
+        if (options.title) {
+            title = <Modal.Title>
+                {options.title}
+            </Modal.Title>
+        }
+
+        await OpenModal(<Modal.Surface>
+            <Form submit={resolve}>
+                {title}
+                <Modal.Body>
+                    {form}
+                </Modal.Body>
+                <Modal.Actions>
+                    <Modal.Button action='no' onClick={cancel}>{options.cancelText}</Modal.Button>
+                    <Modal.Button action='yes' onClick={save}>{options.saveText}</Modal.Button>
+                </Modal.Actions>
+            </Form>
+        </Modal.Surface>)
+
+        cancel()
     })
 }
