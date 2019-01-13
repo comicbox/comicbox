@@ -2,7 +2,7 @@ import autobind from 'autobind-decorator'
 import * as s from 'css/settings.scss'
 import { logout, user } from 'js/auth'
 import { Container } from 'js/components/container'
-import { OpenForm } from 'js/components/modal'
+import { OpenForm, OpenYesNo } from 'js/components/modal'
 import { gql } from 'js/graphql'
 import User from 'js/model/user'
 import url from 'js/url'
@@ -15,7 +15,7 @@ import { Link } from 'preact-router'
 
 /**
  * Things settings will do.
- *
+ * - server address
  * - Change current user's name, username and password
  * - logout
  * - start scan
@@ -28,26 +28,10 @@ import { Link } from 'preact-router'
  */
 
 interface State {
-    address: string
-
     me: User
-    username: string
-    name: string
-
-    oldPass: string
-    newPass: string
-    repeatNewPass: string
-
-    // Admin related vars
-    newNameToAdd: string
-    newUsernameToAdd: string
-    newUserPasswordToAdd: string
-    userToDelete: string
-    userToMakeAdmin: string
-    userToRevokeAdmin: string
 }
 
-const SettingRow: FunctionalComponent<{ title: string }> = props => <div class={s.row}>
+const Row: FunctionalComponent<{ title: string }> = props => <div class={s.row}>
     <div class={s.title}>{props.title}</div>
     <div class={s.action}>{props.children}</div>
 </div>
@@ -56,11 +40,7 @@ export default class Settings extends Component<{}, State> {
 
     public componentDidMount() {
         user().then(me => {
-            this.setState({
-                me: me,
-                username: me.username,
-                name: me.name,
-            })
+            this.setState({ me: me })
         })
     }
 
@@ -71,38 +51,50 @@ export default class Settings extends Component<{}, State> {
                 <h2>Settings</h2>
             </Container>
             <Container background>
-                <SettingRow title='Scan'>
+                <Row title='Scan'>
                     <Button onClick={this.btnScan}>Run</Button>
-                </SettingRow>
-                <SettingRow title='User'>
+                </Row>
+                <Row title='User'>
                     <Button onClick={this.btnUpdateUser}>Update</Button>
-                </SettingRow>
-                <SettingRow title='Password'>
-                    <Button onClick={this.btnTest}>Update</Button>
-                </SettingRow>
+                </Row>
+                <Row title='Password'>
+                    <Button onClick={this.btnUpdatePassword}>Update</Button>
+                </Row>
+            </Container>
+            <Container>
+                <h2>Admin</h2>
+            </Container>
+            <Container background>
+                <Row title='Users'>
+                    <Button onClick={this.btnAddUser}>Add</Button>
+                    <Button onClick={this.btnDeleteUser}>Delete</Button>
+                </Row>
+                <Row title='Groups'>
+                    <Button onClick={this.btnManageGroups}>Manage</Button>
+                </Row>
             </Container>
             <Container>
                 <h2>Different Settings</h2>
             </Container>
             <Container background>
-                <SettingRow title='Test'>
+                <Row title='Test'>
                     <Select hintText='Select an option'>
                         <Select.Item>opt1</Select.Item>
                         <Select.Item>opt2</Select.Item>
                         <Select.Item>opt3</Select.Item>
                         <Select.Item>opt4</Select.Item>
                     </Select>
-                </SettingRow>
-                <SettingRow title='Test'>
+                </Row>
+                <Row title='Test'>
                     <Button onClick={this.btnTest}>Test</Button>
-                </SettingRow>
+                </Row>
             </Container>
         </Layout >
     }
 
     @autobind
     private async btnTest() {
-        const data = await OpenForm({ title: 'Username' }, <div>
+        const data = await OpenForm({ title: 'Username' }, <div class={s.popup}>
             <TextField label='Username' />
         </div>)
         console.log(data)
@@ -110,7 +102,11 @@ export default class Settings extends Component<{}, State> {
 
     @autobind
     private async btnUpdateUser() {
-        const data = await OpenForm({ title: 'Username' }, <div>
+        interface Response {
+            username: string
+            name: string
+        }
+        const data: Response | undefined = await OpenForm({ title: 'User Data' }, <div class={s.popup}>
             <TextField
                 label='Username'
                 name='username'
@@ -121,38 +117,61 @@ export default class Settings extends Component<{}, State> {
             />
         </div>)
 
-        const me = this.state.me
+        if (data === undefined) {
+            return
+        }
+        throw new Error("this isn't finished")
 
-        me.name = data.name
-        me.username = data.username
+        // const me = this.state.me
 
-        await me.save()
+        // me.name = data.name
+        // me.username = data.username
 
-        this.setState({
-            me: me,
-            username: me.username,
-            name: me.name,
-        })
+        // await me.save()
+
+        // this.setState({
+        //     me: me,
+        //     username: me.username,
+        //     name: me.name,
+        // })
     }
 
     @autobind
     private async btnUpdatePassword() {
+        interface Response {
+            current_pass: string
+            new_pass_1: string
+            new_pass_2: string
+        }
+        const data: Response | undefined = await OpenForm({ title: 'Username' }, <div class={s.popup}>
+            <TextField
+                label='Current Password'
+                name='current_pass'
+            />
+            <TextField
+                label='New Password'
+                name='new_pass_1'
+            />
+            <TextField
+                label='Repeat New Password'
+                name='new_pass_2'
+            />
+        </div>)
+
+        if (data === undefined) {
+            return
+        }
         const me = this.state.me
 
         // TODO: Add check to match original old password with given old password for security
-        if (this.state.newPass !== this.state.repeatNewPass) {
+        if (data.new_pass_1 !== data.new_pass_2) {
             alert("Your passwords don't match. Please try again.")
             return
         }
 
-        me.password = this.state.newPass
+        me.password = data.new_pass_1
 
         await me.save()
-
-        this.setState({
-            newPass: '',
-            repeatNewPass: '',
-        })
     }
 
     @autobind
@@ -162,6 +181,10 @@ export default class Settings extends Component<{}, State> {
 
     @autobind
     private async btnScan() {
+        const run = await OpenYesNo('Are you sure you want to run a scan?')
+        if (!run) {
+            return
+        }
         const response = await fetch(await url('/api/scan'))
         if (!response.ok) {
             // TODO: something here
@@ -172,20 +195,20 @@ export default class Settings extends Component<{}, State> {
     @autobind
     private async btnAddUser() {
         // Returns whats in the top block (id,name,username)
-        const response = await gql(`
-            new_user(data: $user) {
-                id
-                name
-                username
-            }`, {
-                user: 'UserInput!',
-            }, {
-                user: {
-                    name: this.state.newNameToAdd,
-                    username: this.state.newUsernameToAdd,
-                    password: this.state.newUserPasswordToAdd,
-                },
-            }, true)
+        // const response = await gql(`
+        //     new_user(data: $user) {
+        //         id
+        //         name
+        //         username
+        //     }`, {
+        //         user: 'UserInput!',
+        //     }, {
+        //         user: {
+        //             name: this.state.newNameToAdd,
+        //             username: this.state.newUsernameToAdd,
+        //             password: this.state.newUserPasswordToAdd,
+        //         },
+        //     }, true)
     }
 
     @autobind
@@ -194,12 +217,7 @@ export default class Settings extends Component<{}, State> {
     }
 
     @autobind
-    private async btnGrantAdminStatus() {
+    private async btnManageGroups() {
         // TODO: Add granting admin status functionality once user groups are implemented
-    }
-
-    @autobind
-    private async btnRevokeAdminStatus() {
-        // TODO: Add revoking admin status functionality once user groups are implemented
     }
 }

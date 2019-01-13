@@ -129,7 +129,7 @@ export async function OpenModal(jsx: JSX.Element) {
     })
 }
 
-export function OpenYesNo(title: string, body: string): Promise<boolean> {
+export function OpenYesNo(title: string, body?: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
         const yes = () => resolve(true)
         const no = () => resolve(false)
