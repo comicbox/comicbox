@@ -1,6 +1,6 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/settings.scss'
-import { logout, user, login } from 'js/auth'
+import { login, logout, user } from 'js/auth'
 import { Container } from 'js/components/container'
 import { OpenForm, OpenYesNo } from 'js/components/modal'
 import { gql } from 'js/graphql'
@@ -9,18 +9,15 @@ import url from 'js/url'
 import Layout from 'js/views/layout'
 import { Component, FunctionalComponent, h } from 'preact'
 import Button from 'preact-material-components/Button'
-import Select from 'preact-material-components/Select'
 import TextField from 'preact-material-components/TextField'
-import { Link } from 'preact-router'
 
 /**
  * Things settings will do.
- * - server address
- * - Change current user's name, username and password
- * - logout
- * - start scan
+ * x Change current user's name, username and password
+ * x logout
+ * x start scan
  * - admin stuff
- *   - add users
+ *   x add users
  *   - delete users
  *   - change user roles
  * - change things from the config file?
@@ -72,22 +69,6 @@ export default class Settings extends Component<{}, State> {
                 </Row>
                 <Row title='Groups'>
                     <Button onClick={this.btnManageGroups}>Manage</Button>
-                </Row>
-            </Container>
-            <Container>
-                <h2>Different Settings</h2>
-            </Container>
-            <Container background>
-                <Row title='Test'>
-                    <Select hintText='Select an option'>
-                        <Select.Item>opt1</Select.Item>
-                        <Select.Item>opt2</Select.Item>
-                        <Select.Item>opt3</Select.Item>
-                        <Select.Item>opt4</Select.Item>
-                    </Select>
-                </Row>
-                <Row title='Test'>
-                    <Button onClick={this.btnTest}>Test</Button>
                 </Row>
             </Container>
         </Layout >
