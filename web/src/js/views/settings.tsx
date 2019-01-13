@@ -1,6 +1,6 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/settings.scss'
-import { logout, user } from 'js/auth'
+import { logout, user, login } from 'js/auth'
 import { Container } from 'js/components/container'
 import { OpenForm, OpenYesNo } from 'js/components/modal'
 import { gql } from 'js/graphql'
@@ -96,7 +96,7 @@ export default class Settings extends Component<{}, State> {
     @autobind
     private async btnTest() {
         const data = await OpenForm({ title: 'Username' }, <div class={s.popup}>
-            <TextField label='Username' />
+            <TextField label='Username' name='test' />
         </div>)
         console.log(data)
     }
@@ -107,34 +107,31 @@ export default class Settings extends Component<{}, State> {
             username: string
             name: string
         }
-        const data: Response | undefined = await OpenForm({ title: 'User Data' }, <div class={s.popup}>
-            <TextField
-                label='Username'
-                name='username'
-            />
+        const data: Response | undefined = await OpenForm({ title: 'Update User' }, <div class={s.popup}>
             <TextField
                 label='Name'
+                value={this.state.me.name}
                 name='name'
+            />
+            <TextField
+                label='Username'
+                value={this.state.me.username}
+                name='username'
             />
         </div>)
 
         if (data === undefined) {
             return
         }
-        throw new Error("this isn't finished")
 
-        // const me = this.state.me
+        const me = this.state.me
 
-        // me.name = data.name
-        // me.username = data.username
+        me.name = data.name
+        me.username = data.username
 
-        // await me.save()
+        await me.save()
 
-        // this.setState({
-        //     me: me,
-        //     username: me.username,
-        //     name: me.name,
-        // })
+        this.setState({ me: me })
     }
 
     @autobind
@@ -144,32 +141,52 @@ export default class Settings extends Component<{}, State> {
             new_pass_1: string
             new_pass_2: string
         }
-        const data: Response | undefined = await OpenForm({ title: 'Change Password' }, <div class={s.popup}>
-            <TextField
-                label='Current Password'
-                type='password'
-                name='current_pass'
-            />
-            <TextField
-                label='New Password'
-                type='password'
-                name='new_pass_1'
-            />
-            <TextField
-                label='Repeat New Password'
-                type='password'
-                name='new_pass_2'
-            />
-        </div>)
 
-        if (data === undefined) {
-            return
-        }
         const me = this.state.me
 
-        // TODO: Add check to match original old password with given old password for security
-        if (data.new_pass_1 !== data.new_pass_2) {
-            alert("Your passwords don't match. Please try again.")
+        const validate = async (resp: Response) => {
+            if (resp.new_pass_1 !== resp.new_pass_2) {
+                alert("Your passwords don't match. Please try again.")
+                return false
+            }
+            // TODO: Add check to match original old password with given old password for security, but dont do it front
+            // end like I did
+            const u = await login(me.username, resp.current_pass)
+            if (u === null) {
+                alert('Your password current password is incorrect')
+                return false
+            }
+            return true
+        }
+
+        const data: Response | undefined = await OpenForm({
+            title: 'Change Password',
+            validate: validate,
+        }, <div class={s.popup}>
+                <TextField
+                    label='Current Password'
+                    type='password'
+                    name='current_pass'
+                    value=''
+                    required
+                />
+                <TextField
+                    label='New Password'
+                    type='password'
+                    name='new_pass_1'
+                    value=''
+                    required
+                />
+                <TextField
+                    label='Repeat New Password'
+                    type='password'
+                    name='new_pass_2'
+                    value=''
+                    required
+                />
+            </div>)
+
+        if (data === undefined) {
             return
         }
 

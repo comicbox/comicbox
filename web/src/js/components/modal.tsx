@@ -1,6 +1,7 @@
 import { MDCDialog } from '@material/dialog'
 import autobind from 'autobind-decorator'
 import { Component, h } from 'preact'
+import Button from 'preact-material-components/Button'
 import Form from './form'
 
 let dialog: MDCDialog & { open: () => void }
@@ -155,6 +156,7 @@ interface ModalFormOptions {
     title?: string
     saveText?: string
     cancelText?: string
+    validate?: ((data: any) => boolean) | ((data: any) => Promise<boolean>)
 }
 
 export function OpenForm(options: ModalFormOptions, form: JSX.Element): Promise<any> {
@@ -174,15 +176,20 @@ export function OpenForm(options: ModalFormOptions, form: JSX.Element): Promise<
             </Modal.Title>
         }
 
+        const submit = (data: any) => {
+            resolve(data)
+            dialog.close()
+        }
+
         await OpenModal(<Modal.Surface>
-            <Form submit={resolve}>
+            <Form submit={submit} validate={options.validate}>
                 {title}
                 <Modal.Body>
                     {form}
                 </Modal.Body>
                 <Modal.Actions>
-                    <Modal.Button action='no'>{options.cancelText}</Modal.Button>
-                    <Modal.Button action='yes' submit>{options.saveText}</Modal.Button>
+                    <Modal.Button action='close'>{options.cancelText}</Modal.Button>
+                    <Button action='accept' submit>{options.saveText}</Button>
                 </Modal.Actions>
             </Form>
         </Modal.Surface>)

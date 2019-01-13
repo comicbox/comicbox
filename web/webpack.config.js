@@ -19,6 +19,7 @@ const paths = {
     DIST: path.resolve(__dirname, 'dist'),
     SRC: path.resolve(__dirname, 'src'),
     JS: path.resolve(__dirname, 'src/js'),
+    LIB: path.resolve(__dirname, 'src', 'lib'),
     CSS: path.resolve(__dirname, 'src/css'),
     RES: path.resolve(__dirname, 'res'),
     COMICBOXD: path.resolve(__dirname, '../comicboxd'),
@@ -122,7 +123,8 @@ module.exports = (env, argv) => {
             extensions: ['.tsx', '.ts', '.js', '.scss', '.css'],
             modules: [
                 "node_modules",
-                paths.SRC
+                paths.SRC,
+                paths.LIB,
             ],
         },
         output: {
