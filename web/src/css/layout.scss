@@ -6,7 +6,6 @@
     top: 0;
     left: 0;
     width: 100%;
-    min-height: calc(100vh - 56px);
 
     @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
         top: 56px;

@@ -24,23 +24,12 @@ import TextField from 'preact-material-components/TextField'
  *   - book folder
  */
 
-interface State {
-    me: User
-}
-
 const Row: FunctionalComponent<{ title: string }> = props => <div class={s.row}>
     <div class={s.title}>{props.title}</div>
     <div class={s.action}>{props.children}</div>
 </div>
 
-export default class Settings extends Component<{}, State> {
-
-    public componentDidMount() {
-        user().then(me => {
-            this.setState({ me: me })
-        })
-    }
-
+export default class Settings extends Component {
     public render() {
 
         return <Layout backLink='/'>
@@ -80,15 +69,16 @@ export default class Settings extends Component<{}, State> {
             username: string
             name: string
         }
+        const me = await user()
         const data: Response | undefined = await OpenForm({ title: 'Update User' }, <div class={s.popup}>
             <TextField
                 label='Name'
-                value={this.state.me.name}
+                value={me.name}
                 name='name'
             />
             <TextField
                 label='Username'
-                value={this.state.me.username}
+                value={me.username}
                 name='username'
             />
         </div>)
@@ -96,8 +86,6 @@ export default class Settings extends Component<{}, State> {
         if (data === undefined) {
             return
         }
-
-        const me = this.state.me
 
         me.name = data.name
         me.username = data.username
@@ -115,8 +103,7 @@ export default class Settings extends Component<{}, State> {
             new_pass_2: string
         }
 
-        const me = this.state.me
-
+        const me = await user()
         const validate = async (resp: Response) => {
             if (resp.new_pass_1 !== resp.new_pass_2) {
                 alert("Your passwords don't match. Please try again.")
