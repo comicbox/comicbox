@@ -48,7 +48,7 @@ export default class Settings extends Component<{}, State> {
 
         return <Layout backLink='/'>
             <Container>
-                <h2>Settings</h2>
+                <h2>General</h2>
             </Container>
             <Container background>
                 <Row title='Scan'>
@@ -56,6 +56,7 @@ export default class Settings extends Component<{}, State> {
                 </Row>
                 <Row title='User'>
                     <Button onClick={this.btnUpdateUser}>Update</Button>
+                    <Button onClick={this.btnLogout}>Logout</Button>
                 </Row>
                 <Row title='Password'>
                     <Button onClick={this.btnUpdatePassword}>Update</Button>
@@ -143,17 +144,20 @@ export default class Settings extends Component<{}, State> {
             new_pass_1: string
             new_pass_2: string
         }
-        const data: Response | undefined = await OpenForm({ title: 'Username' }, <div class={s.popup}>
+        const data: Response | undefined = await OpenForm({ title: 'Change Password' }, <div class={s.popup}>
             <TextField
                 label='Current Password'
+                type='password'
                 name='current_pass'
             />
             <TextField
                 label='New Password'
+                type='password'
                 name='new_pass_1'
             />
             <TextField
                 label='Repeat New Password'
+                type='password'
                 name='new_pass_2'
             />
         </div>)
@@ -194,21 +198,45 @@ export default class Settings extends Component<{}, State> {
     // Adds a user to the database
     @autobind
     private async btnAddUser() {
+        interface Response {
+            name: string
+            username: string
+            password: string
+        }
+        const data: Response | undefined = await OpenForm({ title: 'New User' }, <div class={s.popup}>
+            <TextField
+                label='Name'
+                name='name'
+            />
+            <TextField
+                label='Username'
+                name='username'
+            />
+            <TextField
+                label='Password'
+                type='password'
+                name='password'
+            />
+        </div>)
+
+        if (data === undefined) {
+            return
+        }
         // Returns whats in the top block (id,name,username)
-        // const response = await gql(`
-        //     new_user(data: $user) {
-        //         id
-        //         name
-        //         username
-        //     }`, {
-        //         user: 'UserInput!',
-        //     }, {
-        //         user: {
-        //             name: this.state.newNameToAdd,
-        //             username: this.state.newUsernameToAdd,
-        //             password: this.state.newUserPasswordToAdd,
-        //         },
-        //     }, true)
+        const response = await gql(`
+            new_user(data: $user) {
+                id
+                name
+                username
+            }`, {
+                user: 'UserInput!',
+            }, {
+                user: {
+                    name: data.name,
+                    username: data.username,
+                    password: data.password,
+                },
+            }, true)
     }
 
     @autobind
