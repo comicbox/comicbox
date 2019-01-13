@@ -3,10 +3,10 @@ package controller
 import (
 	"net/http"
 
-	"github.com/zwzn/comicbox/comicboxd/app"
-	"github.com/zwzn/comicbox/comicboxd/app/database"
-	"github.com/zwzn/comicbox/comicboxd/app/model"
-	"github.com/zwzn/comicbox/comicboxd/errors"
+	"github.com/comicbox/comicbox/comicboxd/app"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/app/model"
+	"github.com/comicbox/comicbox/comicboxd/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 

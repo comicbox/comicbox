@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/zwzn/comicbox/comicboxd/app/schema/scalar"
-	"github.com/zwzn/comicbox/comicboxd/j"
+	"github.com/comicbox/comicbox/comicboxd/app/schema/scalar"
+	"github.com/comicbox/comicbox/comicboxd/j"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/zwzn/comicbox/comicboxd/app/database"
-	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/app/model"
 )
 
 type SerieArgs struct {

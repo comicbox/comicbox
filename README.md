@@ -17,7 +17,7 @@ For `go-bindata`, run the command `go get github.com/zwzn/go-bindata/go-bindata`
 
 1. Clone the repository.
 ```
-$ git clone https://github.com/zwzn/comicbox.git
+$ git clone https://github.com/comicbox/comicbox.git
 ```
 
 2. Download the dependencies.
@@ -40,7 +40,7 @@ dir: /path/to/your/comics # Path to the directory containing your comics (defaul
 5. Run the server
 ```
 $ ./bin/comicboxd
-Using config file: /home/<your user>/go/src/github.com/zwzn/comicbox/config.yml
+Using config file: /home/<your user>/go/src/github.com/comicbox/comicbox/config.yml
 I: 17:52:57 Starting server at http://localhost:8080
 ```
 

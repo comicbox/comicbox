@@ -16,8 +16,8 @@ import (
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/jmoiron/sqlx"
-	"github.com/zwzn/comicbox/comicboxd/app/schema/comicrack"
-	"github.com/zwzn/comicbox/comicboxd/cbz"
+	"github.com/comicbox/comicbox/comicboxd/app/schema/comicrack"
+	"github.com/comicbox/comicbox/comicboxd/cbz"
 )
 
 func updateBook(tx *sqlx.Tx, id graphql.ID, book BookInput) error {

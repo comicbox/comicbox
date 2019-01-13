@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/zwzn/comicbox/comicboxd/app"
+	"github.com/comicbox/comicbox/comicboxd/app"
 )
 
 type PublicQuery struct {

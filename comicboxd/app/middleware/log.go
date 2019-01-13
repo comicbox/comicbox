@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/zwzn/comicbox/comicboxd/j"
+	"github.com/comicbox/comicbox/comicboxd/j"
 )
 
 func Log(next http.Handler) http.Handler {

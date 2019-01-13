@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/zwzn/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
 
 	graphql "github.com/graph-gophers/graphql-go"
 

@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
-	"github.com/zwzn/comicbox/comicboxd/j"
+	"github.com/comicbox/comicbox/comicboxd/j"
 )
 
 var (

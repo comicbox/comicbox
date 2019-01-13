@@ -15,9 +15,9 @@ import (
 	"github.com/kardianos/service"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
-	"github.com/zwzn/comicbox/comicboxd/app/routes"
-	"github.com/zwzn/comicbox/comicboxd/j"
-	"github.com/zwzn/comicbox/comicboxd/server"
+	"github.com/comicbox/comicbox/comicboxd/app/routes"
+	"github.com/comicbox/comicbox/comicboxd/j"
+	"github.com/comicbox/comicbox/comicboxd/server"
 )
 
 var logger service.Logger

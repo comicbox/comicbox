@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/zwzn/comicbox/comicboxd/app"
+	"github.com/comicbox/comicbox/comicboxd/app"
 
-	"github.com/zwzn/comicbox/comicboxd/data"
-	"github.com/zwzn/comicbox/comicboxd/errors"
+	"github.com/comicbox/comicbox/comicboxd/data"
+	"github.com/comicbox/comicbox/comicboxd/errors"
 
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
