@@ -75,14 +75,6 @@ export default class Settings extends Component<{}, State> {
     }
 
     @autobind
-    private async btnTest() {
-        const data = await OpenForm({ title: 'Username' }, <div class={s.popup}>
-            <TextField label='Username' name='test' />
-        </div>)
-        console.log(data)
-    }
-
-    @autobind
     private async btnUpdateUser() {
         interface Response {
             username: string
