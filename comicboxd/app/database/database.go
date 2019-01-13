@@ -14,7 +14,7 @@ import (
 	bindata "github.com/golang-migrate/migrate/source/go_bindata"
 	"github.com/jmoiron/sqlx"
 	sqlite3Driver "github.com/mattn/go-sqlite3"
-	"github.com/zwzn/comicbox/comicboxd/data"
+	"github.com/comicbox/comicbox/comicboxd/data"
 )
 
 var db *sqlx.DB

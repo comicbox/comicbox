@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
-	"github.com/zwzn/comicbox/comicboxd/app/database"
-	"github.com/zwzn/comicbox/comicboxd/j"
-	"github.com/zwzn/comicbox/comicboxd/server/tls"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/j"
+	"github.com/comicbox/comicbox/comicboxd/server/tls"
 
 	_ "github.com/golang-migrate/migrate/source/file"
 	"github.com/gorilla/mux"
