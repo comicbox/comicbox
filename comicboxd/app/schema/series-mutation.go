@@ -7,7 +7,7 @@ import (
 	graphql "github.com/graph-gophers/graphql-go"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/zwzn/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
 )
 
 type SeriesInput struct {

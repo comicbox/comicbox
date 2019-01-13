@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/zwzn/comicbox/comicboxd/app/pubsub"
-	"github.com/zwzn/comicbox/comicboxd/errors"
+	"github.com/comicbox/comicbox/comicboxd/app/pubsub"
+	"github.com/comicbox/comicbox/comicboxd/errors"
 	"github.com/gorilla/websocket"
 )
 

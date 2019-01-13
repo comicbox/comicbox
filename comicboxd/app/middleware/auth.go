@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/zwzn/comicbox/comicboxd/app"
-	"github.com/zwzn/comicbox/comicboxd/app/controller"
-	"github.com/zwzn/comicbox/comicboxd/app/database"
-	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/comicbox/comicbox/comicboxd/app"
+	"github.com/comicbox/comicbox/comicboxd/app/controller"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/app/model"
 )
 
 func Auth(next http.Handler) http.Handler {

@@ -10,9 +10,9 @@ import (
 
 	graphql "github.com/graph-gophers/graphql-go"
 
-	"github.com/zwzn/comicbox/comicboxd/app/database"
-	"github.com/zwzn/comicbox/comicboxd/app/model"
-	"github.com/zwzn/comicbox/comicboxd/app/schema/scalar"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/app/model"
+	"github.com/comicbox/comicbox/comicboxd/app/schema/scalar"
 )
 
 type BookArgs struct {

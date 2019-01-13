@@ -1,6 +1,6 @@
 FROM golang:1.11
 
-WORKDIR /go/src/github.com/zwzn/comicbox/
+WORKDIR /go/src/github.com/comicbox/comicbox/
 
 # Setup the build dependencies
 RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
@@ -22,7 +22,7 @@ RUN make get \
 # Now copy it into our base image.
 FROM gcr.io/distroless/base
 
-COPY --from=0 /go/src/github.com/zwzn/comicbox/bin/comicboxd .
-COPY --from=0 /go/src/github.com/zwzn/comicbox/config.yml .
+COPY --from=0 /go/src/github.com/comicbox/comicbox/bin/comicboxd .
+COPY --from=0 /go/src/github.com/comicbox/comicbox/config.yml .
 
 CMD ["/comicboxd"]

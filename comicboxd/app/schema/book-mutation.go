@@ -7,7 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	"github.com/google/uuid"
-	"github.com/zwzn/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
 
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"

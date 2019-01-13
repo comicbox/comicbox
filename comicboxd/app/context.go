@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/comicbox/comicbox/comicboxd/app/model"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"

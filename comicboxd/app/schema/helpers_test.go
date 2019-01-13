@@ -5,14 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/zwzn/comicbox/comicboxd/app/schema/scalar"
+	"github.com/comicbox/comicbox/comicboxd/app/schema/scalar"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
-	"github.com/zwzn/comicbox/comicboxd/app"
-	"github.com/zwzn/comicbox/comicboxd/app/database"
-	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/comicbox/comicbox/comicboxd/app"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/app/model"
 )
 
 func setUpDB() {
