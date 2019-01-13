@@ -4,12 +4,12 @@ import (
 	"net/http"
 
 	assetfs "github.com/elazarl/go-bindata-assetfs"
-	"github.com/zwzn/comicbox/comicboxd/app/controller"
-	"github.com/zwzn/comicbox/comicboxd/app/middleware"
-	"github.com/zwzn/comicbox/comicboxd/app/schema"
-	"github.com/zwzn/comicbox/comicboxd/data"
-	"github.com/zwzn/comicbox/comicboxd/errors"
-	"github.com/zwzn/comicbox/comicboxd/server"
+	"github.com/comicbox/comicbox/comicboxd/app/controller"
+	"github.com/comicbox/comicbox/comicboxd/app/middleware"
+	"github.com/comicbox/comicbox/comicboxd/app/schema"
+	"github.com/comicbox/comicbox/comicboxd/data"
+	"github.com/comicbox/comicbox/comicboxd/errors"
+	"github.com/comicbox/comicbox/comicboxd/server"
 )
 
 func Web(s *server.Server) {

@@ -10,8 +10,8 @@ import (
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/jmoiron/sqlx"
-	"github.com/zwzn/comicbox/comicboxd/app/database"
-	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/app/model"
 	"golang.org/x/crypto/bcrypt"
 )
 

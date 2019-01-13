@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	graphql "github.com/graph-gophers/graphql-go"
-	"github.com/zwzn/comicbox/comicboxd/app/model"
+	"github.com/comicbox/comicbox/comicboxd/app/model"
 
 	"github.com/stretchr/testify/assert"
 )

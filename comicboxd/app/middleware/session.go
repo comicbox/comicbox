@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/zwzn/comicbox/comicboxd/app"
+	"github.com/comicbox/comicbox/comicboxd/app"
 	"github.com/gorilla/sessions"
 )
 
