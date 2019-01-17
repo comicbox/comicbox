@@ -14,13 +14,22 @@ import (
 	"github.com/imdario/mergo"
 
 	"github.com/Masterminds/squirrel"
-	graphql "github.com/graph-gophers/graphql-go"
-	"github.com/jmoiron/sqlx"
 	"github.com/comicbox/comicbox/comicboxd/app/schema/comicrack"
 	"github.com/comicbox/comicbox/comicboxd/cbz"
+	graphql "github.com/graph-gophers/graphql-go"
+	"github.com/jmoiron/sqlx"
 )
 
 func updateBook(tx *sqlx.Tx, id graphql.ID, book BookInput) error {
+	if book.Pages != nil && book.File != nil {
+		files, err := cbz.ZippedImages(*book.File)
+		if err != nil {
+			return err
+		}
+		if len(*book.Pages) > len(files) {
+			*book.Pages = (*book.Pages)[:len(files)]
+		}
+	}
 	m := toStruct(book)
 	if len(m) == 0 {
 		return nil
@@ -34,9 +43,10 @@ func updateBook(tx *sqlx.Tx, id graphql.ID, book BookInput) error {
 		m["page_count"] = len(*book.Pages)
 	}
 
-	query := squirrel.Update("book").Where(squirrel.Eq{"id": id})
-	query = update(m, query)
-	_, err = query.RunWith(tx).Exec()
+	_, err = squirrel.Update("book").
+		Where(squirrel.Eq{"id": id}).
+		SetMap(m).
+		RunWith(tx).Exec()
 	if err != nil {
 		return fmt.Errorf("updateBook exec: %v", err)
 	}
@@ -58,11 +68,11 @@ func updateUserBook(tx *sqlx.Tx, bookID, userID graphql.ID, book UserBookInput) 
 	if err != nil {
 		return fmt.Errorf("updateBook exec: %v", err)
 	}
-	query := squirrel.Update("user_book").
+	_, err = squirrel.Update("user_book").
 		Where(squirrel.Eq{"book_id": bookID}).
-		Where(squirrel.Eq{"user_id": userID})
-	query = update(m, query)
-	_, err = query.RunWith(tx).Exec()
+		Where(squirrel.Eq{"user_id": userID}).
+		SetMap(m).
+		RunWith(tx).Exec()
 	if err != nil {
 		return fmt.Errorf("updateUserBook exec: %v", err)
 	}
