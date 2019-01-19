@@ -102,7 +102,7 @@ func (r SeriesResolver) Read() int32 {
 func (r SeriesResolver) Tags() []string {
 	data := r.s.TagsJSON
 	tags := []string{}
-	if data == nil {
+	if len(data) == 0 {
 		return []string{}
 	}
 	err := json.Unmarshal(data, &tags)
