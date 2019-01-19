@@ -2,11 +2,10 @@ import autobind from 'autobind-decorator'
 import * as s from 'css/edit.scss'
 import serialize from 'form-serialize'
 import Book, { PageType } from 'js/model/book'
+import { dateInput } from 'js/util'
 import { Component, h } from 'preact'
 import CheckBox from 'preact-material-components/Checkbox'
 import FormField from 'preact-material-components/FormField'
-import Radio from 'preact-material-components/Radio'
-import Switch from 'preact-material-components/Switch'
 import TextField from 'preact-material-components/TextField'
 import LazyImg from './lazy-img'
 import Modal from './modal'
@@ -30,94 +29,100 @@ export default class BookEditModal extends Component<Props> {
             </Modal.Title>
             <Modal.Body>
                 <TabContainer>
-                    <div title='Meta'>
-                        <TextField
-                            class={s.element}
-                            label='Alternate Series'
-                            value={book.alternate_series}
-                            name='alternate_series'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Authors'
-                            value={book.authors.join(', ')}
-                            name='authors'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Chapter'
-                            type='number'
-                            value={book.chapter + ''}
-                            name='chapter'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Community Rating'
-                            type='number'
-                            value={book.community_rating + ''}
-                            name='community_rating'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Date Released'
-                            type='date'
-                            value={book.date_released ? book.date_released.toISOString() : ''}
-                            name='date_released'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Genres'
-                            value={book.genres.join(', ')}
-                            name='genres'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Rating'
-                            type='number'
-                            value={book.rating + ''}
-                            name='rating'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Story Arc'
-                            value={book.story_arc}
-                            name='story_arc'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Summary'
-                            value={book.summary}
-                            name='summary'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Title'
-                            value={book.title}
-                            name='title'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Volume'
-                            type='number'
-                            value={book.volume + ''}
-                            name='volume'
-                        />
-                        <TextField
-                            class={s.element}
-                            label='Web'
-                            value={book.web}
-                            name='web'
-                        />
+                    <div title='Meta' class={s.form}>
+                        <fieldset>
+                            <h3>Basic Info</h3>
+                            <TextField
+                                class={s.element}
+                                label='Series'
+                                value={book.series}
+                                name='series'
+                            />
+                            <TextField
+                                class={s.element}
+                                label='Volume'
+                                type='number'
+                                value={book.volume + ''}
+                                name='volume'
+                            />
+                            <TextField
+                                class={s.element}
+                                label='Chapter'
+                                type='number'
+                                value={book.chapter + ''}
+                                name='chapter'
+                            />
+                            <TextField
+                                class={s.element}
+                                label='Title'
+                                value={book.title}
+                                name='title'
+                            />
+                            <TextField
+                                class={s.element}
+                                label='Authors'
+                                value={book.authors.join(', ')}
+                                name='authors'
+                            />
+                        </fieldset>
+
+                        <fieldset>
+                            <h3>Ratings</h3>
+                            <TextField
+                                class={s.element}
+                                label='My Rating'
+                                type='number'
+                                value={book.rating + ''}
+                                name='rating'
+                            />
+                            <TextField
+                                class={s.element}
+                                label='Community Rating'
+                                type='number'
+                                value={book.community_rating + ''}
+                                name='community_rating'
+                            />
+                        </fieldset>
+
+                        <fieldset>
+                            <h3>Extra Info</h3>
+                            <TextField
+                                class={s.element}
+                                label='Date Released'
+                                type='date'
+                                value={book.date_released ? dateInput(book.date_released) : ''}
+                                name='date_released'
+                            />
+                            <TextField
+                                class={s.element}
+                                label='Genres'
+                                value={book.genres.join(', ')}
+                                name='genres'
+                            />
+                            <TextField
+                                class={s.element}
+                                label='Story Arc'
+                                value={book.story_arc}
+                                name='story_arc'
+                            />
+                            <TextField
+                                class={s.element}
+                                label='Summary'
+                                value={book.summary}
+                                name='summary'
+                            />
+                            <TextField
+                                class={s.element}
+                                label='Web'
+                                value={book.web}
+                                name='web'
+                            />
+                        </fieldset>
                     </div>
                     <div title='Pages' class={s.pageList}>
 
                         {book.pages.map((page, i) => <div key={page.file_number} class={s.page}>
                             <LazyImg src={page.url + '?height=150'} />
-                            {/* <RadioGroup name={`page-${i}`} value={page.type} class={s.radio}>
-                                <RadioOption value='FrontCover'>Cover</RadioOption>
-                                <RadioOption value='Story'>Story</RadioOption>
-                                <RadioOption value='Deleted'>Deleted</RadioOption>
-                            </RadioGroup> */}
                             <div>
                                 <input type='hidden' name={`pages[${i}][file_number]`} value={page.file_number} />
                                 <FormField>

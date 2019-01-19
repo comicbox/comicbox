@@ -1,5 +1,12 @@
-.element {
-    width: 100%;
+.form {
+    fieldset {
+        border: none;
+        padding: 0;
+
+    }
+    .element {
+        width: 100%;
+    }
 }
 
 .page-list {
