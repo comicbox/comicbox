@@ -49,8 +49,8 @@ class ModalBody extends Component<JSX.HTMLAttributes> {
             {...this.props}
             class='mdc-dialog__content'
             style={{
-                overflowY: 'scroll',
-                height: 'calc(100vh - 175px)',
+                overflowY: 'auto',
+                maxHeight: 'calc(100vh - 175px)',
             }}
         >
             {this.props.children}

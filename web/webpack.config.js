@@ -18,6 +18,7 @@ const paths = {
     ROOT: path.resolve(__dirname, '../'),
     DIST: path.resolve(__dirname, 'dist'),
     SRC: path.resolve(__dirname, 'src'),
+    LIB: path.resolve(__dirname, 'src', 'lib'),
     JS: path.resolve(__dirname, 'src/js'),
     LIB: path.resolve(__dirname, 'src', 'lib'),
     CSS: path.resolve(__dirname, 'src/css'),

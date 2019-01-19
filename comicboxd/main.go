@@ -1,8 +1,3 @@
-// Copyright 2015 Daniel Theophanes.
-// Use of this source code is governed by a zlib-style
-// license that can be found in the LICENSE file.
-
-// simple does nothing except block while running the service.
 package main
 
 import (
@@ -12,12 +7,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/kardianos/service"
-	homedir "github.com/mitchellh/go-homedir"
-	"github.com/spf13/viper"
 	"github.com/comicbox/comicbox/comicboxd/app/routes"
 	"github.com/comicbox/comicbox/comicboxd/j"
 	"github.com/comicbox/comicbox/comicboxd/server"
+	"github.com/kardianos/service"
+	homedir "github.com/mitchellh/go-homedir"
+	"github.com/spf13/viper"
 )
 
 var logger service.Logger

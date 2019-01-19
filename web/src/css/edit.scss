@@ -1,3 +1,17 @@
 .element {
     width: 100%;
 }
+
+.page-list {
+    .page {
+        display: inline-block;
+        height: 150px;
+        min-width: 100px;
+
+        .radio {
+            :global(.option) {
+                display: block;
+            }
+        }
+    }
+}

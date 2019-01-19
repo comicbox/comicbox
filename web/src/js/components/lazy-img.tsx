@@ -12,7 +12,9 @@ const lazyImageObserver = new IntersectionObserver((entries, observer) => {
                 if (lazyImage.dataset.src) {
                     lazyImage.src = lazyImage.dataset.src
                 }
-                // lazyImage.srcset = lazyImage.dataset.srcset
+                if (lazyImage.dataset.srcset) {
+                    lazyImage.srcset = lazyImage.dataset.srcset
+                }
 
                 lazyImageObserver.unobserve(lazyImage)
             }

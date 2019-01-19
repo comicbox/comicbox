@@ -111,11 +111,17 @@ export function prop(type: string, options: PropOptions = {}): any {
             writeOnly: options.writeOnly,
         }
 
-        const ret: { get?: () => any, set?: (value: any) => void } = {}
+        const ret: {
+            get?: () => any,
+            set?: (value: any) => void,
+        } = {}
 
         if (!options.writeOnly) {
             ret.get = function () {
-                return this.updatedData[key] || this.data[key]
+                if (this.updatedData.hasOwnProperty(key)) {
+                    return this.updatedData[key]
+                }
+                return this.data[key]
             }
         }
 
