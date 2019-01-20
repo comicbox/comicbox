@@ -19,7 +19,7 @@ export default class Home extends Component {
 
         // Book.take(1).with(Series.select('name')).first().then(console.log)
 
-        return <Layout backLink='/'>
+        return <Layout backLink='/' breadcrumbs={[]}>
             <h1>Current</h1>
             <ModelList items={firstBook(reading)} />
             <h1>Paused</h1>

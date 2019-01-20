@@ -37,7 +37,15 @@ export default class Theme extends Component {
                 ],
             },
         ]
-        return <Layout backLink='/'>
+        return <Layout
+            backLink='/'
+            breadcrumbs={[
+                {
+                    name: 'Settings',
+                    href: '/settings',
+                },
+            ]}
+        >
             <h1>Theme</h1>
             {sections.map(sec => <div key={sec.name}>
                 {sec.name}: {sec.colours.map(c => this.input(c))}

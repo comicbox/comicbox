@@ -12,7 +12,7 @@ export default class SeriesIndex extends Component {
             .where('name', /.+/)
             .with(Book.take(1).select('cover'))
 
-        return <Layout backLink='/'>
+        return <Layout backLink='/' breadcrumbs={[]}>
             <h1>Series</h1>
             <ModelList items={series} />
         </Layout >

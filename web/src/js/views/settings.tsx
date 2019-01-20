@@ -81,7 +81,7 @@ export default class Settings extends Component<{}, State> {
             name = this.state.name
             username = this.state.username
         }
-        return <Layout backLink='/'>
+        return <Layout backLink='/' breadcrumbs={[]} >
             <h1>Settings</h1>
             <div>
                 <Btn raised onClick={this.btnScan}>Start Scan</Btn>

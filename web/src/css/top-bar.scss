@@ -11,6 +11,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 24;
+    align-items: center;
 
     transition: background-color 500ms;
     &.hidden {
@@ -34,8 +35,36 @@
         }
     }
     .left {
+        display: inline-flex;
         align-items: center;
         justify-content: flex-start;
+
+        .breadcrumbs {
+            display: inline-block;
+            width: calc(100vw - 112px);
+
+            -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%);
+
+            @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+                width: calc(100vw - 505px);
+            }
+
+            white-space: nowrap;
+            overflow: hidden;
+
+            .home {
+                padding: 0;
+            }
+            a {
+                display: inline-flex;
+                align-items: center;
+                .arrow {
+                    opacity: 0.5;
+                    padding: 0;
+                }
+            }
+
+        }
     }
     .right {
         align-items: center;
@@ -66,6 +95,7 @@
                     @include textSecondary;
                     position: fixed;
                     right: 4px;
+                    top: 4px;
                     pointer-events: none;
                 }
             }
@@ -87,6 +117,7 @@
                 @include textSecondary;
                 position: fixed;
                 right: 4px;
+                top: 4px;
                 pointer-events: none;
             }
         }
