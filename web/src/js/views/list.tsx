@@ -29,7 +29,7 @@ export default class List extends Component {
             .with(firstBook)
             .get()
 
-        return <Layout backLink='/'>
+        return <Layout backLink='/' breadcrumbs={[]}>
             <h1>Reading</h1>
             <ModelList items={reading} />
             <h1>Completed</h1>

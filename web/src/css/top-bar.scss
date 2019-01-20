@@ -11,6 +11,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 24;
+    align-items: center;
 
     transition: background-color 500ms;
     &.hidden {
@@ -36,6 +37,21 @@
     .left {
         align-items: center;
         justify-content: flex-start;
+
+        .breadcrumbs {
+            .home{
+                padding: 0;
+            }
+            display: inline;
+            a {
+                display: inline-flex;
+                align-items: center;
+                .arrow {
+                    opacity: 0.5;
+                    padding: 0;
+                }
+            }
+        }
     }
     .right {
         align-items: center;
