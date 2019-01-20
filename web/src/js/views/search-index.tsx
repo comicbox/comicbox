@@ -18,7 +18,7 @@ export default class SearchIndex extends Component<any> {
             .take(20)
             .get()
 
-        return <Layout backLink='/'>
+        return <Layout backLink='/' breadcrumbs={[]}>
             <h1>Search</h1>
             <h2>Series</h2>
             <ModelList items={series} key={query + 'series'} />

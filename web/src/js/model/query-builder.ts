@@ -50,7 +50,7 @@ export class QueryBuilder<T extends Model> {
         const type: Type = this.TClass.types[field] || this.TClass.searchTypes[field]
         if (value instanceof RegExp) {
             value = value.source
-        } else if (typeof value === 'string' && type.type === 'Regex') {
+        } else if (typeof value === 'string' && type.type === 'String') {
             value = '^' + escapeRegExp(value) + '$'
         }
         const where: Where = {

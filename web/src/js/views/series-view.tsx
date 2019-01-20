@@ -75,7 +75,16 @@ export default class SeriesView extends Component<Props, State> {
             rating = (current.rating || current.community_rating) / 2
         }
 
-        return <Layout backLink='/series' clearTopBar>
+        return <Layout
+            backLink='/series'
+            clearTopBar
+            breadcrumbs={[
+                {
+                    name: 'Series',
+                    href: '/series',
+                },
+            ]}
+        >
             {/* <div class={s.background} style={{ backgroundImage: `url(${backgroundImg})` }} /> */}
             <Parallax class={s.parallax} src={backgroundImg} />
             <div class={s.header}>

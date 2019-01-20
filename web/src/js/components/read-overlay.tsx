@@ -33,7 +33,19 @@ export default class ReadOverlay extends Component<Props, {}>  {
 
         return <div className={s.backdrop}>
             <div className={s.modal}>
-                <TopBar backLink={'/'} />
+                <TopBar
+                    backLink={'/'}
+                    breadcrumbs={[
+                        {
+                            name: 'Series',
+                            href: `/series`,
+                        },
+                        {
+                            name: this.props.book.series,
+                            href: `/series/${this.props.book.series}`,
+                        },
+                    ]}
+                />
 
                 <div class={s.filler} onClick={this.props.onClose} />
 

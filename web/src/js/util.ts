@@ -27,3 +27,10 @@ export function debounce(fn: (...args: any[]) => any, delay: number) {
 }
 
 export const emptyImage = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+
+export function dateInput(d: Date): string {
+    const day = ('0' + d.getDate()).slice(-2)
+    const month = ('0' + (d.getMonth() + 1)).slice(-2)
+
+    return d.getFullYear() + '-' + (month) + '-' + (day)
+}

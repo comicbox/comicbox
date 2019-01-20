@@ -3,11 +3,17 @@ import * as s from 'css/top-bar.scss'
 import { historyPop, historyPrevious } from 'js/history'
 import { Component, h } from 'preact'
 import Icon from 'preact-material-components/Icon'
-import { route } from 'preact-router'
+import { Link, route } from 'preact-router'
+
+export interface Crumb {
+    name: string
+    href: string
+}
 
 interface Props {
     backLink: string
     clear?: boolean
+    breadcrumbs: Crumb[]
 }
 
 const headerHeight = 56
@@ -33,6 +39,15 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
                 <Icon onClick={this.btnBack} href='#' navigation={true}>
                     arrow_back
                 </Icon>
+                <div className={s.breadcrumbs}>
+                    <Link href='/'>
+                        <Icon class={s.home}>home</Icon>
+                    </Link>
+                    {this.props.breadcrumbs.map(crumb => <Link key={crumb.href} href={crumb.href}>
+                        <Icon class={s.arrow}>chevron_right</Icon>
+                        {crumb.name}
+                    </Link>)}
+                </div>
             </section>
             <section class={s.right}>
                 <form onSubmit={this.search}>

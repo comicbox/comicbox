@@ -32,7 +32,7 @@ const Row: FunctionalComponent<{ title: string }> = props => <div class={s.row}>
 export default class Settings extends Component {
     public render() {
 
-        return <Layout backLink='/'>
+        return <Layout backLink='/' breadcrumbs={[]} >
             <Container>
                 <h2>General</h2>
             </Container>
