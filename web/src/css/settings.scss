@@ -1,3 +1,46 @@
 .button {
-    margin-left:10px;
+    margin-left: 10px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    padding-left: $padding;
+    padding-right: $padding;
+    margin-left: -$padding;
+    margin-right: -$padding;
+
+    margin-top: $padding / -2;
+    +.row {
+        border-top: solid 1px $mdc-theme-surface-border;
+        padding-top: $padding / 2;
+        margin-top: $padding / 2;
+    }
+
+    &:last-child {
+        margin-bottom: $padding / -2;
+    }
+
+    .title {
+        flex-grow: 0;
+    }
+
+    .action {
+        flex-grow: 0;
+
+        :global(.mdc-select) {
+            width: 150px;
+        }
+    }
+}
+
+.popup {
+    width: 100%;
+
+    :global(.mdc-text-field) {
+        width: 100%;
+    }
 }

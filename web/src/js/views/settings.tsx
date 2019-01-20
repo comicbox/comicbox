@@ -1,238 +1,158 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/settings.scss'
-import { logout, user } from 'js/auth'
+import { login, logout, user } from 'js/auth'
+import { Container } from 'js/components/container'
+import { OpenForm, OpenYesNo } from 'js/components/modal'
 import { gql } from 'js/graphql'
 import User from 'js/model/user'
 import url from 'js/url'
 import Layout from 'js/views/layout'
-import { Component, h } from 'preact'
-import Btn from 'preact-material-components/Button'
+import { Component, FunctionalComponent, h } from 'preact'
+import Button from 'preact-material-components/Button'
 import TextField from 'preact-material-components/TextField'
-import { Link } from 'preact-router'
 
-interface State {
-    address: string
+/**
+ * Things settings will do.
+ * x Change current user's name, username and password
+ * x logout
+ * x start scan
+ * - admin stuff
+ *   x add users
+ *   - delete users
+ *   - change user roles
+ * - change things from the config file?
+ *   - book folder
+ */
 
-    me: User
-    username: string
-    name: string
+const Row: FunctionalComponent<{ title: string }> = props => <div class={s.row}>
+    <div class={s.title}>{props.title}</div>
+    <div class={s.action}>{props.children}</div>
+</div>
 
-    oldPass: string
-    newPass: string
-    repeatNewPass: string
-
-    // Admin related vars
-    newNameToAdd: string
-    newUsernameToAdd: string
-    newUserPasswordToAdd: string
-    userToDelete: string
-    userToMakeAdmin: string
-    userToRevokeAdmin: string
-}
-
-export default class Settings extends Component<{}, State> {
-
-    public componentDidMount() {
-        user().then(me => {
-            this.setState({
-                me: me,
-                username: me.username,
-                name: me.name,
-            })
-        })
-    }
-
+export default class Settings extends Component {
     public render() {
-        let adminSettings = null
-        let name = ''
-        let username = ''
 
-        // Admin Settings
-        // TODO: Once user groups are implemented
-        // change if statement to check if user is an admin, if so show admin settings
-        if (true) {
-            adminSettings = <div>
-                <h2>Admin</h2>
-                <h3>Add User</h3>
-                <div>
-                    <TextField label='Name' onKeyUp={this.keyUpNewNameToAdd} />
-                </div>
-                <div>
-                    <TextField label='Username' onKeyUp={this.keyUpNewUsernameToAdd} />
-                </div>
-                <div>
-                    <TextField label='Password' type='password' onKeyUp={this.keyUpNewUserPasswordToAdd} />
-                    <Btn raised class={s.button} onClick={this.btnAddUser}>Add User</Btn>
-                </div>
-                <h3>Delete User</h3>
-                <TextField label='Username To Delete' onKeyUp={this.keyUpDeleteUser} />
-                <Btn raised class={s.button} onClick={this.btnDeleteUser}>Delete</Btn>
-                <h3>Grant Admin Status</h3>
-                <TextField label='Username To Make Admin' onKeyUp={this.keyUpAddAdminStatus} />
-                <Btn raised class={s.button} onClick={this.btnGrantAdminStatus}>Grant</Btn>
-                <h3>Revoke Admin Status</h3>
-                <TextField label='Username To Revoke' onKeyUp={this.keyUpRemoveAdminStatus} />
-                <Btn raised class={s.button} onClick={this.btnRevokeAdminStatus}>Revoke</Btn>
-            </div>
-
-        }
-
-        if (this.state.me) {
-            name = this.state.name
-            username = this.state.username
-        }
         return <Layout backLink='/' breadcrumbs={[]} >
-            <h1>Settings</h1>
-            <div>
-                <Btn raised onClick={this.btnScan}>Start Scan</Btn>
-                <Btn raised class={s.button} onClick={this.btnLogout}>Logout</Btn>
-            </div>
-            <div>
-                <h3>User</h3>
-                <div>
-                    <TextField label='Name' value={name} onKeyUp={this.keyUpName} />
-                </div>
-                <div>
-                    <TextField label='Username' value={username} onKeyUp={this.keyUpUsername} />
-                    <Btn raised class={s.button} onClick={this.btnUpdateUser}>Update</Btn>
-                </div>
-                <h3>Change Password</h3>
-                <div>
-                    <TextField label='Old Password' type='password' onKeyUp={this.keyUpOldPassCheck} />
-                </div>
-                <div>
-                    <TextField label='New Password' type='password' onKeyUp={this.keyUpNewPass} />
-                </div>
-                <TextField label='Repeat New Password' type='password' onKeyUp={this.keyUpRepeatNewPass} />
-                <Btn raised class={s.button} onClick={this.btnUpdatePassword}>Update</Btn>
-            </div>
-            <div>
-                {adminSettings}
-            </div>
-            <div>
-                <Link href='/theme'><Btn>Edit Theme</Btn></Link>
-            </div>
+            <Container>
+                <h2>General</h2>
+            </Container>
+            <Container background>
+                <Row title='Scan'>
+                    <Button onClick={this.btnScan}>Run</Button>
+                </Row>
+                <Row title='User'>
+                    <Button onClick={this.btnUpdateUser}>Update</Button>
+                    <Button onClick={this.btnLogout}>Logout</Button>
+                </Row>
+                <Row title='Password'>
+                    <Button onClick={this.btnUpdatePassword}>Update</Button>
+                </Row>
+            </Container>
+            <Container>
+                <h2>Admin</h2>
+            </Container>
+            <Container background>
+                <Row title='Users'>
+                    <Button onClick={this.btnAddUser}>Add</Button>
+                    <Button onClick={this.btnDeleteUser}>Delete</Button>
+                </Row>
+                <Row title='Groups'>
+                    <Button onClick={this.btnManageGroups}>Manage</Button>
+                </Row>
+            </Container>
         </Layout >
     }
 
     @autobind
-    private keyUpAddress(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ address: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpUsername(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ username: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpName(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ name: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpNewNameToAdd(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ newNameToAdd: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpNewUsernameToAdd(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ newUsernameToAdd: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpNewUserPasswordToAdd(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ newUserPasswordToAdd: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpDeleteUser(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ userToDelete: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpAddAdminStatus(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ userToMakeAdmin: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpRemoveAdminStatus(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ userToRevokeAdmin: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpOldPassCheck(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ oldPass: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpNewPass(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ newPass: e.target.value })
-        }
-    }
-
-    @autobind
-    private keyUpRepeatNewPass(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.setState({ repeatNewPass: e.target.value })
-        }
-    }
-
-    @autobind
     private async btnUpdateUser() {
-        const me = this.state.me
+        interface Response {
+            username: string
+            name: string
+        }
+        const me = await user()
+        const data: Response | undefined = await OpenForm({ title: 'Update User' }, <div class={s.popup}>
+            <TextField
+                label='Name'
+                value={me.name}
+                name='name'
+            />
+            <TextField
+                label='Username'
+                value={me.username}
+                name='username'
+            />
+        </div>)
 
-        me.name = this.state.name
-        me.username = this.state.username
+        if (data === undefined) {
+            return
+        }
+
+        me.name = data.name
+        me.username = data.username
 
         await me.save()
 
-        this.setState({
-            me: me,
-            username: me.username,
-            name: me.name,
-        })
+        this.setState({ me: me })
     }
 
     @autobind
     private async btnUpdatePassword() {
-        const me = this.state.me
+        interface Response {
+            current_pass: string
+            new_pass_1: string
+            new_pass_2: string
+        }
 
-        // TODO: Add check to match original old password with given old password for security
-        if (this.state.newPass !== this.state.repeatNewPass) {
-            alert("Your passwords don't match. Please try again.")
+        const me = await user()
+        const validate = async (resp: Response) => {
+            if (resp.new_pass_1 !== resp.new_pass_2) {
+                alert("Your passwords don't match. Please try again.")
+                return false
+            }
+            // TODO: Add check to match original old password with given old password for security, but dont do it front
+            // end like I did
+            const u = await login(me.username, resp.current_pass)
+            if (u === null) {
+                alert('Your password current password is incorrect')
+                return false
+            }
+            return true
+        }
+
+        const data: Response | undefined = await OpenForm({
+            title: 'Change Password',
+            validate: validate,
+        }, <div class={s.popup}>
+                <TextField
+                    label='Current Password'
+                    type='password'
+                    name='current_pass'
+                    value=''
+                    required
+                />
+                <TextField
+                    label='New Password'
+                    type='password'
+                    name='new_pass_1'
+                    value=''
+                    required
+                />
+                <TextField
+                    label='Repeat New Password'
+                    type='password'
+                    name='new_pass_2'
+                    value=''
+                    required
+                />
+            </div>)
+
+        if (data === undefined) {
             return
         }
 
-        me.password = this.state.newPass
+        me.password = data.new_pass_1
 
         await me.save()
-
-        this.setState({
-            newPass: '',
-            repeatNewPass: '',
-        })
     }
 
     @autobind
@@ -242,6 +162,10 @@ export default class Settings extends Component<{}, State> {
 
     @autobind
     private async btnScan() {
+        const run = await OpenYesNo('Are you sure you want to run a scan?')
+        if (!run) {
+            return
+        }
         const response = await fetch(await url('/api/scan'))
         if (!response.ok) {
             // TODO: something here
@@ -251,6 +175,30 @@ export default class Settings extends Component<{}, State> {
     // Adds a user to the database
     @autobind
     private async btnAddUser() {
+        interface Response {
+            name: string
+            username: string
+            password: string
+        }
+        const data: Response | undefined = await OpenForm({ title: 'New User' }, <div class={s.popup}>
+            <TextField
+                label='Name'
+                name='name'
+            />
+            <TextField
+                label='Username'
+                name='username'
+            />
+            <TextField
+                label='Password'
+                type='password'
+                name='password'
+            />
+        </div>)
+
+        if (data === undefined) {
+            return
+        }
         // Returns whats in the top block (id,name,username)
         const response = await gql(`
             new_user(data: $user) {
@@ -261,9 +209,9 @@ export default class Settings extends Component<{}, State> {
                 user: 'UserInput!',
             }, {
                 user: {
-                    name: this.state.newNameToAdd,
-                    username: this.state.newUsernameToAdd,
-                    password: this.state.newUserPasswordToAdd,
+                    name: data.name,
+                    username: data.username,
+                    password: data.password,
                 },
             }, true)
     }
@@ -274,12 +222,7 @@ export default class Settings extends Component<{}, State> {
     }
 
     @autobind
-    private async btnGrantAdminStatus() {
+    private async btnManageGroups() {
         // TODO: Add granting admin status functionality once user groups are implemented
-    }
-
-    @autobind
-    private async btnRevokeAdminStatus() {
-        // TODO: Add revoking admin status functionality once user groups are implemented
     }
 }

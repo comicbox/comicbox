@@ -20,6 +20,7 @@ const paths = {
     SRC: path.resolve(__dirname, 'src'),
     LIB: path.resolve(__dirname, 'src', 'lib'),
     JS: path.resolve(__dirname, 'src/js'),
+    LIB: path.resolve(__dirname, 'src', 'lib'),
     CSS: path.resolve(__dirname, 'src/css'),
     RES: path.resolve(__dirname, 'res'),
     COMICBOXD: path.resolve(__dirname, '../comicboxd'),
