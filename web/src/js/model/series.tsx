@@ -81,7 +81,7 @@ export default class Series extends Model {
                 Edit {this.name}
             </Modal.Title>
             <Modal.Body>
-                <div title='Meta' class={s.form}>
+                <div class={s.form}>
                     <TextField
                         class={s.element}
                         label='Name'
