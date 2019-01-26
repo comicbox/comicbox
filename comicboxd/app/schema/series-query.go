@@ -90,8 +90,11 @@ func (r SeriesResolver) Books(ctx context.Context, args BooksArgs) (*BookQueryRe
 	return (&query{}).Books(ctx, args)
 }
 
-func (r SeriesResolver) List() *string {
-	return r.s.List
+func (r SeriesResolver) List() string {
+	if r.s.List == nil {
+		return "NONE"
+	}
+	return *r.s.List
 }
 func (r SeriesResolver) Name() string {
 	return r.s.Name
