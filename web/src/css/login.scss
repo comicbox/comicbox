@@ -1,0 +1,17 @@
+.form {
+    width: 300px;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+
+    .username,
+    .password {
+        width: 100%;
+    }
+
+    .login{
+        width: 100%;
+    }
+}
