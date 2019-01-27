@@ -36,6 +36,7 @@ const scssLoaders = (loaders) => [
             ident: 'postcss',
             plugins: [
                 require("css-mqpacker")({ sort: true }),
+                require('autoprefixer'),
             ]
         },
     },
