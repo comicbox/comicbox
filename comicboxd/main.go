@@ -50,9 +50,8 @@ func (p *program) Stop(s service.Service) error {
 func init() {
 	var cfgFile string
 
-	flag.StringVar(&cfgFile, "config", "", "config file (default is $HOME/.comicbox.yml)")
+	flag.StringVar(&cfgFile, "config", "", "config file (default is $HOME/comicbox/config.yml)")
 
-	flag.Parse()
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {
@@ -88,8 +87,22 @@ func home() string {
 	return home
 }
 
-func main() {
+func check(err error) {
+	if err != nil {
+		j.Error(err)
+		os.Exit(1)
+	}
+}
 
+func main() {
+	var (
+		install   bool
+		uninstall bool
+	)
+	flag.BoolVar(&install, "install", false, "installs comicboxd as a service")
+	flag.BoolVar(&uninstall, "uninstall", false, "uninstalls comicboxd as a service")
+
+	flag.Parse()
 	svcConfig := &service.Config{
 		Name:        "comicboxd",
 		DisplayName: "ComicBox",
@@ -101,6 +114,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	if install {
+		err = s.Install()
+		check(err)
+		return
+	} else if uninstall {
+		err = s.Uninstall()
+		check(err)
+		return
+	}
+
 	logger, err = s.Logger(nil)
 	if err != nil {
 		log.Fatal(err)
