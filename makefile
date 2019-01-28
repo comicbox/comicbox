@@ -1,4 +1,4 @@
-bindata= -o comicboxd/data/bindata.go -pkg data comicboxd/migrations/... web/dist/... comicboxd/app/schema/gql/...
+bindata= -o comicboxd/data/bindata.go -pkg data comicboxd/migrations/... web/dist/... comicboxd/app/schema/gql/... comicboxd/logo.txt
 
 export GO111MODULE=on
 

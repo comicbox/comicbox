@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/comicbox/comicbox/comicboxd/app/routes"
+	"github.com/comicbox/comicbox/comicboxd/data"
 	"github.com/comicbox/comicbox/comicboxd/j"
 	"github.com/comicbox/comicbox/comicboxd/server"
 	"github.com/kardianos/service"
@@ -101,6 +102,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Printf("\n%s\n\n", data.MustAsset("comicboxd/logo.txt"))
+
 	logger, err = s.Logger(nil)
 	if err != nil {
 		log.Fatal(err)
