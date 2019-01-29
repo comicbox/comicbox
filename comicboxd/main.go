@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 
 	"github.com/comicbox/comicbox/comicboxd/app/routes"
-	"github.com/comicbox/comicbox/comicboxd/data"
 	"github.com/comicbox/comicbox/comicboxd/j"
 	"github.com/comicbox/comicbox/comicboxd/server"
+	figure "github.com/common-nighthawk/go-figure"
 	"github.com/kardianos/service"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -103,7 +103,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("\n%s\n\n", data.MustAsset("comicboxd/logo.txt"))
+	fmt.Println()
+	figure.NewFigure("ComicBox", "colossal", true).Print()
+	fmt.Println()
 
 	logger, err = s.Logger(nil)
 	if err != nil {
