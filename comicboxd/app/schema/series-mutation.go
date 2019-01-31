@@ -6,8 +6,8 @@ import (
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/jmoiron/sqlx"
 )
 
 type SeriesInput struct {
@@ -22,6 +22,9 @@ type UpdateSeriesArgs struct {
 
 func (q *query) UpdateSeries(ctx context.Context, args UpdateSeriesArgs) (*SeriesResolver, error) {
 	c := q.Ctx(ctx)
+	if c.Guest() {
+		return nil, ErrorUnauthenticated
+	}
 	userID := graphql.ID(c.User.ID.String())
 	m := toStruct(args.Data)
 	if len(m) == 0 {

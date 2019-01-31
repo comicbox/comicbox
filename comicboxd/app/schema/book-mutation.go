@@ -6,8 +6,8 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	"github.com/google/uuid"
 	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/google/uuid"
 
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"
@@ -104,6 +104,9 @@ type UpdateBookArgs struct {
 
 func (q *query) UpdateBook(ctx context.Context, args UpdateBookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
+	if c.Guest() {
+		return nil, ErrorUnauthenticated
+	}
 	err := database.Tx(ctx, func(tx *sqlx.Tx) error {
 		err := updateBook(tx, args.ID, args.Data.BookInput)
 		if err != nil {
@@ -127,6 +130,9 @@ type DeleteBookArgs struct {
 
 func (q *query) DeleteBook(ctx context.Context, args DeleteBookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
+	if c.Guest() {
+		return nil, ErrorUnauthenticated
+	}
 	book, err := q.Book(ctx, BookArgs{ID: args.ID})
 	if err != nil {
 		return nil, err

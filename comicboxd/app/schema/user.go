@@ -8,10 +8,10 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/Masterminds/squirrel"
-	graphql "github.com/graph-gophers/graphql-go"
-	"github.com/jmoiron/sqlx"
 	"github.com/comicbox/comicbox/comicboxd/app/database"
 	"github.com/comicbox/comicbox/comicboxd/app/model"
+	graphql "github.com/graph-gophers/graphql-go"
+	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -49,7 +49,10 @@ type UserArgs struct {
 }
 
 func (q *query) User(ctx context.Context, args UserArgs) (*UserResolver, error) {
-	// c := q.Ctx(ctx)
+	c := q.Ctx(ctx)
+	if args.ID != graphql.ID(c.User.ID.String()) {
+		return nil, fmt.Errorf("you may not view users other than your own")
+	}
 	user := model.User{}
 	qSQL, qArgs := squirrel.
 		Select("*").
