@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/spf13/viper"
+
 	"github.com/comicbox/comicbox/comicboxd/app"
 	"github.com/comicbox/comicbox/comicboxd/app/controller"
 	"github.com/comicbox/comicbox/comicboxd/app/database"
@@ -41,13 +43,17 @@ func Auth(next http.Handler) http.Handler {
 
 		}
 
-		if ctx.User == nil {
-			// http.Error(w, "authorization failed", http.StatusUnauthorized)
-			// return
-			ctx.User = &model.User{
-				Name:     "Guest",
-				Username: "guest",
+		if viper.GetBool("guests") {
+			if ctx.User == nil {
+				ctx.User = &model.User{
+					Name:     "Guest",
+					Username: "guest",
+				}
 			}
+		}
+		if ctx.User == nil {
+			http.Error(w, "authorization failed", http.StatusUnauthorized)
+			return
 		}
 		next.ServeHTTP(w, r)
 	})

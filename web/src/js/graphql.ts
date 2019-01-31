@@ -1,5 +1,7 @@
 import { str_random } from 'js/util'
 import url from './url'
+import { logout } from './auth';
+import { route } from 'preact-router';
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
@@ -141,7 +143,7 @@ async function runQueries(gqlType: GQLType, localQueries: Query[]) {
 }
 
 async function fetchQuery(query: string, variables: any): Promise<Response> {
-    return await fetch(await url('/graphql'), {
+    const r = await fetch(await url('/graphql'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -152,6 +154,16 @@ async function fetchQuery(query: string, variables: any): Promise<Response> {
             variables: variables,
         }),
     })
+
+    if (r.status === 401) {
+        route('/login')
+        throw new Error('you must login')
+    }
+    if (!r.ok) {
+        throw new Error(await r.text())
+    }
+
+    return r
 }
 
 export class QueryError extends Error {
