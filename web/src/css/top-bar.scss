@@ -32,6 +32,10 @@
         padding: 4px;
         :global(.mdc-icon) {
             padding: 12px;
+
+            user-select: none;
+
+            cursor: pointer;
         }
     }
     .left {
@@ -43,7 +47,7 @@
             display: inline-block;
             width: calc(100vw - 112px);
 
-            -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
 
             @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
                 width: calc(100vw - 505px);
