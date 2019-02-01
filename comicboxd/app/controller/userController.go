@@ -29,7 +29,7 @@ func (a *user) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := model.User{}
-	err = database.Get(&user, `select * from user where username=? limit 1 COLLATE NOCASE`, body.Username)
+	err = database.Get(&user, `select * from user where username=? COLLATE NOCASE`, body.Username)
 	if err == sql.ErrNoRows {
 		c.Response = errors.HTTP(401)
 		return

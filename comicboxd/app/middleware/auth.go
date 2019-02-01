@@ -29,7 +29,7 @@ func Auth(next http.Handler) http.Handler {
 		if ctx.User == nil {
 			if user, pass, ok := r.BasicAuth(); ok {
 				ctx.User = &model.User{}
-				err := database.Get(ctx.User, `select * from user where username=? limit 1 COLLATE NOCASE`, user)
+				err := database.Get(ctx.User, `select * from user where username=? COLLATE NOCASE`, user)
 				if err == sql.ErrNoRows {
 					ctx.User = nil
 				} else if err != nil {
