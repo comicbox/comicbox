@@ -115,6 +115,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	logger, err = s.Logger(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	j.SetLogger(logger)
+
 	if install {
 		err = s.Install()
 		check(err)
@@ -124,12 +130,6 @@ func main() {
 		check(err)
 		return
 	}
-
-	logger, err = s.Logger(nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	j.SetLogger(logger)
 
 	err = s.Run()
 	if err != nil {
