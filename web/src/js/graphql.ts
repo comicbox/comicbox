@@ -1,7 +1,6 @@
+import url from 'js/url'
 import { str_random } from 'js/util'
-import url from './url'
-import { logout } from './auth';
-import { route } from 'preact-router';
+import { route } from 'preact-router'
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
@@ -53,24 +52,6 @@ export function gql(
     })
 
 }
-
-// export async function mutation<T extends Dictionary<any>>(table: string, data: T, primary: string = 'id'):Promise<T>{
-
-//     const response = await fetchQuery(`mutation ($data: UserInput! $primary: string){
-//             ${table} (${primary}: $primary ${table}: $data) {
-//                 id
-//             }
-//         }`, {
-//             primary: data[primary],
-//             data: data,
-//         })
-
-//     if (response.status < 200 || response.status > 299) {
-//         throw new QueryError(response, response.statusText)
-//     }
-
-//     return null
-// }
 
 async function runQueries(gqlType: GQLType, localQueries: Query[]) {
     if (localQueries.length === 0) {

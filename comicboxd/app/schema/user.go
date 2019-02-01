@@ -82,7 +82,10 @@ type UpdateUserArgs struct {
 
 func (q *query) UpdateUser(ctx context.Context, args UpdateUserArgs) (*UserResolver, error) {
 	var err error
-	// c := q.Ctx(ctx)
+	c := q.Ctx(ctx)
+	if c.Guest() {
+		return nil, ErrorUnauthenticated
+	}
 	args.Data, err = userData(args.Data)
 	if err != nil {
 		return nil, err
