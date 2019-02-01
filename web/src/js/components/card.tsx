@@ -81,7 +81,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
 
         if (model instanceof Book) {
             if (model.cover) {
-                image = model.cover.url + '?height=200&quality=30'
+                image = model.cover.url + '?height=200'
             }
 
             series = model.series
@@ -113,7 +113,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
             options = bookOptions as Options<T>
         } else if (model instanceof Series) {
             if (model.books && model.books[0] && model.books[0].cover) {
-                image = model.books[0].cover.url + '?height=200&quality=30'
+                image = model.books[0].cover.url + '?height=200'
             }
 
             series = model.name

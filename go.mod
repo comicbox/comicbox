@@ -4,6 +4,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/Masterminds/squirrel v0.0.0-20181211162353-a8c1880ebb4d
 	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
+	github.com/common-nighthawk/go-figure v0.0.0-20180619031829-18b2b544842c
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/fatih/color v1.7.0
 	github.com/golang-migrate/migrate v3.5.4+incompatible
