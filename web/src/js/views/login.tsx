@@ -1,5 +1,7 @@
 import autobind from 'autobind-decorator'
+import * as s from 'css/login.scss'
 import { login } from 'js/auth'
+import Form from 'js/components/form'
 import { Component, h } from 'preact'
 import Btn from 'preact-material-components/Button'
 import TextField from 'preact-material-components/TextField'
@@ -7,44 +9,35 @@ import { route } from 'preact-router'
 
 export default class Login extends Component {
 
-    private username: string
-    private password: string
-
     public render() {
-        return <div>
+        return <div class={s.form}>
             <h1>Login</h1>
-            <form onSubmit={this.btnLogin}>
-                <TextField label='username' onKeyUp={this.keyUpUsername} />
-                <TextField label='password' type='password' onKeyUp={this.keyUpPassword} />
-                <Btn raised type='submit'>Login</Btn>
-            </form>
+            <Form submit={this.login}>
+
+                <TextField
+                    class={s.username}
+                    label='username'
+                    name='user'
+                />
+                <TextField
+                    class={s.password}
+                    label='password'
+                    type='password'
+                    name='pass'
+                />
+                <Btn raised type='submit' class={s.login}>Login</Btn>
+            </Form>
         </div >
     }
 
     @autobind
-    private keyUpUsername(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.username = e.target.value
-        }
-    }
+    private async login(data: { user: string, pass: string }) {
 
-    @autobind
-    private keyUpPassword(e: Event) {
-        if (e.target instanceof HTMLInputElement) {
-            this.password = e.target.value
-        }
-    }
-
-    @autobind
-    private async btnLogin(e: Event) {
-        e.preventDefault()
-
-        const me = await login(this.username, this.password)
+        const me = await login(data.user, data.pass)
         if (me === null) {
             alert('Invalid username or password')
             return
         }
         route('/')
     }
-
 }
