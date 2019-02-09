@@ -1,6 +1,7 @@
 import * as s from 'css/edit.scss'
 import Modal, { OpenModal } from 'js/components/modal'
 import { toast } from 'js/components/snack'
+import { gql } from 'js/graphql'
 import Book from 'js/model/book'
 import { Model, ModelArray, prop, table } from 'js/model/model'
 import { Component, h } from 'preact'
@@ -40,6 +41,18 @@ export default class Series extends Model {
 
     public get sortIndex() {
         return `series-${this.name}`
+    }
+
+    public async updateAllBooks(book: Partial<Book>) {
+        await gql(`update_series_books(name: $name, data: $book) { name }`,
+            {
+                name: 'String!',
+                book: 'BookInput!',
+            },
+            {
+                name: this.name,
+                book: book,
+            }, true)
     }
 
     public async openEditModal() {
