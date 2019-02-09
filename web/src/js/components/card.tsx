@@ -184,6 +184,10 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
 }
 
 const seriesOptions: Options<Series> = {
+    'Remove from list': async series => {
+        series.list = 'NONE'
+        await series.save()
+    },
     'Add to reading': async series => {
         series.list = 'READING'
         await series.save()
