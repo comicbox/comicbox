@@ -18,7 +18,7 @@ end;
 DROP TRIGGER if EXISTS user_book_insert;
 
 create trigger user_book_insert
-    after update
+    after insert
     on user_book
     for each row
 begin
