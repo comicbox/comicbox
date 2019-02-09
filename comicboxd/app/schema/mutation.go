@@ -8,6 +8,11 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
+var (
+	// ErrorUnauthenticated will be returned on endpoints that you cant view unless you are authenticated
+	ErrorUnauthenticated = fmt.Errorf("unauthenticated users may not complete this action")
+)
+
 func update(m map[string]interface{}, query squirrel.UpdateBuilder) squirrel.UpdateBuilder {
 	for col, val := range m {
 		query = query.Set(col, val)

@@ -50,7 +50,10 @@
   </div>
   <script>window.addEventListener('load', function (event) {
       GraphQLPlayground.init(document.getElementById('root'), {
-        endpoint: "/graphql"
+        endpoint: "/graphql",
+        settings: {
+          'request.credentials': 'same-origin',
+        },
       })
     })</script>
 </body>

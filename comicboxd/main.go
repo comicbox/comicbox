@@ -73,6 +73,8 @@ func init() {
 	viper.SetDefault("tls-cert", filepath.Join(home(), ".comicbox", "certs", "cert.pem"))
 	viper.SetDefault("tls-key", filepath.Join(home(), ".comicbox", "certs", "key.pem"))
 
+	viper.SetDefault("guests", false)
+
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}

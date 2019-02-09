@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
+
 	"github.com/comicbox/comicbox/comicboxd/app/model"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
@@ -111,4 +113,8 @@ func (c Context) URL(format string, a ...interface{}) string {
 		url = fmt.Sprintf("%s://%s", "http", c.request.Host) + url
 	}
 	return url
+}
+
+func (c Context) Guest() bool {
+	return c.User.ID == uuid.UUID{}
 }
