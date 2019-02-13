@@ -1,11 +1,13 @@
 import * as s from 'css/edit.scss'
 import Modal, { OpenModal } from 'js/components/modal'
 import { toast } from 'js/components/snack'
+import { gql } from 'js/graphql'
 import Book from 'js/model/book'
 import { Model, ModelArray, prop, table } from 'js/model/model'
 import { Component, h } from 'preact'
 import Select from 'preact-material-components/Select'
 import TextField from 'preact-material-components/TextField'
+import { QueryBuilder } from './query-builder';
 
 export type List = 'PLANNING' | 'READING' | 'COMPLETED' | 'PAUSED' | 'DROPPED'
 
@@ -40,6 +42,22 @@ export default class Series extends Model {
 
     public get sortIndex() {
         return `series-${this.name}`
+    }
+
+    public async updateAllBooks(book: Partial<Book>) {
+        const newData = await gql(`update_series_books(name: $name, data: $book) {
+            ${(new QueryBuilder(Series)).generateGQL(Series)}
+        }`,
+            {
+                name: 'String!',
+                book: 'BookInput!',
+            },
+            {
+                name: this.name,
+                book: book,
+            }, true)
+
+        this.data = { ...this.data, ...newData }
     }
 
     public async openEditModal() {

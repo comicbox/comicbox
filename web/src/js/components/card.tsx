@@ -208,6 +208,17 @@ const seriesOptions: Options<Series> = {
     'Edit': async series => {
         await series.openEditModal()
     },
+    'Mark all as read': async series => {
+        await series.updateAllBooks({
+            // without making something just for this I don't know of a better way to mark all the books as read
+            current_page: 10000,
+        })
+    },
+    'Mark all as unread': async series => {
+        await series.updateAllBooks({
+            current_page: 0,
+        })
+    },
 }
 
 const bookOptions: Options<Book> = {
