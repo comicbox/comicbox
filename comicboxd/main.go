@@ -30,7 +30,7 @@ func (p *program) run() {
 	var err error
 	p.server, err = server.New()
 	if err != nil {
-		j.Errorf("error starting server: %v", err)
+		j.Errorf("error initializing server: %v", err)
 		os.Exit(1)
 	}
 
