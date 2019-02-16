@@ -16,14 +16,14 @@ import (
 	graphql "github.com/graph-gophers/graphql-go"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/nfnt/resize"
-	"github.com/spf13/viper"
 	"github.com/comicbox/comicbox/comicboxd/app"
 	"github.com/comicbox/comicbox/comicboxd/app/database"
 	"github.com/comicbox/comicbox/comicboxd/app/schema"
 	"github.com/comicbox/comicbox/comicboxd/cbz"
 	"github.com/comicbox/comicbox/comicboxd/errors"
 	"github.com/comicbox/comicbox/comicboxd/j"
+	"github.com/nfnt/resize"
+	"github.com/spf13/viper"
 	"github.com/zwzn/hidden"
 	"golang.org/x/image/bmp"
 )
@@ -89,7 +89,7 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 	}
 	quality, ok := c.QGetInt64("quality")
 	if !ok {
-		quality = 30
+		quality = 90
 	}
 
 	switch c.Var("ext") {
