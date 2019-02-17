@@ -5,7 +5,7 @@ export interface Type {
     type: string
     jsType?: StaticModel<any>
 }
-export interface StaticModel<T> {
+export interface StaticModel<T extends Model> {
     types: Dictionary<Type>
     searchTypes: Dictionary<Type>
     table: string
@@ -25,13 +25,13 @@ export abstract class Model {
 
     public static where<T extends Model>(
         this: StaticModel<T>,
-        field: string,
+        field: keyof T,
         value: string | number | boolean | RegExp): QueryBuilder<T> {
 
         return (new QueryBuilder<T>(this)).where(field, value)
     }
 
-    public static select<T extends Model>(this: StaticModel<T>, ...args: string[]): QueryBuilder<T> {
+    public static select<T extends Model>(this: StaticModel<T>, ...args: Array<keyof T>): QueryBuilder<T> {
         return (new QueryBuilder<T>(this)).select(...args)
     }
 
@@ -48,6 +48,8 @@ export abstract class Model {
     }
 
     public abstract get id(): string
+    public search: string
+
     public abstract get link(): string
     public abstract get sortIndex(): string
     public fresh: boolean
