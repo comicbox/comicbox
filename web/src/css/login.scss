@@ -6,6 +6,10 @@
     left: 50%;
     transform: translate(-50%, -100%);
 
+    &.guest-mode {
+        transform: translate(-50%, 0%);
+    }
+
     .username,
     .password {
         width: 100%;
