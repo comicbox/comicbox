@@ -1,4 +1,3 @@
-import { KeyPairSyncResult } from 'crypto'
 import { gql } from 'js/graphql'
 import { Model, ModelArray, StaticModel, Type } from 'js/model/model'
 import { str_random } from 'js/util'
