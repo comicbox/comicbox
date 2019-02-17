@@ -9,10 +9,6 @@ export async function user(): Promise<User> {
         _user = await User.me()
     }
 
-    if (_user.id === '00000000-0000-0000-0000-000000000000') {
-        route('/login')
-    }
-
     return _user
 }
 
