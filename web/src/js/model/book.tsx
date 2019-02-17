@@ -89,6 +89,7 @@ export default class Book extends Model {
 
     @prop('ID', { writeOnly: true })
     public after: string
+
     @prop('ID', { writeOnly: true })
     public before: string
 
