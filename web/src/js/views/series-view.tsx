@@ -1,7 +1,9 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/series-view.scss'
+import { OpenYesNo } from 'js/components/modal'
 import ModelList from 'js/components/model-list'
 import Parallax from 'js/components/parallax'
+import { gql } from 'js/graphql'
 import Book from 'js/model/book'
 import Series from 'js/model/series'
 import Layout from 'js/views/layout'
@@ -105,6 +107,9 @@ export default class SeriesView extends Component<Props, State> {
                     <Button onClick={this.btnRead}>
                         <Icon>visibility</Icon>
                     </Button>
+                    <Button onClick={this.btnUnread}>
+                        <Icon>visibility_off</Icon>
+                    </Button>
 
                     <Button onClick={this.btnEdit}>
                         <Icon>edit</Icon>
@@ -120,10 +125,27 @@ export default class SeriesView extends Component<Props, State> {
     }
 
     @autobind
-    private btnRead() {
+    private async btnRead() {
         const series = this.state.series
+        if (!await OpenYesNo(`This will mark all books in ${series.name} as read, are you sure you want to do this?`)) {
+            return
+        }
+        series.updateAllBooks({
+            // without making something just for this I don't know of a better way to mark all the books as read
+            current_page: 10000,
+        })
+    }
 
-        alert(`This will mark all books in ${series.name} as read`)
+    @autobind
+    private async btnUnread() {
+        const series = this.state.series
+        if (!await OpenYesNo(`This will mark all books in ${series.name}
+            as unread, are you sure you want to do this?`)) {
+            return
+        }
+        series.updateAllBooks({
+            current_page: 0,
+        })
     }
 
     @autobind
