@@ -87,6 +87,9 @@ export default class Book extends Model {
     @prop('String')
     public web: string
 
+    @prop('ID', { writeOnly: true })
+    private after: string
+
     public get link() {
         return `/book/${this.id}`
     }
