@@ -3,6 +3,7 @@ import * as s from 'css/book.scss'
 import LazyImg from 'js/components/lazy-img'
 import Book from 'js/model/book'
 import { Model } from 'js/model/model'
+import store from 'js/model/model-store'
 import { QueryBuilder } from 'js/model/query-builder'
 import Series from 'js/model/series'
 import map from 'lodash/map'
@@ -36,6 +37,14 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
     private menu: Menu
     private observer: IntersectionObserver
 
+    constructor(props: Props<T>) {
+        super(props)
+
+        if (props.data) {
+            this.modelWatch(props.data)
+        }
+    }
+
     public componentDidMount() {
         if (this.props.loadQuery) {
             const options = {
@@ -48,6 +57,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
                     if (element.isIntersecting) {
                         if (!this.props.data && !this.state.data && this.props.loadQuery) {
                             this.props.loadQuery.first().then(model => {
+                                this.modelWatch(model)
                                 this.setState({ data: model })
                                 this.observer.disconnect()
                             })
@@ -62,6 +72,11 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
     }
 
     public componentWillUnmount() {
+        const model = this.state.data || this.props.data
+        if (model) {
+            store.unwatch(model)
+        }
+
         if (this.observer) {
             this.observer.disconnect()
         }
@@ -178,8 +193,18 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
             if ('then' in done) {
                 await done
             }
-            this.setState({ data: model })
+            // this.setState({ data: model })
         }
+    }
+
+    private modelWatch(model: Model) {
+        store.watch(model)
+        model.addEventListener('change', this.modelChange)
+    }
+
+    @autobind
+    private modelChange(e: Event) {
+        this.setState({ data: e.target as T })
     }
 }
 

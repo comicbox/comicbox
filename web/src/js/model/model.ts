@@ -12,8 +12,7 @@ export interface StaticModel<T> {
     new(data: any, fresh: boolean): T
 }
 
-export abstract class Model {
-
+export abstract class Model extends EventTarget {
     public static readonly types: Dictionary<Type>
     public static readonly searchTypes: Dictionary<Type> = {}
     public static readonly table: string
@@ -57,6 +56,8 @@ export abstract class Model {
     protected hasUpdates: boolean = false
 
     constructor(data: any, fresh: boolean) {
+        super()
+
         this.data = data
         this.fresh = fresh
     }
@@ -90,7 +91,24 @@ export abstract class Model {
         this.hasUpdates = false
         this.data = { ...this.data, ...this.updatedData, ...newData }
         this.updatedData = {}
+
+        this.dispatchEvent(new Event('change'))
     }
+
+    /**
+     * update updates the data of one model to be the same as another
+     *
+     * @param target the model to update from
+     */
+    public update(target: Model): void {
+        if (JSON.stringify(this.data) === JSON.stringify(target.data)) {
+            return
+        }
+
+        this.data = { ...this.data, ...target.data }
+        this.dispatchEvent(new Event('change'))
+    }
+
 }
 
 interface PropOptions {
