@@ -26,6 +26,19 @@ class ModelStore {
         }
     }
 
+    public updateWhere(cb: (model: Model) => boolean, updateModel: Model) {
+        for (const [id, models] of this.models) {
+
+            for (const model of models) {
+                
+                if (cb(model)) {
+                    console.log(model);
+                    model.update(updateModel)
+                }
+            }
+        }
+    }
+
     @autobind
     private modelChange(e: Event) {
         const models = this.models.get((e.target as Model).id)

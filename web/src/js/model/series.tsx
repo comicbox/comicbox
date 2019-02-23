@@ -8,7 +8,8 @@ import map from 'lodash/map'
 import { Component, h } from 'preact'
 import Select from 'preact-material-components/Select'
 import TextField from 'preact-material-components/TextField'
-import { QueryBuilder } from './query-builder';
+import { QueryBuilder } from './query-builder'
+import store from './model-store';
 
 export type List = 'NONE' | 'PLANNING' | 'READING' | 'COMPLETED' | 'PAUSED' | 'DROPPED'
 export const lists: Dictionary<List> = {
@@ -66,6 +67,13 @@ export default class Series extends Model {
             }, true)
 
         this.data = { ...this.data, ...newData }
+
+        store.updateWhere(m => {
+            if (!(m instanceof Book)) {
+                return false
+            }
+            return m.series === this.name
+        }, new Book(book, false))
     }
 
     public async openEditModal() {

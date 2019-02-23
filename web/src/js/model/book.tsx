@@ -113,4 +113,22 @@ export default class Book extends Model {
             .where('before', this.id)
             .first()
     }
+
+    protected onUpdate() {
+        console.log('this.updatedData', this.updatedData);
+        
+        if (this.current_page && this.pages) {
+            this.current_page = Math.min(this.current_page, this.pages.length - 1)
+
+            this.read = this.current_page >= this.pages.length - 1
+        }
+
+        if (this.last_page_read && this.pages) {
+            this.last_page_read = Math.min(this.last_page_read, this.pages.length - 1)
+        }
+
+        if (this.last_page_read && this.current_page) {
+            this.last_page_read = Math.max(this.last_page_read, this.current_page)
+        }
+    }
 }

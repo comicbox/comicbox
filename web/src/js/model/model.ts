@@ -104,11 +104,24 @@ export abstract class Model extends EventTarget {
         if (JSON.stringify(this.data) === JSON.stringify(target.data)) {
             return
         }
+        console.log('a', target.data);
 
+        console.log('b', this.data);
         this.data = { ...this.data, ...target.data }
+
+        console.log('c', this.data);
+
+        this.onUpdate()
+
+        // this.data = { ...this.data, ...this.updatedData }
+        // this.updatedData = {}
+
         this.dispatchEvent(new Event('change'))
     }
 
+    protected onUpdate() {
+        // nothing
+    }
 }
 
 interface PropOptions {

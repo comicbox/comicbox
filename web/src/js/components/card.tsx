@@ -190,7 +190,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
                 return
             }
             const done = func.call(this, model)
-            if ('then' in done) {
+            if (done instanceof Promise) {
                 await done
             }
             // this.setState({ data: model })
