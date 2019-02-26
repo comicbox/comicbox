@@ -61,7 +61,7 @@ module.exports = (env, argv) => {
     const devMode = argv.mode !== 'production'
     return {
         mode: process.env.NODE_ENV,
-        // devtool: devMode ? 'source-map' : '',
+        devtool: devMode ? 'source-map' : '',
         entry: {
             // polyfill: "@babel/polyfill",
             main: path.join(paths.JS, 'index.tsx'),

@@ -1,5 +1,6 @@
+import url from 'js/url'
 import { str_random } from 'js/util'
-import url from './url'
+import { route } from 'preact-router'
 
 export interface GraphqlResponse {
     data: { [name: string]: any }
@@ -51,24 +52,6 @@ export function gql(
     })
 
 }
-
-// export async function mutation<T extends Dictionary<any>>(table: string, data: T, primary: string = 'id'):Promise<T>{
-
-//     const response = await fetchQuery(`mutation ($data: UserInput! $primary: string){
-//             ${table} (${primary}: $primary ${table}: $data) {
-//                 id
-//             }
-//         }`, {
-//             primary: data[primary],
-//             data: data,
-//         })
-
-//     if (response.status < 200 || response.status > 299) {
-//         throw new QueryError(response, response.statusText)
-//     }
-
-//     return null
-// }
 
 async function runQueries(gqlType: GQLType, localQueries: Query[]) {
     if (localQueries.length === 0) {
@@ -141,7 +124,7 @@ async function runQueries(gqlType: GQLType, localQueries: Query[]) {
 }
 
 async function fetchQuery(query: string, variables: any): Promise<Response> {
-    return await fetch(await url('/graphql'), {
+    const r = await fetch(await url('/graphql'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -152,6 +135,16 @@ async function fetchQuery(query: string, variables: any): Promise<Response> {
             variables: variables,
         }),
     })
+
+    if (r.status === 401) {
+        route('/login')
+        throw new Error('you must login')
+    }
+    if (!r.ok) {
+        throw new Error(await r.text())
+    }
+
+    return r
 }
 
 export class QueryError extends Error {
