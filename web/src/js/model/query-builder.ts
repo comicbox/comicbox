@@ -46,15 +46,15 @@ export class QueryBuilder<T extends Model> {
         return qb
     }
 
-    public where(field: string, value: string | number | boolean | RegExp): QueryBuilder<T> {
-        const type: Type = this.TClass.types[field] || this.TClass.searchTypes[field]
+    public where(field: keyof T, value: string | number | boolean | RegExp): QueryBuilder<T> {
+        const type: Type = this.TClass.types[field as string] || this.TClass.searchTypes[field as string]
         if (value instanceof RegExp) {
             value = value.source
         } else if (typeof value === 'string' && type.type === 'String') {
             value = '^' + escapeRegExp(value) + '$'
         }
         const where: Where = {
-            field: field,
+            field: field as string,
             value: value,
             type: type,
         }
@@ -69,8 +69,8 @@ export class QueryBuilder<T extends Model> {
         return this.clone()
     }
 
-    public select(...selects: string[]): QueryBuilder<T> {
-        this.selects = this.selects.concat(selects)
+    public select(...selects: Array<keyof T>): QueryBuilder<T> {
+        this.selects = this.selects.concat(selects as string[])
         return this.clone()
     }
 
