@@ -1,6 +1,8 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/top-bar.scss'
+import auth from 'js/auth'
 import { historyPop, historyPrevious } from 'js/history'
+import User from 'js/model/user'
 import { Component, h } from 'preact'
 import Icon from 'preact-material-components/Icon'
 import { Link, route } from 'preact-router'
@@ -16,9 +18,13 @@ interface Props {
     breadcrumbs: Crumb[]
 }
 
+interface State {
+    user: User
+}
+
 const headerHeight = 56
 
-export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
+export default class TopBar extends Component<Props & JSX.HTMLAttributes, State> {
 
     private searchInput: HTMLInputElement
 
@@ -27,12 +33,21 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
     private offset: number = 1
     private lastScrollTop: number = -1
 
+    constructor(props: Props) {
+        super(props)
+        auth.user().then(me => this.setState({ user: me }))
+        auth.addEventListener('change', this.userChange)
+    }
+
     public componentDidMount() {
         setTimeout(() => {
             window.requestAnimationFrame(this.frame)
         })
     }
 
+    public componentWillUnmount() {
+        auth.removeEventListener('change', this.userChange)
+    }
     public render() {
         return <header {...this.props} class={s.topBar + ' ' + this.props.class} ref={e => this.header = e}>
             <section class={s.left}>
@@ -47,6 +62,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
                         <Icon class={s.arrow}>chevron_right</Icon>
                         {crumb.name}
                     </Link>)}
+                {this.state.user ? this.state.user.name : ''}
                 </div>
             </section>
             <section class={s.right}>
@@ -102,6 +118,11 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
     @autobind
     private searchClick(e: Event) {
         this.searchInput.select()
+    }
+
+    @autobind
+    private userChange(e: Event) {
+        console.log(e)
     }
 }
 

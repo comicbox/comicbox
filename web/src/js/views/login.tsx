@@ -1,5 +1,5 @@
 import autobind from 'autobind-decorator'
-import { login } from 'js/auth'
+import auth from 'js/auth'
 import { Component, h } from 'preact'
 import Btn from 'preact-material-components/Button'
 import TextField from 'preact-material-components/TextField'
@@ -39,7 +39,7 @@ export default class Login extends Component {
     private async btnLogin(e: Event) {
         e.preventDefault()
 
-        const me = await login(this.username, this.password)
+        const me = await auth.login(this.username, this.password)
         if (me === null) {
             alert('Invalid username or password')
             return

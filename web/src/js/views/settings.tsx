@@ -1,6 +1,6 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/settings.scss'
-import { login, logout, user } from 'js/auth'
+import auth from 'js/auth'
 import { Container } from 'js/components/container'
 import { OpenForm, OpenYesNo } from 'js/components/modal'
 import { gql } from 'js/graphql'
@@ -69,7 +69,7 @@ export default class Settings extends Component {
             username: string
             name: string
         }
-        const me = await user()
+        const me = await auth.user()
         const data: Response | undefined = await OpenForm({ title: 'Update User' }, <div class={s.popup}>
             <TextField
                 label='Name'
@@ -103,7 +103,7 @@ export default class Settings extends Component {
             new_pass_2: string
         }
 
-        const me = await user()
+        const me = await auth.user()
         const validate = async (resp: Response) => {
             if (resp.new_pass_1 !== resp.new_pass_2) {
                 alert("Your passwords don't match. Please try again.")
@@ -111,7 +111,7 @@ export default class Settings extends Component {
             }
             // TODO: Add check to match original old password with given old password for security, but dont do it front
             // end like I did
-            const u = await login(me.username, resp.current_pass)
+            const u = await auth.login(me.username, resp.current_pass)
             if (u === null) {
                 alert('Your password current password is incorrect')
                 return false
@@ -157,7 +157,7 @@ export default class Settings extends Component {
 
     @autobind
     private btnLogout() {
-        logout()
+        auth.logout()
     }
 
     @autobind

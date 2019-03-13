@@ -8,7 +8,7 @@ import map from 'lodash/map'
 import { Component, h } from 'preact'
 import Select from 'preact-material-components/Select'
 import TextField from 'preact-material-components/TextField'
-import { QueryBuilder } from './query-builder';
+import { QueryBuilder } from './query-builder'
 
 export type List = 'NONE' | 'PLANNING' | 'READING' | 'COMPLETED' | 'PAUSED' | 'DROPPED'
 export const lists: Dictionary<List> = {
