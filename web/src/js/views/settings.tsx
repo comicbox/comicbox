@@ -10,6 +10,7 @@ import Layout from 'js/views/layout'
 import { Component, FunctionalComponent, h } from 'preact'
 import Button from 'preact-material-components/Button'
 import TextField from 'preact-material-components/TextField'
+import { Link } from 'preact-router'
 
 /**
  * Things settings will do.
@@ -29,9 +30,27 @@ const Row: FunctionalComponent<{ title: string }> = props => <div class={s.row}>
     <div class={s.action}>{props.children}</div>
 </div>
 
-export default class Settings extends Component {
-    public render() {
+interface State {
+    me: User
+}
 
+export default class Settings extends Component<{}, State> {
+    constructor(props: {}) {
+        super(props)
+        auth.user().then(me => this.setState({ me: me }))
+    }
+
+    public render() {
+        if (this.state.me && this.state.me.guest()) {
+            return <Layout backLink='/' breadcrumbs={[]} >
+                <Container>
+                    <h2>You must login to change settings</h2>
+                    <Link href='/login'>
+                        <Button raised>Login</Button>
+                    </Link>
+                </Container>
+            </Layout>
+        }
         return <Layout backLink='/' breadcrumbs={[]} >
             <Container>
                 <h2>General</h2>

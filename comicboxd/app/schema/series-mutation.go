@@ -22,6 +22,9 @@ type UpdateSeriesArgs struct {
 
 func (q *query) UpdateSeries(ctx context.Context, args UpdateSeriesArgs) (*SeriesResolver, error) {
 	c := q.Ctx(ctx)
+	if c.Guest() {
+		return nil, ErrorUnauthenticated
+	}
 	userID := graphql.ID(c.User.ID.String())
 	m := toStruct(args.Data)
 	if len(m) == 0 {

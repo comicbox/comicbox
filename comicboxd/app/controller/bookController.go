@@ -111,6 +111,11 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *book) Scan(w http.ResponseWriter, r *http.Request) {
+	c := app.Ctx(r)
+	if c.Guest() {
+		c.Response = errors.HTTP(401)
+		return
+	}
 	go scan(r)
 }
 

@@ -31,7 +31,7 @@ func (p *program) run() {
 	var err error
 	p.server, err = server.New()
 	if err != nil {
-		j.Errorf("error starting server: %v", err)
+		j.Errorf("error initializing server: %v", err)
 		os.Exit(1)
 	}
 
@@ -71,6 +71,8 @@ func init() {
 	viper.SetDefault("https", false)
 	viper.SetDefault("tls-cert", filepath.Join(home(), ".comicbox", "certs", "cert.pem"))
 	viper.SetDefault("tls-key", filepath.Join(home(), ".comicbox", "certs", "key.pem"))
+
+	viper.SetDefault("guests", false)
 
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())

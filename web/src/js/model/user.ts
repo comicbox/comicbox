@@ -35,4 +35,8 @@ export default class User extends Model {
     public get sortIndex() {
         return `user-${this.username}`
     }
+
+    public guest(): boolean {
+        return this.id === '00000000-0000-0000-0000-000000000000'
+    }
 }
