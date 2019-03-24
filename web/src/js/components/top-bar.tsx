@@ -62,7 +62,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes, State>
                         <Icon class={s.arrow}>chevron_right</Icon>
                         {crumb.name}
                     </Link>)}
-                {this.state.user ? this.state.user.name : ''}
+                {/* {this.state.user ? this.state.user.name : ''} */}
                 </div>
             </section>
             <section class={s.right}>
@@ -122,7 +122,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes, State>
 
     @autobind
     private userChange(e: Event) {
-        console.log(e)
+        // console.log(e)
     }
 }
 

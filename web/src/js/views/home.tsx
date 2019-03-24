@@ -1,49 +1,54 @@
 import auth from 'js/auth'
+import LoginPrompt from 'js/components/loginPrompt'
 import ModelList from 'js/components/model-list'
 import Book from 'js/model/book'
 import { ModelArray } from 'js/model/model'
 import Series from 'js/model/series'
-import User from 'js/model/user'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 
 interface State {
-    me: User
+    guest: boolean
 }
 
 export default class Home extends Component<{}, State> {
 
     constructor(props: {}) {
         super(props)
-        auth.user().then(me => this.setState({ me: me }))
+        this.state = {
+            guest: true,
+        }
+        auth.guest().then(guest => this.setState({ guest: guest }))
     }
 
     public render() {
-        const reading = Series
-            .where('list', 'READING')
-            .with(Book.where('read', false).take(1))
-            .get()
-        const paused = Series
-            .where('list', 'PAUSED')
-            .with(Book.where('read', false).take(1))
-            .get()
 
         // Book.take(1).with(Series.select('name')).first().then(console.log)
         const sections: JSX.Element[] = []
-        if (this.state.me !== null) {
+
+        if (!this.state.guest) {
+            const reading = Series
+                .where('list', 'READING')
+                .with(Book.where('read', false).take(1))
+                .get()
+            const paused = Series
+                .where('list', 'PAUSED')
+                .with(Book.where('read', false).take(1))
+                .get()
             sections.push(
                 <h1>Current</h1>,
-                <ModelList items={firstBook(reading)} />,
+                <ModelList key='reading' items={firstBook(reading)} />,
                 <h1>Paused</h1>,
-                <ModelList items={firstBook(paused)} />,
+                <ModelList key='paused' items={firstBook(paused)} />,
             )
+        } else {
+            sections.push(<LoginPrompt />)
         }
-        sections.push(
-            <h1>New Chapters</h1>,
-            <ModelList items={Book.sort('!created_at').take(15).get()} />,
-        )
+
         return <Layout backLink='/' breadcrumbs={[]}>
             {sections}
+            <h1>New Chapters</h1>
+            <ModelList key='new' items={Book.sort('!created_at').take(15).get()} />
         </Layout >
     }
 }

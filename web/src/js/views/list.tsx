@@ -1,12 +1,28 @@
+import auth from 'js/auth'
+import LoginPrompt from 'js/components/loginPrompt'
 import ModelList from 'js/components/model-list'
 import Book from 'js/model/book'
 import Series from 'js/model/series'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 
-export default class List extends Component {
+interface State {
+    guest?: boolean
+}
+
+export default class List extends Component<{}, State> {
+
+    constructor(props: {}) {
+        super(props)
+        auth.guest().then(guest => this.setState({ guest: guest }))
+    }
 
     public render() {
+        if (this.state.guest) {
+            return <Layout backLink='/' breadcrumbs={[]}>
+                <LoginPrompt />
+            </Layout>
+        }
         const firstBook = Book.take(1)
         const reading = Series
             .where('list', 'READING')

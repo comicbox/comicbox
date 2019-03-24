@@ -51,7 +51,15 @@ export default class Settings extends Component<{}, State> {
                 </Container>
             </Layout>
         }
+        let name = ''
+        if (this.state.me) {
+            name = this.state.me.name
+        }
         return <Layout backLink='/' breadcrumbs={[]} >
+            <Container>
+                <h2>General</h2>
+                <p>Hello {name}</p>
+            </Container>
             <Container>
                 <h2>General</h2>
             </Container>

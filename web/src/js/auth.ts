@@ -10,11 +10,6 @@ class Auth extends EventTarget {
         if (this.currentUser === null) {
             this.currentUser = await User.me()
         }
-
-        if (this.currentUser.id === '00000000-0000-0000-0000-000000000000') {
-            route('/login')
-        }
-
         return this.currentUser
     }
 
@@ -43,6 +38,14 @@ class Auth extends EventTarget {
         route('/login')
         this.dispatchEvent(new Event('logout'))
         this.dispatchEvent(new Event('change'))
+    }
+
+    public async guest(): Promise<boolean> {
+        const user = await this.user()
+        if (!user) {
+            return true
+        }
+        return user.id === '00000000-0000-0000-0000-000000000000'
     }
 }
 
