@@ -2,6 +2,7 @@ import autobind from 'autobind-decorator'
 import * as s from 'css/settings.scss'
 import auth from 'js/auth'
 import { Container } from 'js/components/container'
+import LoginPrompt from 'js/components/loginPrompt'
 import { OpenForm, OpenYesNo } from 'js/components/modal'
 import { gql } from 'js/graphql'
 import User from 'js/model/user'
@@ -44,10 +45,7 @@ export default class Settings extends Component<{}, State> {
         if (this.state.me && this.state.me.guest()) {
             return <Layout backLink='/' breadcrumbs={[]} >
                 <Container>
-                    <h2>You must login to change settings</h2>
-                    <Link href='/login'>
-                        <Button raised>Login</Button>
-                    </Link>
+                    <LoginPrompt />
                 </Container>
             </Layout>
         }
