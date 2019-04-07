@@ -1,10 +1,7 @@
-import autobind from 'autobind-decorator'
 import * as s from 'css/layout.scss'
-import auth from 'js/auth'
 import { endBottomBar, startBottomBar } from 'js/components/snack'
 import TopBar, { Crumb } from 'js/components/top-bar'
 import Series from 'js/model/series'
-import User from 'js/model/user'
 import { Component, h } from 'preact'
 import Icon from 'preact-material-components/Icon'
 import { Link, route } from 'preact-router'
@@ -15,11 +12,7 @@ interface Props {
     breadcrumbs: Crumb[]
 }
 
-interface State {
-    user: User
-}
-
-export default class Layout extends Component<Props, State> {
+export default class Layout extends Component<Props> {
 
     private get menu() {
         return [
