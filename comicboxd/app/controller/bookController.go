@@ -5,8 +5,10 @@ import (
 	"context"
 	"fmt"
 	"image"
+	"image/gif"
 	"image/jpeg"
 	"image/png"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -26,6 +28,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/zwzn/hidden"
 	"golang.org/x/image/bmp"
+	"golang.org/x/image/tiff"
+	"golang.org/x/image/webp"
 )
 
 type book struct{}
@@ -66,19 +70,7 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 	// errors.Check(err)
 	// return
 
-	imgBytes, err := ioutil.ReadAll(rc)
-	errors.Check(err)
-
-	// c.Response = imgBytes
-	mime := http.DetectContentType(imgBytes)
-	var img image.Image
-	if mime == "image/jpeg" {
-		img, err = jpeg.Decode(bytes.NewReader(imgBytes))
-	} else if mime == "image/png" {
-		img, err = png.Decode(bytes.NewReader(imgBytes))
-	} else {
-		err = fmt.Errorf("Unsupported file type: %s", mime)
-	}
+	img, err := DecodeImage(rc)
 	if err != nil {
 		c.Response = err
 		return
@@ -107,6 +99,29 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 		err = bmp.Encode(w, img)
 		errors.Check(err)
 		// w.Header().Set("Content-Type", "image/bmp")
+	}
+}
+
+func DecodeImage(r io.Reader) (image.Image, error) {
+	imgBytes, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
+	mime := http.DetectContentType(imgBytes)
+	if mime == "image/jpeg" {
+		return jpeg.Decode(bytes.NewReader(imgBytes))
+	} else if mime == "image/png" {
+		return png.Decode(bytes.NewReader(imgBytes))
+	} else if mime == "image/gif" {
+		return gif.Decode(bytes.NewReader(imgBytes))
+	} else if mime == "image/webp" {
+		return webp.Decode(bytes.NewReader(imgBytes))
+	} else if mime == "image/tiff" {
+		return tiff.Decode(bytes.NewReader(imgBytes))
+	} else if mime == "image/bmp" {
+		return bmp.Decode(bytes.NewReader(imgBytes))
+	} else {
+		return nil, fmt.Errorf("Unsupported file type: %s", mime)
 	}
 }
 
