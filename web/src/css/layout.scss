@@ -13,12 +13,14 @@
 
     .main {
         margin-top: 56px;
+        margin-bottom: 56px;
         padding: $padding;
 
         @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
             $desktopMargin: 10%;
             margin-left: $desktopMargin;
             margin-right: $desktopMargin;
+            margin-bottom: 0;
             margin-top: 0;
         }
     }
