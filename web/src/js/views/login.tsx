@@ -1,6 +1,6 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/login.scss'
-import { login } from 'js/auth'
+import auth from 'js/auth'
 import Form from 'js/components/form'
 import Book from 'js/model/book'
 import { Component, h } from 'preact'
@@ -60,7 +60,7 @@ export default class Login extends Component<{}, State> {
     @autobind
     private async login(data: { user: string, pass: string }) {
 
-        const me = await login(data.user, data.pass)
+        const me = await auth.login(data.user, data.pass)
         if (me === null) {
             alert('Invalid username or password')
             return

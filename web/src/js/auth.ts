@@ -2,35 +2,53 @@ import User from 'js/model/user'
 import url from 'js/url'
 import { route } from 'preact-router'
 
-let _user: User | null = null
+class Auth extends EventTarget {
 
-export async function user(): Promise<User> {
-    if (_user === null) {
-        _user = await User.me()
+    private currentUser: User | null = null
+
+    public async user(): Promise<User> {
+        if (this.currentUser === null) {
+            this.currentUser = await User.me()
+        }
+        return this.currentUser
     }
 
-    return _user
-}
+    public async login(username: string, password: string): Promise<User | null> {
 
-export async function login(username: string, password: string): Promise<User | null> {
+        const data = await fetch(await url('/login'), {
+            method: 'POST',
+            body: JSON.stringify({
+                username: username,
+                password: password,
+            }),
+        }).then(r => r.json())
 
-    const data = await fetch(await url('/login'), {
-        method: 'POST',
-        body: JSON.stringify({
-            username: username,
-            password: password,
-        }),
-    }).then(r => r.json())
-
-    if (data.error !== undefined) {
-        return null
+        if (data.error !== undefined) {
+            return null
+        }
+        this.currentUser = new User(data, true)
+        this.dispatchEvent(new Event('login'))
+        this.dispatchEvent(new Event('change'))
+        return this.currentUser
     }
-    _user = new User(data, true)
-    return _user
+
+    public logout(): void {
+        document.cookie = 'comicbox-session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+        this.currentUser = null
+        route('/login')
+        this.dispatchEvent(new Event('logout'))
+        this.dispatchEvent(new Event('change'))
+    }
+
+    public async guest(): Promise<boolean> {
+        const user = await this.user()
+        if (!user) {
+            return true
+        }
+        return user.id === '00000000-0000-0000-0000-000000000000'
+    }
 }
 
-export function logout(): void {
-    document.cookie = 'comicbox-session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-    _user = null
-    route('/login')
-}
+const auth = new Auth()
+
+export default auth

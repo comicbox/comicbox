@@ -1,7 +1,8 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/settings.scss'
-import { login, logout, user } from 'js/auth'
+import auth from 'js/auth'
 import { Container } from 'js/components/container'
+import LoginPrompt from 'js/components/loginPrompt'
 import { OpenForm, OpenYesNo } from 'js/components/modal'
 import { gql } from 'js/graphql'
 import User from 'js/model/user'
@@ -37,21 +38,26 @@ interface State {
 export default class Settings extends Component<{}, State> {
     constructor(props: {}) {
         super(props)
-        user().then(me => this.setState({ me: me }))
+        auth.user().then(me => this.setState({ me: me }))
     }
 
     public render() {
         if (this.state.me && this.state.me.guest()) {
             return <Layout backLink='/' breadcrumbs={[]} >
                 <Container>
-                    <h2>You must login to change settings</h2>
-                    <Link href='/login'>
-                        <Button raised>Login</Button>
-                    </Link>
+                    <LoginPrompt />
                 </Container>
             </Layout>
         }
+        let name = ''
+        if (this.state.me) {
+            name = this.state.me.name
+        }
         return <Layout backLink='/' breadcrumbs={[]} >
+            <Container>
+                <h2>General</h2>
+                <p>Hello {name}</p>
+            </Container>
             <Container>
                 <h2>General</h2>
             </Container>
@@ -88,7 +94,7 @@ export default class Settings extends Component<{}, State> {
             username: string
             name: string
         }
-        const me = this.state.me
+        const me = await auth.user()
         const data: Response | undefined = await OpenForm({ title: 'Update User' }, <div class={s.popup}>
             <TextField
                 label='Name'
@@ -122,7 +128,7 @@ export default class Settings extends Component<{}, State> {
             new_pass_2: string
         }
 
-        const me = await user()
+        const me = await auth.user()
         const validate = async (resp: Response) => {
             if (resp.new_pass_1 !== resp.new_pass_2) {
                 alert("Your passwords don't match. Please try again.")
@@ -130,7 +136,7 @@ export default class Settings extends Component<{}, State> {
             }
             // TODO: Add check to match original old password with given old password for security, but dont do it front
             // end like I did
-            const u = await login(me.username, resp.current_pass)
+            const u = await auth.login(me.username, resp.current_pass)
             if (u === null) {
                 alert('Your password current password is incorrect')
                 return false
@@ -176,7 +182,7 @@ export default class Settings extends Component<{}, State> {
 
     @autobind
     private btnLogout() {
-        logout()
+        auth.logout()
     }
 
     @autobind
