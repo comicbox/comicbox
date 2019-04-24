@@ -26,6 +26,7 @@ func ZippedImages(file string) ([]*zip.File, error) {
 			strings.HasSuffix(lowerName, ".png") ||
 			strings.HasSuffix(lowerName, ".bmp") ||
 			strings.HasSuffix(lowerName, ".gif") ||
+			strings.HasSuffix(lowerName, ".webp") ||
 			strings.HasSuffix(lowerName, ".tiff") {
 			imageFiles = append(imageFiles, x)
 		}
