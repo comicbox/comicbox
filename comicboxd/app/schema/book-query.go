@@ -13,6 +13,7 @@ import (
 	"github.com/comicbox/comicbox/comicboxd/app/database"
 	"github.com/comicbox/comicbox/comicboxd/app/model"
 	"github.com/comicbox/comicbox/comicboxd/app/schema/scalar"
+	"github.com/comicbox/comicbox/plugin"
 )
 
 type BookArgs struct {
@@ -34,6 +35,9 @@ func (q *query) Book(ctx context.Context, args BookArgs) (*BookResolver, error) 
 	} else if err != nil {
 		return nil, err
 	}
+
+	plugin.BookQuery(book)
+
 	return &BookResolver{b: book}, nil
 }
 

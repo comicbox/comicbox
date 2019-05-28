@@ -80,7 +80,6 @@ func init() {
 }
 
 func home() string {
-
 	// Find home directory.
 	home, err := homedir.Dir()
 	if err != nil {

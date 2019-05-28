@@ -14,6 +14,8 @@ require (
 	github.com/gorilla/sessions v1.1.3
 	github.com/gorilla/websocket v1.4.0
 	github.com/graph-gophers/graphql-go v0.0.0-20181128220952-0079757a4d96
+	github.com/hashicorp/go-hclog v0.8.0
+	github.com/hashicorp/go-plugin v1.0.0
 	github.com/imdario/mergo v0.3.6
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1 // indirect
@@ -27,7 +29,7 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/opentracing/opentracing-go v1.0.2 // indirect
 	github.com/spf13/viper v1.3.1
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.3.0
 	github.com/zwzn/hidden v0.0.0-20181217162026-b4ced36b8f4a
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 	golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b
