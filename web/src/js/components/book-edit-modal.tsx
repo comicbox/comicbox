@@ -126,7 +126,11 @@ export default class BookEditModal extends Component<Props> {
                             <div>
                                 <input type='hidden' name={`pages[${i}][file_number]`} value={page.file_number} />
                                 <FormField>
-                                    <CheckBox name={`pages[${i}][deleted]`} id={`deleted-${i}`} />
+                                    <CheckBox
+                                        name={`pages[${i}][deleted]`}
+                                        id={`deleted-${i}`}
+                                        checked={page.type === 'Deleted'}
+                                    />
                                     <label for={`deleted-${i}`}>Deleted</label>
                                 </FormField>
                             </div>

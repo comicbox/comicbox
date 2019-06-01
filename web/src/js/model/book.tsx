@@ -119,4 +119,15 @@ export default class Book extends Model {
             .where('before', this.id)
             .first()
     }
+
+    public validPages(): Page[] {
+        const validPages: Page[] = []
+        for (const page of this.pages) {
+            if (page.type === 'Deleted') {
+                continue
+            }
+            validPages.push(page)
+        }
+        return validPages
+    }
 }
