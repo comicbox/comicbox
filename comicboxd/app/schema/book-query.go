@@ -22,14 +22,14 @@ type BookArgs struct {
 
 func (q *query) Book(ctx context.Context, args BookArgs) (*BookResolver, error) {
 	c := q.Ctx(ctx)
-	book := model.BookUserBook{}
+	book := &model.BookUserBook{}
 	qSQL, qArgs := squirrel.Select("*").
 		From("book_user_book").
 		Where(squirrel.Eq{"id": args.ID}).
 		Where(squirrel.Eq{"user_id": c.User.ID}).
 		MustSql()
 
-	err := database.Get(&book, qSQL, qArgs...)
+	err := database.Get(book, qSQL, qArgs...)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -38,7 +38,7 @@ func (q *query) Book(ctx context.Context, args BookArgs) (*BookResolver, error) 
 
 	plugin.BookQuery(book)
 
-	return &BookResolver{b: book}, nil
+	return &BookResolver{b: *book}, nil
 }
 
 type BooksArgs struct {
