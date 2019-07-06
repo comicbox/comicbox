@@ -67,8 +67,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
         if (this.lastScrollTop !== scrollTop && this.header) {
             this.offset = clamp(this.offset + this.lastScrollTop - scrollTop, -headerHeight, 0)
 
-            this.header.style.top = this.offset + 'px'
-
+            this.header.style.transform = `translate3D(0, ${this.offset}px, 0)`
             if (scrollTop + this.offset === 0 && this.props.clear) {
                 this.header.classList.add(s.hidden)
             } else {
