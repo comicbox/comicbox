@@ -30,6 +30,7 @@ export default class TabContainer extends Component<Props, State> {
                         key={child.attributes.title}
                         active={i === this.state.active}
                         onClick={this.clickTab(i)}
+                        type='button'
                     >
                         <TabBar.TabLabel>{child.attributes.title}</TabBar.TabLabel>
                     </TabBar.Tab>,
