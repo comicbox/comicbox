@@ -1,4 +1,5 @@
 import autobind from 'autobind-decorator'
+import { series } from 'css/book.scss'
 import * as s from 'css/edit.scss'
 import serialize from 'form-serialize'
 import Book, { PageType } from 'js/model/book'
@@ -152,6 +153,7 @@ export default class BookEditModal extends Component<Props> {
                 file_number: string,
                 deleted?: 'on',
             }>,
+            series: string,
             alternate_series: string,
             authors: string,
             chapter: string,
@@ -181,6 +183,7 @@ export default class BookEditModal extends Component<Props> {
                 }
             })
         } else {
+            this.props.book.series = data.series
             this.props.book.alternate_series = data.alternate_series
             this.props.book.authors = data.authors.split(',')
             this.props.book.chapter = Number(data.chapter)
