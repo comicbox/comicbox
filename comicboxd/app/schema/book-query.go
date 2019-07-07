@@ -19,8 +19,8 @@ type BookArgs struct {
 	ID graphql.ID
 }
 
-func (q *query) Book(ctx context.Context, args BookArgs) (*BookResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) Book(ctx context.Context, args BookArgs) (*BookResolver, error) {
+	c := q.ctx(ctx)
 	book := model.BookUserBook{}
 	qSQL, qArgs := squirrel.Select("*").
 		From("book_user_book").
@@ -72,8 +72,8 @@ type BooksArgs struct {
 	Volume          *scalar.NumberRange `db:"volume"`
 }
 
-func (q *query) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
+	c := q.ctx(ctx)
 	skip := int32(0)
 	if args.Skip != nil {
 		skip = *args.Skip

@@ -52,8 +52,8 @@ type NewBookArgs struct {
 	Data BookUserBookInput
 }
 
-func (q *query) NewBook(ctx context.Context, args NewBookArgs) (*BookResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) NewBook(ctx context.Context, args NewBookArgs) (*BookResolver, error) {
+	c := q.ctx(ctx)
 	newID := graphql.ID(uuid.New().String())
 
 	book, err := loadNewBookData(args.Data)
@@ -102,8 +102,8 @@ type UpdateBookArgs struct {
 	Data BookUserBookInput
 }
 
-func (q *query) UpdateBook(ctx context.Context, args UpdateBookArgs) (*BookResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) UpdateBook(ctx context.Context, args UpdateBookArgs) (*BookResolver, error) {
+	c := q.ctx(ctx)
 	if c.Guest() {
 		return nil, ErrorUnauthenticated
 	}
@@ -128,8 +128,8 @@ type DeleteBookArgs struct {
 	ID graphql.ID
 }
 
-func (q *query) DeleteBook(ctx context.Context, args DeleteBookArgs) (*BookResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) DeleteBook(ctx context.Context, args DeleteBookArgs) (*BookResolver, error) {
+	c := q.ctx(ctx)
 	if c.Guest() {
 		return nil, ErrorUnauthenticated
 	}

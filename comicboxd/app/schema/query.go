@@ -8,7 +8,7 @@ import (
 )
 
 type PublicQuery struct {
-	q   query
+	q   RootQuery
 	ctx context.Context
 }
 

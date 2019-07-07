@@ -20,8 +20,8 @@ type UpdateSeriesArgs struct {
 	Data SeriesInput
 }
 
-func (q *query) UpdateSeries(ctx context.Context, args UpdateSeriesArgs) (*SeriesResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) UpdateSeries(ctx context.Context, args UpdateSeriesArgs) (*SeriesResolver, error) {
+	c := q.ctx(ctx)
 	if c.Guest() {
 		return nil, ErrorUnauthenticated
 	}
@@ -59,8 +59,8 @@ type UpdateSeriesBooksArgs struct {
 	Data BookUserBookInput
 }
 
-func (q *query) UpdateSeriesBooks(ctx context.Context, args UpdateSeriesBooksArgs) (*SeriesResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) UpdateSeriesBooks(ctx context.Context, args UpdateSeriesBooksArgs) (*SeriesResolver, error) {
+	c := q.ctx(ctx)
 	// userID := graphql.ID(c.User.ID.String())
 	m := toStruct(args.Data.UserBookInput)
 	bookM := toStruct(args.Data.BookInput)
