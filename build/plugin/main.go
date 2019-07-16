@@ -26,9 +26,13 @@ func main() {
 }
 
 type Func struct {
-	name    string
-	args    []reflect.Type
-	returns []reflect.Type
+	name string
+
+	context bool
+	arg     string
+
+	err bool
+	ret string
 }
 
 func NewFunc(method reflect.Method) *Func {
@@ -36,26 +40,30 @@ func NewFunc(method reflect.Method) *Func {
 
 	f := &Func{}
 	f.name = method.Name
-	for i := 1; i < x.NumIn(); i++ {
+	for i := 0; i < x.NumIn(); i++ {
 		arg := x.In(i)
 
 		if arg.PkgPath() == "context" && arg.Name() == "Context" {
+			f.context = true
 		} else {
-			f.args = append(f.args, arg)
+			f.arg = Type(arg)
 		}
-
 	}
-	for i := 1; i < x.NumOut(); i++ {
+
+	for i := 0; i < x.NumOut(); i++ {
 		arg := x.Out(i)
-
 		if arg.PkgPath() == "" && arg.Name() == "error" {
+			f.err = true
 		} else {
-			f.args = append(f.args, arg)
+			f.ret = Type(arg)
 		}
-
 	}
 
 	return f
+}
+
+func Type(t reflect.Type) string {
+	return strings.Replace(t.String(), "schema.", "", 1)
 }
 
 func name(r reflect.Type) (string, string) {
@@ -67,6 +75,20 @@ func name(r reflect.Type) (string, string) {
 }
 
 func (f *Func) Before() string {
-	src := fmt.Sprintf("func Before%s(%s)", f.name, "")
+	args := []string{}
+	if f.context {
+		args = append(args, "ctx context.Context")
+	}
+	args = append(args, "data "+f.arg)
+
+	rets := []string{}
+	rets = append(rets, f.ret)
+	if f.err {
+		rets = append(rets, "error")
+	}
+	src := fmt.Sprintf(`func Before%s(cb func(%s) (%s)) {
+	
+	return 
+}`, f.name, strings.Join(args, ", "), strings.Join(rets, ", "))
 	return src
 }
