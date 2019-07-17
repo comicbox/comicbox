@@ -137,7 +137,7 @@ async function fetchQuery(query: string, variables: any): Promise<Response> {
     })
 
     if (r.status === 401) {
-        route('login')
+        route('login').navigate()
         throw new Error('you must login')
     }
     if (!r.ok) {

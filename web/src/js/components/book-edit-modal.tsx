@@ -1,5 +1,4 @@
 import autobind from 'autobind-decorator'
-import { series } from 'css/book.scss'
 import * as s from 'css/edit.scss'
 import serialize from 'form-serialize'
 import Book, { PageType } from 'js/model/book'
