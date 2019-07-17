@@ -4,9 +4,9 @@ import Page from 'js/components/page'
 import ReadOverlay from 'js/components/read-overlay'
 import Book from 'js/model/book'
 import User from 'js/model/user'
+import route from 'js/routes'
 import { debounce, emptyImage } from 'js/util'
 import { Component, h } from 'preact'
-import { route } from 'preact-router'
 
 interface Props {
     matches?: { [id: string]: string }
@@ -63,9 +63,9 @@ export default class Read extends Page<Props, State> {
             return <div />
         }
 
-        const page = this.state.book.pages[this.state.current]
-        const nextPage = this.state.book.pages[this.state.current + 1] || { url: emptyImage }
-        const previousPage = this.state.book.pages[this.state.current - 1] || { url: emptyImage }
+        const page = this.state.book.validPages()[this.state.current] || { url: emptyImage }
+        const nextPage = this.state.book.validPages()[this.state.current + 1] || { url: emptyImage }
+        const previousPage = this.state.book.validPages()[this.state.current - 1] || { url: emptyImage }
 
         return <div className={s.reader}>
             <img
@@ -87,7 +87,7 @@ export default class Read extends Page<Props, State> {
                 show={this.state.modalOpen}
 
                 currentPage={this.state.current}
-                maxPage={this.state.book.pages.length}
+                maxPage={this.state.book.validPages().length}
 
                 onClose={this.toggleModal}
                 onUpdateCurrent={this.changePage}
@@ -155,7 +155,7 @@ export default class Read extends Page<Props, State> {
             return
         }
 
-        if (dst < book.pages.length && dst > -1) {
+        if (dst < book.validPages().length && dst > -1) {
             // TODO update progress to dst
             book.current_page = dst
             this.save()
@@ -180,7 +180,7 @@ export default class Read extends Page<Props, State> {
         }
 
         const dst = this.state.current + step
-        if (dst < book.pages.length && dst > -1) {
+        if (dst < book.validPages().length && dst > -1) {
             book.current_page = dst
             this.save()
 
@@ -188,7 +188,7 @@ export default class Read extends Page<Props, State> {
                 current: dst,
                 book: book,
             })
-        } else if (dst === book.pages.length) {
+        } else if (dst === book.validPages().length) {
             this.next()
         } else if (dst <= -1) {
             this.previous()
@@ -202,9 +202,9 @@ export default class Read extends Page<Props, State> {
         const book = await this.state.book.next()
 
         if (book != null) {
-            route('/book/' + book.id, true)
+            route('book.read', [book.id]).navigate(true)
         } else {
-            route('/series/' + this.state.book.series)
+            route('series.view', [this.state.book.series]).navigate()
         }
     }
     @autobind
@@ -214,9 +214,9 @@ export default class Read extends Page<Props, State> {
         const book = await this.state.book.previous()
 
         if (book != null) {
-            route('/book/' + book.id, true)
+            route('book.read', [book.id]).navigate(true)
         } else {
-            route('/series/' + this.state.book.series)
+            route('series.view', [this.state.book.series]).navigate()
         }
     }
 

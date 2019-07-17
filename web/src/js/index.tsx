@@ -15,19 +15,20 @@ import Settings from 'js/views/settings'
 import Theme, { loadTheme } from 'js/views/theme'
 import { h, render } from 'preact'
 import Router from 'preact-router'
+import { add } from './routes'
 
 const jsx = <div>
     <Router onChange={historyPush} history={createHashHistory()}>
-        <Home path='/' />
-        <SeriesIndex path='/series' />
-        <SeriesView path='/series/:name/:page?' />
-        <SearchIndex path='/search/:query' />
-        <Settings path='/settings' />
-        <List path='/list' />
-        <Read path='/book/:id/:page?' />
-        <Theme path='/theme' />
+        <Home path={add('/', 'home')} />
+        <SeriesIndex path={add('/series', 'series.index')} />
+        <SeriesView path={add('/series/:name/:page?', 'series.view')} />
+        <SearchIndex path={add('/search/:query', 'search.index')} />
+        <Settings path={add('/settings', 'settings')} />
+        <List path={add('/list', 'list.index')} />
+        <Read path={add('/book/:id/:page?', 'book.read')} />
+        <Theme path={add('/theme', 'theme')} />
 
-        <Login path='/login' />
+        <Login path={add('/login', 'login')} />
 
         <Error default={true} />
     </Router>

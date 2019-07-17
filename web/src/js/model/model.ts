@@ -1,5 +1,6 @@
 import { gql } from 'js/graphql'
 import { QueryBuilder } from 'js/model/query-builder'
+import { Router } from 'js/routes'
 
 export interface Type {
     type: string
@@ -50,7 +51,7 @@ export abstract class Model {
     public abstract get id(): string
     public search: string
 
-    public abstract get link(): string
+    public abstract get link(): Router
     public abstract get sortIndex(): string
     public fresh: boolean
 

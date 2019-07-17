@@ -2,12 +2,13 @@ import * as s from 'css/layout.scss'
 import { endBottomBar, startBottomBar } from 'js/components/snack'
 import TopBar, { Crumb } from 'js/components/top-bar'
 import Series from 'js/model/series'
+import route, { Router } from 'js/routes'
 import { Component, h } from 'preact'
 import Icon from 'preact-material-components/Icon'
-import { Link, route } from 'preact-router'
+import { Link } from 'preact-router'
 
 interface Props {
-    backLink: string
+    back: Router
     clearTopBar?: boolean
     breadcrumbs: Crumb[]
 }
@@ -19,31 +20,22 @@ export default class Layout extends Component<Props> {
             {
                 name: 'Home',
                 icon: 'home',
-                href: '/',
+                route: route('home'),
             },
             {
                 name: 'Lists',
                 icon: 'view_list',
-                href: '/list',
+                route: route('list.index'),
             },
             {
                 name: 'Series',
                 icon: 'collections_bookmark',
-                href: '/series',
-            },
-            {
-                name: 'Random',
-                icon: 'help',
-                onClick: async () => {
-                    const list = await Series.take(0).get()
-                    const series = await Series.skip(Math.floor(Math.random() * list.total)).first()
-                    route(series.link)
-                },
+                route: route('series.index'),
             },
             {
                 name: 'Settings',
                 icon: 'settings',
-                href: '/settings',
+                route: route('settings'),
             },
         ]
     }
@@ -60,7 +52,7 @@ export default class Layout extends Component<Props> {
         return <div className={s.app}>
 
             <TopBar
-                backLink={this.props.backLink}
+                back={this.props.back}
                 clear={this.props.clearTopBar}
                 breadcrumbs={this.props.breadcrumbs}
             />
@@ -73,9 +65,8 @@ export default class Layout extends Component<Props> {
                 {this.menu.map((item, i) => (
                     <Link
                         key={i}
-                        href={item.href}
-                        onClick={item.onClick}
-                        class={s.link + ' ' + (location.hash === '#' + item.href ? s.active : '')}
+                        href={item.route.url}
+                        class={s.link + ' ' + (location.hash === '#' + item.route.url ? s.active : '')}
                     >
                         <Icon class={s.icon}>{item.icon}</Icon>
                         <div class={s.title}>{item.name}</div>

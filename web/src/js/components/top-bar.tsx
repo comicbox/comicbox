@@ -1,17 +1,18 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/top-bar.scss'
 import { historyPop, historyPrevious } from 'js/history'
+import route, { Router } from 'js/routes'
 import { Component, h } from 'preact'
 import Icon from 'preact-material-components/Icon'
-import { Link, route } from 'preact-router'
+import { Link } from 'preact-router'
 
 export interface Crumb {
     name: string
-    href: string
+    route: Router
 }
 
 interface Props {
-    backLink: string
+    back: Router
     clear?: boolean
     breadcrumbs: Crumb[]
 }
@@ -40,10 +41,10 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
                     arrow_back
                 </Icon>
                 <div className={s.breadcrumbs}>
-                    <Link href='/'>
+                    <Link href={route('home').url}>
                         <Icon class={s.home}>home</Icon>
                     </Link>
-                    {this.props.breadcrumbs.map(crumb => <Link key={crumb.href} href={crumb.href}>
+                    {this.props.breadcrumbs.map(crumb => <Link key={crumb.route.url} href={crumb.route.url}>
                         <Icon class={s.arrow}>chevron_right</Icon>
                         {crumb.name}
                     </Link>)}
@@ -67,8 +68,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
         if (this.lastScrollTop !== scrollTop && this.header) {
             this.offset = clamp(this.offset + this.lastScrollTop - scrollTop, -headerHeight, 0)
 
-            this.header.style.top = this.offset + 'px'
-
+            this.header.style.transform = `translate3D(0, ${this.offset}px, 0)`
             if (scrollTop + this.offset === 0 && this.props.clear) {
                 this.header.classList.add(s.hidden)
             } else {
@@ -89,14 +89,14 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
 
             return
         }
-        route(this.props.backLink)
+        this.props.back.navigate()
     }
 
     @autobind
     private search(e: Event) {
         e.preventDefault()
         this.searchInput.blur()
-        route(`/search/${this.searchInput.value}`)
+        route('search', [this.searchInput.value])
     }
 
     @autobind

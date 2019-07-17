@@ -35,7 +35,7 @@ export default class Parallax extends Component<JSX.HTMLAttributes> {
     private frame() {
         if (this.img) {
             const scrollTop = document.documentElement!.scrollTop
-            this.img.style.top = scrollTop / 2 + 'px'
+            this.img.style.transform = `translate3D(0, ${scrollTop / 2}px, 0)`
         }
         if (this.mounted) {
             window.requestAnimationFrame(this.frame)

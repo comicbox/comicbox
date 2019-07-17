@@ -1,5 +1,6 @@
 import { gql } from 'js/graphql'
 import { Model, prop, table } from 'js/model/model'
+import route from 'js/routes'
 
 @table('users', 'update_user', 'UserInput!')
 export default class User extends Model {
@@ -29,7 +30,7 @@ export default class User extends Model {
     public password: string
 
     public get link() {
-        return `/user/${this.username}`
+        return route('user.view', [this.username])
     }
 
     public get sortIndex() {

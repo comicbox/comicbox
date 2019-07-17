@@ -2,6 +2,7 @@ import autobind from 'autobind-decorator'
 import BookEditModal from 'js/components/book-edit-modal'
 import { OpenModal } from 'js/components/modal'
 import { Model, prop, table } from 'js/model/model'
+import route from 'js/routes'
 import { h } from 'preact'
 
 export type PageType = 'FrontCover' | 'Story' | 'Deleted'
@@ -94,7 +95,7 @@ export default class Book extends Model {
     public before: string
 
     public get link() {
-        return `/book/${this.id}`
+        return route('book.read', [this.id])
     }
 
     public get sortIndex() {
@@ -118,5 +119,16 @@ export default class Book extends Model {
             .where('series', this.series)
             .where('before', this.id)
             .first()
+    }
+
+    public validPages(): Page[] {
+        const validPages: Page[] = []
+        for (const page of this.pages) {
+            if (page.type === 'Deleted') {
+                continue
+            }
+            validPages.push(page)
+        }
+        return validPages
     }
 }

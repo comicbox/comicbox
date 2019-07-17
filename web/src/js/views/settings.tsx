@@ -6,6 +6,7 @@ import LoginPrompt from 'js/components/loginPrompt'
 import { OpenForm, OpenYesNo } from 'js/components/modal'
 import { gql } from 'js/graphql'
 import User from 'js/model/user'
+import route from 'js/routes'
 import url from 'js/url'
 import Layout from 'js/views/layout'
 import { Component, FunctionalComponent, h } from 'preact'
@@ -43,7 +44,7 @@ export default class Settings extends Component<{}, State> {
 
     public render() {
         if (this.state.me && this.state.me.guest()) {
-            return <Layout backLink='/' breadcrumbs={[]} >
+            return <Layout back={route('home')} breadcrumbs={[]} >
                 <Container>
                     <LoginPrompt />
                 </Container>
@@ -53,7 +54,7 @@ export default class Settings extends Component<{}, State> {
         if (this.state.me) {
             name = this.state.me.name
         }
-        return <Layout backLink='/' breadcrumbs={[]} >
+        return <Layout back={route('home')} breadcrumbs={[]} >
             <Container>
                 <h2>General</h2>
                 <p>Hello {name}</p>

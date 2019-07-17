@@ -6,6 +6,7 @@ import Parallax from 'js/components/parallax'
 import { gql } from 'js/graphql'
 import Book from 'js/model/book'
 import Series from 'js/model/series'
+import route from 'js/routes'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 import Button from 'preact-material-components/Button'
@@ -59,7 +60,7 @@ export default class SeriesView extends Component<Props, State> {
         if (this.state.current || this.state.first) {
             const current = this.state.current || this.state.first
             thumbImg = current.cover.url
-            readLink = current.link
+            readLink = current.link.url
             summary = current.summary
             if (current.volume) {
                 title += `V${current.volume} `
@@ -78,12 +79,12 @@ export default class SeriesView extends Component<Props, State> {
         }
 
         return <Layout
-            backLink='/series'
+            back={route('series.index')}
             clearTopBar
             breadcrumbs={[
                 {
                     name: 'Series',
-                    href: '/series',
+                    route: route('series.index'),
                 },
             ]}
         >
