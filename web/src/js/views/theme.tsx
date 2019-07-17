@@ -1,4 +1,5 @@
 import autobind from 'autobind-decorator'
+import route from 'js/routes'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 import Button from 'preact-material-components/Button'
@@ -38,11 +39,11 @@ export default class Theme extends Component {
             },
         ]
         return <Layout
-            backLink='/'
+            back={route('home')}
             breadcrumbs={[
                 {
                     name: 'Settings',
-                    href: '/settings',
+                    route: route('settings'),
                 },
             ]}
         >

@@ -4,9 +4,9 @@ import Page from 'js/components/page'
 import ReadOverlay from 'js/components/read-overlay'
 import Book from 'js/model/book'
 import User from 'js/model/user'
+import route from 'js/routes'
 import { debounce, emptyImage } from 'js/util'
 import { Component, h } from 'preact'
-import { route } from 'preact-router'
 
 interface Props {
     matches?: { [id: string]: string }
@@ -63,7 +63,7 @@ export default class Read extends Page<Props, State> {
             return <div />
         }
 
-        const page = this.state.book.validPages()[this.state.current]
+        const page = this.state.book.validPages()[this.state.current] || { url: emptyImage }
         const nextPage = this.state.book.validPages()[this.state.current + 1] || { url: emptyImage }
         const previousPage = this.state.book.validPages()[this.state.current - 1] || { url: emptyImage }
 
@@ -202,9 +202,9 @@ export default class Read extends Page<Props, State> {
         const book = await this.state.book.next()
 
         if (book != null) {
-            route('/book/' + book.id, true)
+            route('book.read', [book.id]).navigate(true)
         } else {
-            route('/series/' + this.state.book.series)
+            route('series.view', [this.state.book.series]).navigate()
         }
     }
     @autobind
@@ -214,9 +214,9 @@ export default class Read extends Page<Props, State> {
         const book = await this.state.book.previous()
 
         if (book != null) {
-            route('/book/' + book.id, true)
+            route('book.read', [book.id]).navigate(true)
         } else {
-            route('/series/' + this.state.book.series)
+            route('series.view', [this.state.book.series]).navigate()
         }
     }
 

@@ -3,6 +3,7 @@ import LoginPrompt from 'js/components/loginPrompt'
 import ModelList from 'js/components/model-list'
 import Book from 'js/model/book'
 import Series from 'js/model/series'
+import route from 'js/routes'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 
@@ -19,7 +20,7 @@ export default class List extends Component<{}, State> {
 
     public render() {
         if (this.state.guest) {
-            return <Layout backLink='/' breadcrumbs={[]}>
+            return <Layout back={route('home')} breadcrumbs={[]}>
                 <LoginPrompt />
             </Layout>
         }
@@ -45,7 +46,7 @@ export default class List extends Component<{}, State> {
             .with(firstBook)
             .get()
 
-        return <Layout backLink='/' breadcrumbs={[]}>
+        return <Layout back={route('home')} breadcrumbs={[]}>
             <h1>Reading</h1>
             <ModelList items={reading} />
             <h1>Completed</h1>

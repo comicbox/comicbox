@@ -1,6 +1,6 @@
 import User from 'js/model/user'
+import route from 'js/routes'
 import url from 'js/url'
-import { route } from 'preact-router'
 
 class Auth extends EventTarget {
 
@@ -35,7 +35,7 @@ class Auth extends EventTarget {
     public logout(): void {
         document.cookie = 'comicbox-session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
         this.currentUser = null
-        route('/login')
+        route('login')
         this.dispatchEvent(new Event('logout'))
         this.dispatchEvent(new Event('change'))
     }
