@@ -4,6 +4,7 @@ import ModelList from 'js/components/model-list'
 import Book from 'js/model/book'
 import { ModelArray } from 'js/model/model'
 import Series from 'js/model/series'
+import route from 'js/routes'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 
@@ -45,7 +46,7 @@ export default class Home extends Component<{}, State> {
             sections.push(<LoginPrompt />)
         }
 
-        return <Layout backLink='/' breadcrumbs={[]}>
+        return <Layout back={route('home')} breadcrumbs={[]}>
             {sections}
             <h1>New Chapters</h1>
             <ModelList key='new' items={Book.sort('!created_at').take(15).get()} />

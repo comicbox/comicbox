@@ -1,6 +1,7 @@
 import ModelList from 'js/components/model-list'
 import Book from 'js/model/book'
 import Series from 'js/model/series'
+import route from 'js/routes'
 import Layout from 'js/views/layout'
 import { Component, h } from 'preact'
 
@@ -18,7 +19,7 @@ export default class SearchIndex extends Component<any> {
             .take(20)
             .get()
 
-        return <Layout backLink='/' breadcrumbs={[]}>
+        return <Layout back={route('home')} breadcrumbs={[]}>
             <h1>Search</h1>
             <h2>Series</h2>
             <ModelList items={series} key={query + 'series'} />

@@ -1,14 +1,12 @@
 import autobind from 'autobind-decorator'
 import * as s from 'css/read-overlay.scss'
 import TopBar from 'js/components/top-bar'
-import { historyPop, historyPrevious } from 'js/history'
 import Book from 'js/model/book'
+import route from 'js/routes'
 import { debounce } from 'js/util'
 import { Component, h } from 'preact'
 import Button from 'preact-material-components/Button'
 import Slider from 'preact-material-components/Slider'
-import TopAppBar from 'preact-material-components/TopAppBar'
-import { Link, route } from 'preact-router'
 
 interface Props {
     show: boolean
@@ -34,15 +32,15 @@ export default class ReadOverlay extends Component<Props, {}>  {
         return <div className={s.backdrop}>
             <div className={s.modal}>
                 <TopBar
-                    backLink={'/'}
+                    back={route('home')}
                     breadcrumbs={[
                         {
                             name: 'Series',
-                            href: `/series`,
+                            route: route('series.index'),
                         },
                         {
                             name: this.props.book.series,
-                            href: `/series/${this.props.book.series}`,
+                            route: route('series.view', [this.props.book.series]),
                         },
                     ]}
                 />

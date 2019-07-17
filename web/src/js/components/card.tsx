@@ -5,13 +5,14 @@ import Book from 'js/model/book'
 import { Model } from 'js/model/model'
 import { QueryBuilder } from 'js/model/query-builder'
 import Series from 'js/model/series'
+import route from 'js/routes'
 import map from 'lodash/map'
 import { Component, h } from 'preact'
 import Button from 'preact-material-components/Button'
 import Elevation from 'preact-material-components/Elevation'
 import Icon from 'preact-material-components/Icon'
 import Menu from 'preact-material-components/Menu'
-import { Link, route } from 'preact-router'
+import { Link } from 'preact-router'
 
 export interface PageData {
     url: string
@@ -131,7 +132,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
         }
 
         return <Elevation z={2} className={s.book}>
-            <Link href={model.link}>
+            <Link href={model.link.url}>
                 {readMark}
                 <LazyImg className={s.cover} src={image} key={image} />
                 <div className={s.series} title={series}>{series || '\u00A0'}</div>
@@ -236,7 +237,7 @@ const bookOptions: Options<Book> = {
     },
     'd1': 'divider',
     'Go to series': book => {
-        route(`/series/${book.series}`)
+        route('series.view', [book.series]).navigate()
     },
     'd2': 'divider',
     'Edit Book': async book => {

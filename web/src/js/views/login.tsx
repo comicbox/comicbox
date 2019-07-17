@@ -3,10 +3,10 @@ import * as s from 'css/login.scss'
 import auth from 'js/auth'
 import Form from 'js/components/form'
 import Book from 'js/model/book'
+import route from 'js/routes'
 import { Component, h } from 'preact'
 import Btn from 'preact-material-components/Button'
 import TextField from 'preact-material-components/TextField'
-import { route } from 'preact-router'
 import Layout from './layout'
 
 interface State {
@@ -49,7 +49,7 @@ export default class Login extends Component<{}, State> {
         </div >
 
         if (this.state.guestMode) {
-            return <Layout backLink='/' breadcrumbs={[]}>
+            return <Layout back={route('home')} breadcrumbs={[]}>
                 {content}
             </Layout>
         }
@@ -65,6 +65,6 @@ export default class Login extends Component<{}, State> {
             alert('Invalid username or password')
             return
         }
-        route('/')
+        route('home').navigate()
     }
 }

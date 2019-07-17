@@ -41,12 +41,13 @@
 
         .link {
             display: inline-block;
-            width: 20%;
+            width: 25%;
             text-align: center; // @include textSecondary;
-            
+
             user-select: none;
 
             cursor: pointer;
+
             &.active {
                 @include colorPrimary;
             }
@@ -56,6 +57,7 @@
                 font-size: 34px;
                 padding-top: 5px;
             }
+
             .title {
                 display: block;
                 font-size: 10px;
