@@ -111,7 +111,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
                 </div>
             }
 
-            options = bookOptions as Options<T>
+            options = bookOptions as Options<any>
         } else if (model instanceof Series) {
             if (model.books && model.books[0] && model.books[0].cover) {
                 image = model.books[0].cover.url + '?height=200'
@@ -128,7 +128,7 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
                     </svg>
                 </div>
             }
-            options = seriesOptions as Options<T>
+            options = seriesOptions as Options<any>
         }
 
         return <Elevation z={2} className={s.book}>
