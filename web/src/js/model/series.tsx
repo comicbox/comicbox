@@ -4,7 +4,7 @@ import { toast } from 'js/components/snack'
 import { gql } from 'js/graphql'
 import Book from 'js/model/book'
 import { Model, ModelArray, prop, table } from 'js/model/model'
-import route from 'js/routes';
+import route from 'js/routes'
 import map from 'lodash/map'
 import { Component, h } from 'preact'
 import Select from 'preact-material-components/Select'
