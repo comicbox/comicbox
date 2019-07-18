@@ -33,7 +33,7 @@ func Handler() http.Handler {
 	for _, file := range files {
 		s += string(data.MustAsset(filepath.Join(dir, file))) + "\n"
 	}
-	schema, err := graphql.ParseSchema(s, &RootQuery{})
+	schema, err := graphql.ParseSchema(s, &PluginQuery{})
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		os.Exit(1)
