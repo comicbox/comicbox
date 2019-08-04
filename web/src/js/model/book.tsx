@@ -121,14 +121,4 @@ export default class Book extends Model {
             .first()
     }
 
-    public validPages(): Page[] {
-        const validPages: Page[] = []
-        for (const page of this.pages) {
-            if (page.type === 'Deleted') {
-                continue
-            }
-            validPages.push(page)
-        }
-        return validPages
-    }
 }
