@@ -146,7 +146,7 @@ export default class Book extends Model {
         }
     }
 
-    public getPage(num: number) {
+    public getPage(num: number): Page | undefined {
         return this.pages.filter(p => p.type !== 'Deleted')[num]
     }
 
