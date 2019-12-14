@@ -131,7 +131,8 @@ export default class Book extends Model {
                 out++
             }
         }
-        return out
+
+        return Math.max(out, 0)
     }
 
     public setCurrentPage(currentPage: number): void {
