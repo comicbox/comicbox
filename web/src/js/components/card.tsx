@@ -228,11 +228,11 @@ const seriesOptions: Options<Series> = {
 
 const bookOptions: Options<Book> = {
     'Mark as read': async book => {
-        book.current_page = book.pages.length
+        book.setCurrentPage(book.getPageCount())
         await book.save()
     },
     'Mark as unread': async book => {
-        book.current_page = 0
+        book.setCurrentPage(0)
         await book.save()
     },
     'd1': 'divider',

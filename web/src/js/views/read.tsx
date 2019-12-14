@@ -21,7 +21,7 @@ interface State {
 }
 
 export default class Read extends Page<Props, State> {
-    private img: HTMLImageElement
+    private img: HTMLImageElement = new Image()
     private user: User | null = null
 
     private touchDown: Touch | null = null
@@ -63,9 +63,9 @@ export default class Read extends Page<Props, State> {
             return <div />
         }
 
-        const page = this.state.book.pages[this.state.current] || { url: emptyImage }
-        const nextPage = this.state.book.pages[this.state.current + 1] || { url: emptyImage }
-        const previousPage = this.state.book.pages[this.state.current - 1] || { url: emptyImage }
+        const page = this.state.book.getPage(this.state.current) || { url: emptyImage }
+        const nextPage = this.state.book.getPage(this.state.current + 1) || { url: emptyImage }
+        const previousPage = this.state.book.getPage(this.state.current - 1) || { url: emptyImage }
 
         return <div className={s.reader}>
             <img
@@ -87,7 +87,7 @@ export default class Read extends Page<Props, State> {
                 show={this.state.modalOpen}
 
                 currentPage={this.state.current}
-                maxPage={this.state.book.pages.length}
+                maxPage={this.state.book.getPageCount()}
 
                 onClose={this.toggleModal}
                 onUpdateCurrent={this.changePage}
@@ -129,10 +129,10 @@ export default class Read extends Page<Props, State> {
         if (pageMatch !== '') {
             pageNum = Number(pageMatch)
         } else {
-            pageNum = book.current_page || pageNum
+            pageNum = book.getCurrentPage() || pageNum
         }
 
-        book.current_page = pageNum
+        book.setCurrentPage(pageNum)
         this.save()
 
         this.setState({
@@ -155,9 +155,9 @@ export default class Read extends Page<Props, State> {
             return
         }
 
-        if (dst < book.pages.length && dst > -1) {
+        if (dst < book.getPageCount() && dst > -1) {
             // TODO update progress to dst
-            book.current_page = dst
+            book.setCurrentPage(dst)
             this.save()
 
             this.setState({
@@ -179,26 +179,17 @@ export default class Read extends Page<Props, State> {
             return
         }
 
-        let nextPage = this.state.current
-        let moved = 0
-        while (moved < Math.abs(step)) {
-            nextPage += step / Math.abs(step)
-            if (this.state.book.pages[nextPage] === undefined) {
-                break
-            }
-            if (this.state.book.pages[nextPage].type !== 'Deleted') {
-                moved++
-            }
-        }
-        if (nextPage < book.pages.length && nextPage > -1) {
-            book.current_page = nextPage
+        const nextPage = this.state.current + step
+
+        if (nextPage < book.getPageCount() && nextPage > -1) {
+            book.setCurrentPage(nextPage)
             this.save()
 
             this.setState({
                 current: nextPage,
                 book: book,
             })
-        } else if (nextPage === book.pages.length) {
+        } else if (nextPage === book.getPageCount()) {
             this.next()
         } else if (nextPage <= -1) {
             this.previous()
@@ -286,7 +277,7 @@ export default class Read extends Page<Props, State> {
         }
 
         this.img.classList.remove(s.moving)
-        this.img.style.left = null
+        this.img.style.left = ''
         setTimeout(() => {
             if (this.img.classList.contains(s.next)) {
                 this.stepPage(1)
