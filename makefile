@@ -2,8 +2,6 @@ bindata= -o comicboxd/data/bindata.go -pkg data comicboxd/migrations/... web/dis
 
 export GO111MODULE=on
 
-export GO111MODULE=on
-
 all: comicboxd
 	
 comicboxd: bindata tidy
