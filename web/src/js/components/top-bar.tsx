@@ -17,9 +17,12 @@ interface Props {
     breadcrumbs: Crumb[]
 }
 
-const headerHeight = 56
+interface State {
+    topOfPage: boolean
+}
+const headerHeight = 56 + 5
 
-export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
+export default class TopBar extends Component<Props & JSX.HTMLAttributes, State> {
 
     private searchInput: HTMLInputElement
 
@@ -28,6 +31,14 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
     private offset: number = 1
     private lastScrollTop: number = -1
 
+    constructor(props: Props) {
+        super(props)
+
+        this.state = {
+            topOfPage: true,
+        }
+    }
+
     public componentDidMount() {
         setTimeout(() => {
             window.requestAnimationFrame(this.frame)
@@ -35,7 +46,11 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
     }
 
     public render() {
-        return <header {...this.props} class={s.topBar + ' ' + this.props.class} ref={e => this.header = e}>
+        return <header
+            {...this.props}
+            class={`${s.topBar} ${this.state.topOfPage ? s.topOfPage : ''} ${this.props.class}`}
+            ref={e => this.header = e}
+        >
             <section class={s.left}>
                 <Icon onClick={this.btnBack} href='#' navigation={true}>
                     arrow_back
@@ -63,7 +78,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
 
     @autobind
     private frame() {
-        const scrollTop = document.documentElement!.scrollTop
+        const scrollTop = Math.max(document.documentElement!.scrollTop, 0)
 
         if (this.lastScrollTop !== scrollTop && this.header) {
             this.offset = clamp(this.offset + this.lastScrollTop - scrollTop, -headerHeight, 0)
@@ -75,8 +90,15 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
                 this.header.classList.remove(s.hidden)
             }
 
+            if (scrollTop === 0) {
+                this.setState({ topOfPage: true })
+            } else {
+                this.setState({ topOfPage: false })
+            }
+
             this.lastScrollTop = scrollTop
         }
+
         window.requestAnimationFrame(this.frame)
     }
 

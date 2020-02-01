@@ -90,3 +90,7 @@ $padding: 15px;
     color: $mdc-theme-text-icon-on-background;
     color: var(--mdc-theme-icon-primary-on-background, $mdc-theme-text-icon-on-background);
 }
+
+@mixin shadow {
+    box-shadow: 0 0 5px 0 rgba(black, 0.5);
+}
