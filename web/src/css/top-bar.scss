@@ -14,6 +14,10 @@
     align-items: center;
 
     transition: background-color 500ms;
+    transition: box-shadow 500ms;
+    top: 0;
+    @include shadow;
+
     &.hidden {
         background-color: rgba(0, 0, 0, 0);
         background-image: linear-gradient(black, rgba(0, 0, 0, 0));
@@ -24,12 +28,17 @@
         }
     }
 
+    &.top-of-page {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.5);
+    }
+
     @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
-        top: 0 !important;
+        transform: translate3d(0, 0, 0) !important;
     }
 
     section {
         padding: 4px;
+
         :global(.mdc-icon) {
             padding: 12px;
 
@@ -38,6 +47,7 @@
             cursor: pointer;
         }
     }
+
     .left {
         display: inline-flex;
         align-items: center;
@@ -59,9 +69,11 @@
             .home {
                 padding: 0;
             }
+
             a {
                 display: inline-flex;
                 align-items: center;
+
                 .arrow {
                     opacity: 0.5;
                     padding: 0;
@@ -70,6 +82,7 @@
 
         }
     }
+
     .right {
         align-items: center;
         justify-content: flex-end;
@@ -85,9 +98,8 @@
             outline: none;
 
             font-size: 1.12em;
-            padding-top: 16px;
-            padding-bottom: 16px;
-
+            padding: 16px 0;
+            border-radius: 0;
 
             &:focus {
                 width: calc(100% - 44px);
@@ -95,6 +107,7 @@
                 padding-left: 10px;
                 border-bottom: solid $mdc-theme-primary 3px;
                 border-bottom: solid var(--mdc-theme-primary, $mdc-theme-primary) 3px;
+
                 &+label {
                     @include textSecondary;
                     position: fixed;
@@ -107,6 +120,7 @@
         }
 
         @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
+
             input,
             input:focus {
                 width: 400px;
@@ -117,6 +131,7 @@
                 border-bottom: unset;
                 margin: 6px;
             }
+
             label {
                 @include textSecondary;
                 position: fixed;

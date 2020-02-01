@@ -34,8 +34,7 @@
         width: 100%;
 
         @include backgroundSurface;
-        border-top: solid $mdc-theme-surface-border 2px;
-        border-top: solid var(--mdc-theme-surface-border, $mdc-theme-surface-border) 2px;
+        @include shadow;
 
         z-index: 1;
 
@@ -72,6 +71,7 @@
             height: 300px;
             background-color: unset;
             border-top: unset;
+            box-shadow: none;
 
             .link {
                 width: 100%;
