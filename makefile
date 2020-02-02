@@ -21,6 +21,7 @@ bindata-debug:
 	go-bindata -debug $(bindata)
 
 get: bindata-debug
+	go get github.com/zwzn/go-bindata/...
 	cd web; npm install
 	go get ./...
 
