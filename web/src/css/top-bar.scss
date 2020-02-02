@@ -18,18 +18,20 @@
     top: 0;
     @include shadow;
 
+    &.top-of-page {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.5);
+    }
+
     &.hidden {
         background-color: rgba(0, 0, 0, 0);
         background-image: linear-gradient(black, rgba(0, 0, 0, 0));
+        transition: box-shadow 0;
+        box-shadow: none;
 
         @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {
             @include backgroundPrimary;
             background-image: unset;
         }
-    }
-
-    &.top-of-page {
-        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.5);
     }
 
     @media (min-width: mdc-layout-grid-breakpoint-min(desktop)) {

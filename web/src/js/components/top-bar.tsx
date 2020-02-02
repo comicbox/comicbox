@@ -19,6 +19,7 @@ interface Props {
 
 interface State {
     topOfPage: boolean
+    hidden: boolean
 }
 const headerHeight = 56 + 5
 
@@ -36,6 +37,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes, State>
 
         this.state = {
             topOfPage: true,
+            hidden: true,
         }
     }
 
@@ -48,7 +50,7 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes, State>
     public render() {
         return <header
             {...this.props}
-            class={`${s.topBar} ${this.state.topOfPage ? s.topOfPage : ''} ${this.props.class}`}
+            class={`${s.topBar} ${this.state.topOfPage ? s.topOfPage : ''} ${this.state.hidden ? s.hidden : ''} ${this.props.class}`}
             ref={e => this.header = e}
         >
             <section class={s.left}>
@@ -84,17 +86,9 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes, State>
             this.offset = clamp(this.offset + this.lastScrollTop - scrollTop, -headerHeight, 0)
 
             this.header.style.transform = `translate3D(0, ${this.offset}px, 0)`
-            if (scrollTop + this.offset === 0 && this.props.clear) {
-                this.header.classList.add(s.hidden)
-            } else {
-                this.header.classList.remove(s.hidden)
-            }
 
-            if (scrollTop === 0) {
-                this.setState({ topOfPage: true })
-            } else {
-                this.setState({ topOfPage: false })
-            }
+            this.setState({ hidden: scrollTop + this.offset === 0 && this.props.clear! })
+            this.setState({ topOfPage: scrollTop === 0 })
 
             this.lastScrollTop = scrollTop
         }
