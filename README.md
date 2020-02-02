@@ -2,9 +2,7 @@
 
 ComicBox is a web based comic reader and manager that serves your digital comic book collection.
 
-<img alt="Home page" src="./.github/readme/home-phone.png" width="24%">
-<img alt="Series chapter list" src="./.github/readme/series-desktop.png" width="51.092299%">
-<img alt="Home page" src="./.github/readme/reading-phone.png" width="24%">
+![Screenshots](.github/readme/screenshots.png)
 
 ## Features
 
