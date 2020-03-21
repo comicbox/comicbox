@@ -18,6 +18,7 @@ require (
 	github.com/graph-gophers/graphql-go v0.0.0-20181128220952-0079757a4d96
 	github.com/imdario/mergo v0.3.7
 	github.com/jmoiron/sqlx v1.2.0
+	github.com/julienschmidt/httprouter v1.2.0
 	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1 // indirect
 	github.com/kardianos/service v0.0.0-20181115005516-4c239ee84e7b
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
