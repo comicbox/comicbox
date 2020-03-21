@@ -134,7 +134,9 @@ export default class Card<T extends Model> extends Component<Props<T>, State<T>>
         return <Elevation z={2} className={s.book}>
             <Link href={model.link.url}>
                 {readMark}
-                <LazyImg className={s.cover} src={image} key={image} />
+                <div className={s.coverWrapper}>
+                    <LazyImg className={s.cover} src={image} key={image} />
+                </div>
                 <div className={s.series} title={series}>{series || '\u00A0'}</div>
 
                 <div className={s.title} title={title}>{title}</div>
