@@ -8,11 +8,11 @@ import (
 	"github.com/comicbox/comicbox/comicboxd/app/schema/scalar"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/jmoiron/sqlx"
-	"github.com/spf13/viper"
 	"github.com/comicbox/comicbox/comicboxd/app"
 	"github.com/comicbox/comicbox/comicboxd/app/database"
 	"github.com/comicbox/comicbox/comicboxd/app/model"
+	"github.com/jmoiron/sqlx"
+	"github.com/spf13/viper"
 )
 
 func setUpDB() {

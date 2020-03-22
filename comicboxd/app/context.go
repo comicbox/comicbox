@@ -118,3 +118,11 @@ func (c Context) URL(format string, a ...interface{}) string {
 func (c Context) Guest() bool {
 	return c.User.ID == uuid.UUID{}
 }
+
+func (c Context) Host() string {
+	proto := "http"
+	if c.request.TLS != nil {
+		proto = "https"
+	}
+	return proto + "://" + c.request.Host
+}

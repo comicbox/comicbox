@@ -1,14 +1,39 @@
 package schema
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"net/http"
 
-	"github.com/davecgh/go-spew/spew"
+	"github.com/comicbox/comicbox/comicboxd/app"
 )
 
-func before(name string, ctx context.Context, args interface{}) {
+type Request struct {
+	Name   string
+	Args   json.RawMessage
+	Extras map[string]string
+	Host   string
 }
 
 func after(name string, ctx context.Context, args interface{}, result interface{}) {
-	spew.Dump(name, args, result)
+	bArgs, err := json.Marshal(args)
+	if err != nil {
+		return
+	}
+	c := ctx.Value(appCtx).(*app.Context)
+
+	r := &Request{
+		Name:   name,
+		Args:   bArgs,
+		Extras: map[string]string{},
+		Host:   c.Host(),
+	}
+
+	b, err := json.Marshal(r)
+	if err != nil {
+		return
+	}
+
+	http.Post("http://localhost:8087", "text/json", bytes.NewReader(b))
 }
