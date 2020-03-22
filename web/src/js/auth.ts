@@ -1,3 +1,4 @@
+import EventTarget from 'event-target-shim'
 import User from 'js/model/user'
 import route from 'js/routes'
 import url from 'js/url'

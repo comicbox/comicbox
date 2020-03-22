@@ -1,4 +1,5 @@
 export const topBar: string;
+export const topOfPage: string;
 export const hidden: string;
 export const left: string;
 export const breadcrumbs: string;

@@ -121,14 +121,37 @@ export default class Book extends Model {
             .first()
     }
 
-    public validPages(): Page[] {
-        const validPages: Page[] = []
-        for (const page of this.pages) {
-            if (page.type === 'Deleted') {
-                continue
-            }
-            validPages.push(page)
+    public getCurrentPage(): number | null {
+        if (this.current_page === null) {
+            return null
         }
-        return validPages
+        let out: number = -1
+        for (let i = 0; i < this.current_page + 1; i++) {
+            if (this.pages[i].type !== 'Deleted') {
+                out++
+            }
+        }
+
+        return Math.max(out, 0)
+    }
+
+    public setCurrentPage(currentPage: number): void {
+        const page = this.pages.filter(p => p.type !== 'Deleted')[currentPage]
+        this.current_page = this.pages.indexOf(page)
+        for (let i = Math.min(this.current_page + 1, this.pages.length); i < this.pages.length; i++) {
+            if (this.pages[i].type === 'Deleted') {
+                this.current_page = i
+            } else {
+                break
+            }
+        }
+    }
+
+    public getPage(num: number): Page | undefined {
+        return this.pages.filter(p => p.type !== 'Deleted')[num]
+    }
+
+    public getPageCount(): number {
+        return this.pages.filter(p => p.type !== 'Deleted').length
     }
 }

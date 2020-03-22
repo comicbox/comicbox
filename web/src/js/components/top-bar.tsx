@@ -17,9 +17,13 @@ interface Props {
     breadcrumbs: Crumb[]
 }
 
-const headerHeight = 56
+interface State {
+    topOfPage: boolean
+    hidden: boolean
+}
+const headerHeight = 56 + 5
 
-export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
+export default class TopBar extends Component<Props & JSX.HTMLAttributes, State> {
 
     private searchInput: HTMLInputElement
 
@@ -28,6 +32,15 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
     private offset: number = 1
     private lastScrollTop: number = -1
 
+    constructor(props: Props) {
+        super(props)
+
+        this.state = {
+            topOfPage: true,
+            hidden: true,
+        }
+    }
+
     public componentDidMount() {
         setTimeout(() => {
             window.requestAnimationFrame(this.frame)
@@ -35,7 +48,11 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
     }
 
     public render() {
-        return <header {...this.props} class={s.topBar + ' ' + this.props.class} ref={e => this.header = e}>
+        return <header
+            {...this.props}
+            class={`${s.topBar} ${this.state.topOfPage ? s.topOfPage : ''} ${this.state.hidden ? s.hidden : ''} ${this.props.class}`}
+            ref={e => this.header = e}
+        >
             <section class={s.left}>
                 <Icon onClick={this.btnBack} href='#' navigation={true}>
                     arrow_back
@@ -63,20 +80,19 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes> {
 
     @autobind
     private frame() {
-        const scrollTop = document.documentElement!.scrollTop
+        const scrollTop = Math.max(document.documentElement!.scrollTop, 0)
 
         if (this.lastScrollTop !== scrollTop && this.header) {
             this.offset = clamp(this.offset + this.lastScrollTop - scrollTop, -headerHeight, 0)
 
             this.header.style.transform = `translate3D(0, ${this.offset}px, 0)`
-            if (scrollTop + this.offset === 0 && this.props.clear) {
-                this.header.classList.add(s.hidden)
-            } else {
-                this.header.classList.remove(s.hidden)
-            }
+
+            this.setState({ hidden: scrollTop + this.offset === 0 && this.props.clear! })
+            this.setState({ topOfPage: scrollTop === 0 })
 
             this.lastScrollTop = scrollTop
         }
+
         window.requestAnimationFrame(this.frame)
     }
 
