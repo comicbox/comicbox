@@ -2,6 +2,7 @@ package schema
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/Masterminds/squirrel"
 	graphql "github.com/graph-gophers/graphql-go"
@@ -29,6 +30,14 @@ func (q *query) UpdateSeries(ctx context.Context, args UpdateSeriesArgs) (*Serie
 	m := toStruct(args.Data)
 	if len(m) == 0 {
 		return q.Serie(ctx, SerieArgs{Name: args.Name})
+	}
+
+	if args.Data.Tags != nil {
+		b, err := json.Marshal(*args.Data.Tags)
+		if err != nil {
+			return nil, err
+		}
+		m["tags"] = b
 	}
 
 	err := database.Tx(ctx, func(tx *sqlx.Tx) error {
