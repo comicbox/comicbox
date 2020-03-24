@@ -98,7 +98,15 @@ func newArg(fun reflect.Type, argNum int, data []byte) (reflect.Value, error) {
 
 func Query(ctx context.Context) (interface{}, error) {
 	host := ctx.Value("host").(string)
-	r, err := http.Post(host+"/graphql", "text/json", bytes.NewReader([]byte{}))
+	auth := ctx.Value("auth").(string)
+	req, err := http.NewRequestWithContext(ctx, "POST", host+"/graphql", bytes.NewReader([]byte("{}")))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Authorization", auth)
+
+	r, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
