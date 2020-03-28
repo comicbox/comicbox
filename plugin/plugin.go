@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
-	"os"
 	"reflect"
 
 	"github.com/comicbox/comicbox/comicboxd/app/schema"
+	"github.com/davecgh/go-spew/spew"
+	gqlErrors "github.com/graph-gophers/graphql-go/errors"
 	"github.com/pkg/errors"
 )
 
@@ -96,7 +96,13 @@ func newArg(fun reflect.Type, argNum int, data []byte) (reflect.Value, error) {
 	return reflect.ValueOf(v).Elem(), nil
 }
 
-func Query(ctx context.Context, query string, variables map[string]interface{}) (interface{}, error) {
+type Response struct {
+	Errors []*gqlErrors.QueryError    `json:"errors,omitempty"`
+	Data   map[string]json.RawMessage `json:"data,omitempty"`
+}
+
+func Query(ctx context.Context, target interface{}, query string, variables map[string]interface{}) error {
+	spew.Dump(variables)
 	host := ctx.Value("host").(string)
 	auth := ctx.Value("auth").(string)
 
@@ -105,22 +111,42 @@ func Query(ctx context.Context, query string, variables map[string]interface{}) 
 		"variables": variables,
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", host+"/graphql", bytes.NewReader(b))
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	req.Header.Add("Authorization", auth)
 
 	r, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer r.Body.Close()
-	io.Copy(os.Stdout, r.Body)
+	resp := &Response{}
+	err = json.NewDecoder(r.Body).Decode(resp)
+	if err != nil {
+		return err
+	}
 
-	return nil, nil
+	if len(resp.Data) > 1 {
+		return errors.Errorf("you may only run one query at a time")
+	}
+
+	if resp.Errors != nil && len(resp.Errors) > 0 {
+		return errors.Wrap(resp.Errors[0], "error running query")
+	}
+	for _, d := range resp.Data {
+		spew.Dump(d)
+		err = json.Unmarshal(d, target)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	return errors.Errorf("there was no data in the graphql request")
 }
