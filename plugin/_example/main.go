@@ -6,6 +6,7 @@ import (
 	"github.com/comicbox/comicbox/comicboxd/app/schema"
 	"github.com/comicbox/comicbox/plugin"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/pkg/errors"
 )
 
 type Book struct {
@@ -18,10 +19,9 @@ type Series struct {
 }
 
 func main() {
-	plugin.Start(&plugin.Plugin{
+	plugin.Start(2345, &plugin.Plugin{
 		UpdateBook: func(ctx context.Context, extras map[string]string, args schema.UpdateBookArgs) error {
 			b := &Book{}
-
 			err := plugin.Query(ctx, b, `query($bookID: ID!) {
 				book(id: $bookID){
 					series
@@ -31,10 +31,9 @@ func main() {
 				"bookID": args.ID,
 			})
 			if err != nil {
-				return err
+				return errors.Wrap(err, "could not run book query")
 			}
 
-			spew.Dump(args.Data.CurrentPage, b.PageCount)
 			if args.Data.CurrentPage != nil && *args.Data.CurrentPage >= b.PageCount-1 {
 				s := &Series{}
 				err = plugin.Query(ctx, s, `query($name: String!) {
@@ -45,7 +44,7 @@ func main() {
 					"name": b.Series,
 				})
 				if err != nil {
-					return err
+					return errors.Wrap(err, "could not run series query")
 				}
 
 				spew.Dump(s)

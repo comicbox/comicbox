@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/comicbox/comicbox/comicboxd/app/routes"
+	"github.com/comicbox/comicbox/comicboxd/app/schema"
 	"github.com/comicbox/comicbox/comicboxd/j"
 	"github.com/comicbox/comicbox/comicboxd/server"
 	figure "github.com/common-nighthawk/go-figure"
@@ -137,6 +138,8 @@ func main() {
 		check(err)
 		return
 	}
+
+	schema.StartPlugins()
 
 	err = s.Run()
 	if err != nil {

@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"reflect"
 
 	"github.com/comicbox/comicbox/comicboxd/app/schema"
-	"github.com/davecgh/go-spew/spew"
 	gqlErrors "github.com/graph-gophers/graphql-go/errors"
 	"github.com/pkg/errors"
 )
@@ -30,8 +30,8 @@ type Plugin struct {
 	User              func(ctx context.Context, extras map[string]string, args schema.UserArgs) error
 }
 
-func Start(p *Plugin) {
-	log.Fatal(http.ListenAndServe(":8087", p))
+func Start(port int, p *Plugin) {
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), p))
 }
 
 func (p *Plugin) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -102,7 +102,6 @@ type Response struct {
 }
 
 func Query(ctx context.Context, target interface{}, query string, variables map[string]interface{}) error {
-	spew.Dump(variables)
 	host := ctx.Value("host").(string)
 	auth := ctx.Value("auth").(string)
 
@@ -140,7 +139,6 @@ func Query(ctx context.Context, target interface{}, query string, variables map[
 		return errors.Wrap(resp.Errors[0], "error running query")
 	}
 	for _, d := range resp.Data {
-		spew.Dump(d)
 		err = json.Unmarshal(d, target)
 		if err != nil {
 			return err
