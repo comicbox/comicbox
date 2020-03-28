@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/comicbox/comicbox/comicboxd/app"
+	"github.com/comicbox/comicbox/comicboxd/app/middleware"
 )
 
 type Request struct {
@@ -14,6 +15,7 @@ type Request struct {
 	Args   json.RawMessage
 	Extras map[string]string
 	Host   string
+	Auth   string
 }
 
 func after(name string, ctx context.Context, args interface{}, result interface{}) {
@@ -23,11 +25,14 @@ func after(name string, ctx context.Context, args interface{}, result interface{
 	}
 	c := ctx.Value(appCtx).(*app.Context)
 
+	key := middleware.NewTempKey(c.User)
+	defer middleware.ClearTempKey(key)
 	r := &Request{
 		Name:   name,
 		Args:   bArgs,
 		Extras: map[string]string{},
 		Host:   c.Host(),
+		Auth:   key,
 	}
 
 	b, err := json.Marshal(r)

@@ -54,7 +54,7 @@ func (p *Plugin) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	numIn := x.NumIn() //Count inbound parameters
 
 	args := []reflect.Value{
-		reflect.ValueOf(context.WithValue(r.Context(), "host", req.Host)),
+		reflect.ValueOf(context.WithValue(context.WithValue(r.Context(), "host", req.Host), "auth", req.Auth)),
 		reflect.ValueOf(map[string]string{}),
 	}
 	if numIn > 2 {
@@ -96,10 +96,19 @@ func newArg(fun reflect.Type, argNum int, data []byte) (reflect.Value, error) {
 	return reflect.ValueOf(v).Elem(), nil
 }
 
-func Query(ctx context.Context) (interface{}, error) {
+func Query(ctx context.Context, query string, variables map[string]interface{}) (interface{}, error) {
 	host := ctx.Value("host").(string)
 	auth := ctx.Value("auth").(string)
-	req, err := http.NewRequestWithContext(ctx, "POST", host+"/graphql", bytes.NewReader([]byte("{}")))
+
+	b, err := json.Marshal(map[string]interface{}{
+		"query":     query,
+		"variables": variables,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", host+"/graphql", bytes.NewReader(b))
 	if err != nil {
 		return nil, err
 	}

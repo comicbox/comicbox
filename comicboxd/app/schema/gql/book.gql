@@ -17,6 +17,7 @@ type Book {
     id: ID!
     last_page_read: Int!
     pages: [Page!]!
+    page_count: Int!
     rating: Float
     read: Boolean!
     series: String!

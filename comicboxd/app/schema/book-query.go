@@ -215,6 +215,10 @@ func (r *BookResolver) Pages() []PageResolver {
 	return pages
 }
 
+func (r *BookResolver) PageCount() int32 {
+	return int32(len(r.Pages()))
+}
+
 func (r *BookResolver) Rating() *float64 {
 	return r.b.Rating
 }
