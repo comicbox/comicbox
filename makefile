@@ -16,9 +16,6 @@ run: bindata-debug
 bindata: npm
 	go-bindata $(bindata)
 
-plugin:
-	go run build/plugin/main.go
-
 bindata-debug:
 	mkdir -p web/dist
 	go-bindata -debug $(bindata)
