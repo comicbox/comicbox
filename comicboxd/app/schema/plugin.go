@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os/exec"
 
@@ -75,7 +74,7 @@ func StartPlugins() {
 	for _, p := range c.Plugins {
 		if p.Command != nil {
 			go func(p *Plugin) {
-				fmt.Println("start plugin", p.Name)
+				j.Infof("start plugin %s", p.Name)
 				c := exec.Command(p.Command[0], p.Command[1:]...)
 
 				out, err := c.StdoutPipe()
