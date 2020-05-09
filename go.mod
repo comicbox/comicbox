@@ -3,9 +3,10 @@ module github.com/comicbox/comicbox
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/Masterminds/squirrel v0.0.0-20181211162353-a8c1880ebb4d
+	github.com/aqatl/cliwait v0.0.0-20180719204814-741dc231a3b4 // indirect
+	github.com/aqatl/mal v0.0.0-20200120155257-5745129c4d79 // indirect
 	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
 	github.com/common-nighthawk/go-figure v0.0.0-20180619031829-18b2b544842c
-	github.com/davecgh/go-spew v1.1.1
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/fatih/color v1.7.0
 	github.com/golang-migrate/migrate v3.5.4+incompatible
@@ -28,12 +29,14 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/opentracing/opentracing-go v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1
+	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966 // indirect
+	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.3.1
 	github.com/stretchr/testify v1.2.2
 	github.com/zwzn/hidden v0.0.0-20181217162026-b4ced36b8f4a
-	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
+	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 	golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b
-	golang.org/x/net v0.0.0-20181217023233-e147a9138326 // indirect
+	golang.org/x/net v0.0.0-20200202094626-16171245cfb2 // indirect
 	google.golang.org/appengine v1.3.0 // indirect
 )
 

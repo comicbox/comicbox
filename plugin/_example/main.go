@@ -1,54 +1,44 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"fmt"
+	"os"
+	"os/exec"
+	"text/template"
 
 	"github.com/comicbox/comicbox/comicboxd/app/schema"
 	"github.com/comicbox/comicbox/plugin"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/pkg/errors"
 )
 
-type Book struct {
-	Series    string `json:"series"`
-	PageCount int32  `json:"page_count"`
-}
-
-type Series struct {
-	Tags []string `json:"tags"`
-}
-
 func main() {
+
 	plugin.Start(2345, &plugin.Plugin{
 		UpdateBook: func(ctx context.Context, extras map[string]string, args schema.UpdateBookArgs) error {
-			b := &Book{}
-			err := plugin.Query(ctx, b, `query($bookID: ID!) {
-				book(id: $bookID){
-					series
-					page_count
-				}
-			}`, map[string]interface{}{
-				"bookID": args.ID,
-			})
+			cmd, ok := extras["command"]
+			if !ok {
+				return fmt.Errorf("command is not set")
+			}
+
+			t, err := template.New("command").Parse(cmd)
 			if err != nil {
-				return errors.Wrap(err, "could not run book query")
+				return errors.Wrap(err, "command failed to parse")
 			}
 
-			if args.Data.CurrentPage != nil && *args.Data.CurrentPage >= b.PageCount-1 {
-				s := &Series{}
-				err = plugin.Query(ctx, s, `query($name: String!) {
-					serie(name: $name){
-						tags
-					}
-				}`, map[string]interface{}{
-					"name": b.Series,
-				})
-				if err != nil {
-					return errors.Wrap(err, "could not run series query")
-				}
-
-				spew.Dump(s)
+			prepedCmd := bytes.NewBuffer([]byte{})
+			err = t.Execute(prepedCmd, args)
+			if err != nil {
+				return errors.Wrap(err, "failed prepare command")
 			}
+
+			b, err := exec.Command("bash", "-c", prepedCmd.String()).CombinedOutput()
+			if err != nil {
+				os.Stderr.Write(b)
+				return errors.Wrap(err, "command failed")
+			}
+			os.Stdout.Write(b)
 			return nil
 		},
 	})

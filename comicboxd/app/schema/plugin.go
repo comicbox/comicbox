@@ -24,9 +24,10 @@ type Request struct {
 }
 
 type Plugin struct {
-	Name    string   `mapstructure:"name"`
-	Address string   `mapstructure:"address"`
-	Command []string `mapstructure:"command"`
+	Name    string            `mapstructure:"name"`
+	Address string            `mapstructure:"address"`
+	Command []string          `mapstructure:"command"`
+	Extras  map[string]string `mapstructure:"extras"`
 }
 type Config struct {
 	Plugins []*Plugin `mapstructure:"plugins"`
@@ -43,21 +44,21 @@ func after(name string, ctx context.Context, args interface{}, result interface{
 
 	key := middleware.NewTempKey(c.User)
 	defer middleware.ClearTempKey(key)
-	r := &Request{
-		Name:   name,
-		Args:   bArgs,
-		Extras: map[string]string{},
-		Host:   c.Host(),
-		Auth:   key,
-	}
-
-	b, err := json.Marshal(r)
-	if err != nil {
-		j.Errorf("failed to marshal plugin request: %v", err)
-		return
-	}
 
 	for _, p := range plugins {
+		r := &Request{
+			Name:   name,
+			Args:   bArgs,
+			Extras: p.Extras,
+			Host:   c.Host(),
+			Auth:   key,
+		}
+
+		b, err := json.Marshal(r)
+		if err != nil {
+			j.Errorf("failed to marshal plugin request: %v", err)
+			return
+		}
 		_, err = http.Post(p.Address, "text/json", bytes.NewReader(b))
 		if err != nil {
 			j.Errorf("could not run plugin %s: %v", p.Name, err)

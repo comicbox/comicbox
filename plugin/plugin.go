@@ -55,7 +55,7 @@ func (p *Plugin) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	args := []reflect.Value{
 		reflect.ValueOf(context.WithValue(context.WithValue(r.Context(), "host", req.Host), "auth", req.Auth)),
-		reflect.ValueOf(map[string]string{}),
+		reflect.ValueOf(req.Extras),
 	}
 	if numIn > 2 {
 		a, err := newArg(x, 2, req.Args)
