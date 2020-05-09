@@ -19,8 +19,8 @@ type SerieArgs struct {
 	Name string
 }
 
-func (q *query) Serie(ctx context.Context, args SerieArgs) (*SeriesResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) Serie(ctx context.Context, args SerieArgs) (*SeriesResolver, error) {
+	c := q.ctx(ctx)
 	serie := model.Series{}
 	sqll, opts, err := squirrel.
 		Select("*").
@@ -56,8 +56,8 @@ type SeriesArgs struct {
 	Read  *scalar.NumberRange `db:"read"`
 }
 
-func (q *query) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryResolver, error) {
+	c := q.ctx(ctx)
 	skip := int32(0)
 	if args.Skip != nil {
 		skip = *args.Skip
@@ -87,7 +87,7 @@ type SeriesResolver struct {
 func (r SeriesResolver) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
 	name := "^" + regexp.QuoteMeta(r.s.Name) + "$"
 	args.Series = (*scalar.Regex)(&name)
-	return (&query{}).Books(ctx, args)
+	return (&RootQuery{}).Books(ctx, args)
 }
 
 func (r SeriesResolver) List() string {

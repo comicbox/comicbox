@@ -21,7 +21,7 @@ type ctxKey string
 
 type DateTime time.Time
 
-type query struct{}
+type RootQuery struct{}
 
 var appCtx = ctxKey("appCtx")
 
@@ -33,7 +33,7 @@ func Handler() http.Handler {
 	for _, file := range files {
 		s += string(data.MustAsset(filepath.Join(dir, file))) + "\n"
 	}
-	schema, err := graphql.ParseSchema(s, &query{})
+	schema, err := graphql.ParseSchema(s, &PluginQuery{})
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		os.Exit(1)
@@ -50,7 +50,7 @@ func addUser(next http.Handler) http.Handler {
 	})
 }
 
-func (*query) Ctx(ctx context.Context) *app.Context {
+func (*RootQuery) ctx(ctx context.Context) *app.Context {
 	cI := ctx.Value(appCtx)
 	c, ok := cI.(*app.Context)
 	if !ok {

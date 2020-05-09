@@ -38,7 +38,7 @@ func (a *user) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !CheckPasswordHash(body.Password, user.Password) {
+	if !checkPasswordHash(body.Password, user.Password) {
 		c.Response = errors.HTTP(401)
 		return
 	}
@@ -49,7 +49,7 @@ func (a *user) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 // from https://gowebexamples.com/password-hashing/
-func CheckPasswordHash(password, hash string) bool {
+func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }

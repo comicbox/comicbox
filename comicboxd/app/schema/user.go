@@ -35,8 +35,8 @@ func (r *UserResolver) Username() string {
 	return r.u.Username
 }
 
-func (q *query) Me(ctx context.Context) (*UserResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) Me(ctx context.Context) (*UserResolver, error) {
+	c := q.ctx(ctx)
 	user := c.User
 	if user == nil {
 		return nil, fmt.Errorf("user not set")
@@ -48,8 +48,8 @@ type UserArgs struct {
 	ID graphql.ID
 }
 
-func (q *query) User(ctx context.Context, args UserArgs) (*UserResolver, error) {
-	c := q.Ctx(ctx)
+func (q *RootQuery) User(ctx context.Context, args UserArgs) (*UserResolver, error) {
+	c := q.ctx(ctx)
 	if args.ID != graphql.ID(c.User.ID.String()) {
 		return nil, fmt.Errorf("you may not view users other than your own")
 	}
@@ -80,9 +80,9 @@ type UpdateUserArgs struct {
 	Data UserInput
 }
 
-func (q *query) UpdateUser(ctx context.Context, args UpdateUserArgs) (*UserResolver, error) {
+func (q *RootQuery) UpdateUser(ctx context.Context, args UpdateUserArgs) (*UserResolver, error) {
 	var err error
-	c := q.Ctx(ctx)
+	c := q.ctx(ctx)
 	if c.Guest() {
 		return nil, ErrorUnauthenticated
 	}
@@ -125,9 +125,9 @@ type NewUserArgs struct {
 	Data UserInput
 }
 
-func (q *query) NewUser(ctx context.Context, args NewUserArgs) (*UserResolver, error) {
+func (q *RootQuery) NewUser(ctx context.Context, args NewUserArgs) (*UserResolver, error) {
 	var err error
-	// c := q.Ctx(ctx)
+	// c := q.ctx(ctx)
 	args.Data, err = userData(args.Data)
 	if err != nil {
 		return nil, err
