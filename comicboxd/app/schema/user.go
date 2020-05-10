@@ -34,6 +34,9 @@ func (r *UserResolver) Name() string {
 func (r *UserResolver) Username() string {
 	return r.u.Username
 }
+func (r *UserResolver) Change() int32 {
+	return int32(r.u.Change)
+}
 
 func (q *RootQuery) Me(ctx context.Context) (*UserResolver, error) {
 	c := q.ctx(ctx)

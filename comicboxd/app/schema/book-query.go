@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/Masterminds/squirrel"
 
@@ -72,7 +71,7 @@ type BooksArgs struct {
 	Rating          *scalar.NumberRange `db:"rating"`
 	Volume          *scalar.NumberRange `db:"volume"`
 
-	UpdatedAfter *string
+	ChangeAfter *int32
 }
 
 func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
@@ -117,12 +116,8 @@ func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolv
 		query = query.OrderBy("sort")
 	}
 
-	if args.UpdatedAfter != nil {
-		t, err := time.Parse(time.RFC3339, *args.UpdatedAfter)
-		if err != nil {
-			return nil, fmt.Errorf("could not parse date: %v", err)
-		}
-		query = query.Where("updated_at > ?", t.Format("2006-01-02 15:04:05"))
+	if args.ChangeAfter != nil {
+		query = query.Where("change > ?", *args.ChangeAfter)
 	}
 
 	query = scalar.Query(query, args)
@@ -258,6 +253,9 @@ func (r *BookResolver) Volume() *int32 {
 }
 func (r *BookResolver) Web() string {
 	return r.b.Web
+}
+func (r *BookResolver) Change() int32 {
+	return int32(r.b.Change)
 }
 
 type PageResolver struct {

@@ -10,7 +10,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/imdario/mergo"
 
@@ -20,10 +19,6 @@ import (
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/jmoiron/sqlx"
 )
-
-func formattedDate() string {
-	return time.Now().Format("2006-01-02 15:04:05")
-}
 
 func updateBook(tx *sqlx.Tx, id graphql.ID, book BookInput) error {
 	m := toStruct(book)
@@ -41,8 +36,7 @@ func updateBook(tx *sqlx.Tx, id graphql.ID, book BookInput) error {
 
 	query := squirrel.
 		Update("book").
-		Where(squirrel.Eq{"id": id}).
-		Set("updated_at", formattedDate())
+		Where(squirrel.Eq{"id": id})
 	query = update(m, query)
 	// spew.Dump(query.ToSql())
 	_, err = query.RunWith(tx).Exec()
@@ -69,8 +63,7 @@ func updateUserBook(tx *sqlx.Tx, bookID, userID graphql.ID, book UserBookInput) 
 	}
 	query := squirrel.Update("user_book").
 		Where(squirrel.Eq{"book_id": bookID}).
-		Where(squirrel.Eq{"user_id": userID}).
-		Set("updated_at", formattedDate())
+		Where(squirrel.Eq{"user_id": userID})
 
 	query = update(m, query)
 	// spew.Dump(query.ToSql())

@@ -4,20 +4,41 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"sync"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/j"
 )
 
 var (
 	// ErrorUnauthenticated will be returned on endpoints that you cant view unless you are authenticated
 	ErrorUnauthenticated = fmt.Errorf("unauthenticated users may not complete this action")
+	change               = 0
+	changeMtx            = &sync.Mutex{}
 )
+
+func nextChange() int {
+	changeMtx.Lock()
+	defer changeMtx.Unlock()
+	if change == 0 {
+		c := 0
+		err := database.Get(&c, `select "change" from "change"`)
+		if err != nil {
+			j.Errorf("failed to get max change: %v", err)
+		}
+		change = c
+	}
+	change++
+	return change
+}
 
 func update(m map[string]interface{}, query squirrel.UpdateBuilder) squirrel.UpdateBuilder {
 	for col, val := range m {
 		query = query.Set(col, val)
 	}
 
+	query = query.Set("change", nextChange())
 	return query
 }
 

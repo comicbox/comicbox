@@ -67,7 +67,7 @@ type RootQuery {
         rating: NumberRange
         volume: NumberRange
 
-        updated_after: String
+        change_after: Int
     ): BookQuery
 
     serie(name: String!): Series
@@ -85,6 +85,8 @@ type RootQuery {
         
         total: NumberRange
         read: NumberRange
+
+        change_after: Int
     ): SeriesQuery
 
     me: User

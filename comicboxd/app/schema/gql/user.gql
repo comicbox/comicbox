@@ -8,6 +8,8 @@ type User {
     name: String!
     updated_at: Time!
     username: String!
+
+    change: Int!
 }
 
 input UserInput {

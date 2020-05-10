@@ -54,6 +54,8 @@ type SeriesArgs struct {
 	Tags  *scalar.Regex       `db:"tags"`
 	Total *scalar.NumberRange `db:"total"`
 	Read  *scalar.NumberRange `db:"read"`
+
+	ChangeAfter *int32 `db:"-"`
 }
 
 func (q *RootQuery) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryResolver, error) {
@@ -115,6 +117,10 @@ func (r SeriesResolver) Tags() []string {
 	}
 	return tags
 }
+func (r SeriesResolver) Change() int32 {
+	return int32(0)
+}
+
 func (r SeriesResolver) Total() int32 {
 	return r.s.Total
 }
