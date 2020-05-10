@@ -66,6 +66,8 @@ type RootQuery {
         chapter: NumberRange
         rating: NumberRange
         volume: NumberRange
+
+        updated_after: String
     ): BookQuery
 
     serie(name: String!): Series

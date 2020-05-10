@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/Masterminds/squirrel"
 
@@ -32,7 +33,7 @@ func (q *RootQuery) Book(ctx context.Context, args BookArgs) (*BookResolver, err
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read reccord: %v", err)
 	}
 	return &BookResolver{b: book}, nil
 }
@@ -70,6 +71,8 @@ type BooksArgs struct {
 	Chapter         *scalar.NumberRange `db:"chapter"`
 	Rating          *scalar.NumberRange `db:"rating"`
 	Volume          *scalar.NumberRange `db:"volume"`
+
+	UpdatedAfter *string
 }
 
 func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
@@ -79,8 +82,8 @@ func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolv
 		skip = *args.Skip
 	}
 	take := args.Take
-	if 0 > take || take > 100 {
-		return nil, fmt.Errorf("you must take between 0 and 100 items")
+	if 0 > take || take > 1000 {
+		return nil, fmt.Errorf("you must take between 0 and 1000 items")
 	}
 
 	query := squirrel.Select().
@@ -113,6 +116,15 @@ func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolv
 	if args.Sort == nil && !sorted {
 		query = query.OrderBy("sort")
 	}
+
+	if args.UpdatedAfter != nil {
+		t, err := time.Parse(time.RFC3339, *args.UpdatedAfter)
+		if err != nil {
+			return nil, fmt.Errorf("could not parse date: %v", err)
+		}
+		query = query.Where("updated_at > ?", t.Format("2006-01-02 15:04:05"))
+	}
+
 	query = scalar.Query(query, args)
 
 	return &BookQueryResolver{

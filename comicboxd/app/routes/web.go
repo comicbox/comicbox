@@ -3,13 +3,13 @@ package routes
 import (
 	"net/http"
 
-	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"github.com/comicbox/comicbox/comicboxd/app/controller"
 	"github.com/comicbox/comicbox/comicboxd/app/middleware"
 	"github.com/comicbox/comicbox/comicboxd/app/schema"
 	"github.com/comicbox/comicbox/comicboxd/data"
 	"github.com/comicbox/comicbox/comicboxd/errors"
 	"github.com/comicbox/comicbox/comicboxd/server"
+	assetfs "github.com/elazarl/go-bindata-assetfs"
 )
 
 func Web(s *server.Server) {
@@ -37,6 +37,13 @@ func Web(s *server.Server) {
 		_, err := w.Write(data.MustAsset("web/dist/graphql.html"))
 		errors.Check(err)
 	}).Methods("GET")
+
+	s.Router.PathPrefix("/v2").Handler(http.StripPrefix("/v2", http.FileServer(&assetfs.AssetFS{
+		Asset:     data.Asset,
+		AssetDir:  data.AssetDir,
+		AssetInfo: data.AssetInfo,
+		Prefix:    "web2/dist",
+	}))).Methods("GET")
 
 	s.Router.Methods("GET").Handler(http.FileServer(&assetfs.AssetFS{
 		Asset:     data.Asset,
