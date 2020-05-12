@@ -1,3 +1,4 @@
+import { db, Book } from "."
 
 export async function fetchQuery(query: string, variables: any): Promise<Response> {
     const r = await fetch('/graphql', {
@@ -23,34 +24,39 @@ export async function fetchQuery(query: string, variables: any): Promise<Respons
 }
 
 
-export async function* ittrQuery() {
-    let skip = 0
+export async function* ittrQuery(): AsyncIterable<Book[]> {
+    let maxChange = (await db.change.get('books'))?.change ?? 0
     const take = 1000
     let results: any
 
     do {
         results = await fetchQuery(`{
-            books(take: ${take} skip: ${skip}) {
+            books(take: ${take} change_after: ${maxChange} sort: "change") {
                 results {
                     id
-                    updated_at
+                    change
                     series
                     title
                     volume
                     chapter
-                    cover {
-                        url
+                    pages {
+                        type
+                        file_number
                     }
+                    sort
+                    read
                 }
             }
         }`, {}).then(r => r.json())
 
-
         for (const book of results.data.books.results) {
-            yield book
+            maxChange = Math.max(maxChange, book.change)
         }
-
-        skip += take
+        yield results.data.books.results
     } while (results.data.books.results.length >= take)
 
+    db.change.put({
+        table: 'books',
+        change: maxChange,
+    })
 }

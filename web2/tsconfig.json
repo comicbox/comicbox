@@ -3,6 +3,7 @@
         "jsx": "react",
         "jsxFactory": "h",
         "strict": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "target": "ES2019"
     }
 }

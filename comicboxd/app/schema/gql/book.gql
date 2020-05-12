@@ -28,6 +28,7 @@ type Book {
     updated_at: Time!
     volume: Int
     web: String!
+    sort: String!
 }
 
 input BookInput {

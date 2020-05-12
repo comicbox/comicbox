@@ -118,7 +118,7 @@ func (r SeriesResolver) Tags() []string {
 	return tags
 }
 func (r SeriesResolver) Change() int32 {
-	return int32(0)
+	return int32(r.s.Change)
 }
 
 func (r SeriesResolver) Total() int32 {

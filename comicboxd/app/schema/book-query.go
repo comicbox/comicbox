@@ -257,6 +257,9 @@ func (r *BookResolver) Web() string {
 func (r *BookResolver) Change() int32 {
 	return int32(r.b.Change)
 }
+func (r *BookResolver) Sort() string {
+	return r.b.Sort
+}
 
 type PageResolver struct {
 	p *model.Page

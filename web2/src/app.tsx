@@ -1,6 +1,7 @@
 import { render, h } from 'preact'
 import { init } from './db'
+import { Home } from './views/home'
 
 init()
 
-render(<div>test</div>, document.getElementById('app')!)
+render(<Home />, document.getElementById('app')!)
