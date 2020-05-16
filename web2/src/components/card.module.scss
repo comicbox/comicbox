@@ -19,22 +19,11 @@
         height: $image-height;
         object-fit: cover;
         box-shadow: 0px 0px 9px -1px rgba(black, 0.5);
+        background-color: rgba(black, 0.5);
     }
 
 
     .titles {
-        // display: flex;
-        // flex-direction: column;
-        // position: absolute;
-        // width: 100%;
-        // bottom: 0;
-        // background-image: linear-gradient(rgba(black, 0), rgba(black, 0.7), rgba(black, 0.7));
-        // color: white;
-        // height: 60px;
-        // justify-content: flex-end;
-        // padding: 5px;
-
-
 
         .title,
         .subtitle {

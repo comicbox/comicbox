@@ -6,9 +6,17 @@
     box-sizing: border-box;
 }
 
-html {
+
+body {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    margin: 0;
+
     backdrop-filter: url("#noise") opacity(0.2);
-    background-image: radial-gradient(farthest-corner at 100vw 100vh, #578 0%, #555 100%);
+    background-image: radial-gradient(farthest-corner at 100vw 100vh, #578 0%, transparent 100%);
+    background-color: #555;
+    background-attachment: fixed;
     min-height: 100vh;
 
     color: white;
