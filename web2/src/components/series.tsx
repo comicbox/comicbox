@@ -3,6 +3,7 @@ import { useAsync } from '../async-hook';
 import { db, Book } from "../db";
 import Dexie from "dexie";
 import styles from "./series.module.scss";
+import { Card, CardList } from "./card";
 
 async function getSeries(): Promise<string[]> {
     return Array.from(await db.books.orderBy('series').uniqueKeys()).map(String).slice(0, 20)
@@ -19,11 +20,11 @@ async function getFirstBook(series: string): Promise<Book | undefined> {
 
 export const SeriesList: FunctionalComponent = () => {
     const series = useAsync(getSeries, []).result ?? []
-    return <div>
+    return <CardList>
         {series.map(s => (
             <Series key={s} series={s} />
         ))}
-    </div>
+    </CardList>
 }
 
 export const Series: FunctionalComponent<{ series: string }> = ({ series }) => {
@@ -33,8 +34,10 @@ export const Series: FunctionalComponent<{ series: string }> = ({ series }) => {
             Loading...
         </div>
     }
-    return <div className={styles.series}>
-        <img src={`/api/v1/book/${book.id}/page/0.jpg?height=200`} alt="" />
-        {book.series} - #{book.chapter} V{book.volume}
-    </div>
+    return <Card
+        image={`/api/v1/book/${book.id}/page/0.jpg?height=200`}
+        title={book.series}
+        subtitle={`#${book.chapter} V${book.volume}`}
+        link={`/v2/book/${book.id}`}
+    />
 }

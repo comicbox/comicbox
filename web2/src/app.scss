@@ -1,0 +1,20 @@
+@import 'variables.scss';
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+html {
+    backdrop-filter: url("#noise") opacity(0.2);
+    background-image: radial-gradient(farthest-corner at 100vw 100vh, #578 0%, #555 100%);
+    min-height: 100vh;
+
+    color: white;
+
+    font-size: $font-size;
+    line-height: $line-height;
+
+    font-family: sans-serif;
+}

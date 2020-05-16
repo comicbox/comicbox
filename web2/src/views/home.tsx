@@ -1,5 +1,5 @@
-import { FunctionalComponent, h } from "preact";
-import { SeriesList } from "../components/series";
+import { FunctionalComponent, h } from "preact"
+import { SeriesList } from "../components/series"
 
 export const Home: FunctionalComponent = () => {
     return <div>

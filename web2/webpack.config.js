@@ -59,13 +59,21 @@ module.exports = (env, argv) => {
                         'sass-loader',
                     ],
                 },
+                {
+                    test: /\.svg/,
+                    exclude: /node_modules/,
+                    loader: 'file-loader',
+                    options: {
+                        name: devMode ? '[name].[ext]' : '[name].[hash].[ext]',
+                    }
+                },
             ],
         },
         "output": {
             path: paths.dist,
             filename: (devMode ? '[name].js' : '[name].[hash].js'),
             chunkFilename: (devMode ? '[id].js' : '[id].[hash].js'),
-            // publicPath: '/',
+            publicPath: '/v2/',
         },
         "resolve": {
             extensions: ['.tsx', '.ts', '.js', '.scss', '.css'],

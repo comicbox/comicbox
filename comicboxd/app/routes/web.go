@@ -1,7 +1,10 @@
 package routes
 
 import (
+	"io/ioutil"
 	"net/http"
+	"os"
+	"path"
 
 	"github.com/comicbox/comicbox/comicboxd/app/controller"
 	"github.com/comicbox/comicbox/comicboxd/app/middleware"
@@ -38,12 +41,12 @@ func Web(s *server.Server) {
 		errors.Check(err)
 	}).Methods("GET")
 
-	s.Router.PathPrefix("/v2").Handler(http.StripPrefix("/v2", http.FileServer(&assetfs.AssetFS{
+	s.Router.PathPrefix("/v2").Handler(http.StripPrefix("/v2", FileServer404(&assetfs.AssetFS{
 		Asset:     data.Asset,
 		AssetDir:  data.AssetDir,
 		AssetInfo: data.AssetInfo,
 		Prefix:    "web2/dist",
-	}))).Methods("GET")
+	}, "index.html"))).Methods("GET")
 
 	s.Router.Methods("GET").Handler(http.FileServer(&assetfs.AssetFS{
 		Asset:     data.Asset,
@@ -51,4 +54,26 @@ func Web(s *server.Server) {
 		AssetInfo: data.AssetInfo,
 		Prefix:    "web/dist",
 	}))
+}
+
+func FileServer404(root http.FileSystem, fallbackPath string) http.Handler {
+	var fallback []byte
+	f, err := root.Open(fallbackPath)
+	if err == nil {
+		fallback, err = ioutil.ReadAll(f)
+		if err != nil {
+			fallback = nil
+		}
+	}
+
+	fsh := http.FileServer(root)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, err := root.Open(path.Clean(r.URL.Path))
+		if os.IsNotExist(err) {
+			w.Write(fallback)
+			return
+		}
+		fsh.ServeHTTP(w, r)
+	})
 }
