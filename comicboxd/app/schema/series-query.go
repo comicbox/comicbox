@@ -65,8 +65,8 @@ func (q *RootQuery) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryRe
 		skip = *args.Skip
 	}
 	take := args.Take
-	if 0 > take || take > 100 {
-		return nil, fmt.Errorf("you must take between 0 and 100 items")
+	if 0 > take || take > 1000 {
+		return nil, fmt.Errorf("you must take between 0 and 1000 items")
 	}
 
 	query := squirrel.Select().

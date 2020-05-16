@@ -4,6 +4,12 @@
         "jsxFactory": "h",
         "strict": true,
         "moduleResolution": "node",
-        "target": "ES2019"
+        "target": "ES2019",
+        "baseUrl": "./",
+        "paths": {
+            "*": [
+                "src/*"
+            ]
+        }
     }
 }

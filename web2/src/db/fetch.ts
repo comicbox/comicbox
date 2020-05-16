@@ -1,4 +1,5 @@
-import { db, Book } from "."
+import { Database, db, Book, ExtractType } from "."
+import { generate, prepare, GraphQLQuery } from "./graphql"
 
 export async function fetchQuery(query: string, variables: any): Promise<Response> {
     const r = await fetch('/graphql', {
@@ -23,40 +24,29 @@ export async function fetchQuery(query: string, variables: any): Promise<Respons
     return r
 }
 
-
-export async function* ittrQuery(): AsyncIterable<Book[]> {
-    let maxChange = (await db.change.get('books'))?.change ?? 0
+export async function* ittrQuery<Name extends KeyOfType<Database, Dexie.Table>>(name: Name, selects: Array<string | GraphQLQuery>): AsyncIterable<ExtractType<Database[Name]>[]> {
+    let maxChange = (await db.change.get(name))?.change ?? 0
     const take = 1000
-    let results: any
+    let items: any[]
 
     do {
-        results = await fetchQuery(`{
-            books(take: ${take} change_after: ${maxChange} sort: "change") {
-                results {
-                    id
-                    change
-                    series
-                    title
-                    volume
-                    chapter
-                    pages {
-                        type
-                        file_number
-                    }
-                    sort
-                    read
-                }
-            }
-        }`, {}).then(r => r.json())
+        const results = await fetchQuery(generate(
+            prepare('query', {},
+                prepare(name, { take: take, change_after: maxChange, sort: "change" },
+                    prepare('results', {}, ...selects)
+                )
+            )
+        ), {}).then(r => r.json())
 
-        for (const book of results.data.books.results) {
-            maxChange = Math.max(maxChange, book.change)
+        items = results.data[name].results
+        for (const item of items) {
+            maxChange = Math.max(maxChange, item.change)
         }
-        yield results.data.books.results
-    } while (results.data.books.results.length >= take)
+        yield items
+    } while (items.length >= take)
 
     db.change.put({
-        table: 'books',
+        table: name,
         change: maxChange,
     })
 }

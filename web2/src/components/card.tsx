@@ -1,14 +1,22 @@
 import { FunctionalComponent, h } from 'preact'
 import styles from './card.module.scss'
 
-interface CardProps {
+type CardProps = {
     image: string
     title: string
     subtitle: string
     link: string
+    loading?: false
+} | {
+    loading: true
 }
 
 export const Card: FunctionalComponent<CardProps> = props => {
+    if (props.loading) {
+        return <div class={styles.card}>
+            <div class={styles.image} />
+        </div>
+    }
     return <div class={styles.card}>
         <a href={props.link}>
             <img class={styles.image} src={props.image} />
