@@ -3,6 +3,7 @@ import Dexie from 'dexie'
 import { prepare } from 'db/graphql'
 import { useState, useEffect } from 'preact/hooks'
 import { EventEmitter } from 'events'
+import { useAsync, Result } from 'async-hook'
 
 const dbChanges = new EventEmitter()
 
@@ -16,7 +17,7 @@ export class Database extends Dexie {
     constructor() {
         super("database");
         this.version(1).stores({
-            books: 'id,series,change,[series+read+sort]',
+            books: 'id,series,change,created_at,[series+read+sort]',
             series: 'name,list,change',
             change: 'table,change',
         })
@@ -30,15 +31,16 @@ export class Database extends Dexie {
 export interface Book {
     id: string
     change: number
+    created_at: string
     series: string
     title: string
     volume: number
     chapter: number
+    read: number
     pages: {
         type: 'FrontCover' | 'Story' | 'Deleted'
         file_number: number
     }
-    read: number
 }
 
 export interface Series {
@@ -59,6 +61,7 @@ export async function init() {
     const bookSelects = [
         'id',
         'change',
+        'created_at',
         'series',
         'title',
         'volume',
@@ -95,25 +98,17 @@ export async function nextChapter(series: string) {
         .first();
 }
 
-export function useQuery<T extends KeyOfType<Database, Dexie.Table>>(
-    table: T,
-    cb: (q: Database[T]) => Dexie.Collection<ExtractType<Database[T]>>
-): ExtractType<Database[T]>[] | undefined {
-    const [result, setResult] = useState<ExtractType<Database[T]>[] | undefined>(undefined)
-
-    const runQuery = () => {
-        console.log('query');
-        cb(db[table])
-            .toArray()
-            .then(ret => setResult(ret))
-    }
+export function useQuery<T, E, Args extends unknown[]>(cb: (...args: Args) => Promise<T>, args: Args): Result<T, E> {
+    const result = useAsync<T, E, Args>(cb, args)
 
 
     useEffect(() => {
-        runQuery()
+        const runQuery = () => {
+            cb(...args)
+        }
 
         dbChanges.on('change', runQuery)
         return () => dbChanges.off('change', runQuery)
-    }, [table])
+    }, [cb, ...args])
     return result
 }

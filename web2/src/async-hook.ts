@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'preact/hooks'
+import { useState, useEffect, Inputs } from 'preact/hooks'
 
-type Result<T, E> = {
+export type Result<T, E> = {
     loading: true
     error: undefined
     result: undefined
@@ -14,7 +14,7 @@ type Result<T, E> = {
     result: undefined
 }
 
-export function useAsync<T, E, Args extends unknown[]>(cb: (...args: Args) => Promise<T>, args: Args): Result<T, E> {
+export function useAsync<T, E, Args extends unknown[]>(cb: (...args: Args) => Promise<T>, args: Args, inputs: Inputs = []): Result<T, E> {
     const [result, setResult] = useState<Result<T, E>>({
         loading: true,
         error: undefined,
@@ -37,7 +37,7 @@ export function useAsync<T, E, Args extends unknown[]>(cb: (...args: Args) => Pr
                     result: undefined
                 })
             })
-    }, [cb, ...args])
+    }, [cb, ...args, ...inputs])
 
     return result
 }

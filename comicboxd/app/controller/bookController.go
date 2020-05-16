@@ -44,6 +44,11 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 	book, err := schema.Query(r).Book(schema.BookArgs{ID: graphql.ID(bookID)})
 	errors.Check(err)
 
+	if book == nil {
+		c.Response = errors.HTTP(404)
+		return
+	}
+
 	pages := book.Pages()
 	if pageNum < 0 || pageNum >= len(pages) {
 		c.Response = errors.HTTP(404)

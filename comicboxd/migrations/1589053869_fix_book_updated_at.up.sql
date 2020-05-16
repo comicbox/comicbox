@@ -52,7 +52,7 @@ select max("change") as "change" from (
 	select max("change") as "change" FROM "user_book" 
 	union all 
 	select max("change") as "change" FROM "user_series"
-) as "changes" 
+) as "changes";
 
 DROP VIEW IF EXISTS series;
 CREATE VIEW series as
