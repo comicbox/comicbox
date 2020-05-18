@@ -6,6 +6,7 @@ import { EventEmitter } from 'events'
 import { useAsync, Result } from 'async-hook'
 
 const dbChanges = new EventEmitter()
+dbChanges.setMaxListeners(10000)
 
 export type ExtractType<Type> = Type extends Dexie.Table<infer X> ? X : never
 
@@ -17,7 +18,7 @@ export class Database extends Dexie {
     constructor() {
         super("database");
         this.version(1).stores({
-            books: 'id,series,change,created_at,[series+read+sort]',
+            books: 'id,series,change,created_at,[series+sort],[series+read+sort]',
             series: 'name,list,change',
             change: 'table,change',
         })
@@ -100,7 +101,6 @@ export async function nextChapter(series: string) {
 
 export function useQuery<T, E, Args extends unknown[]>(cb: (...args: Args) => Promise<T>, args: Args): Result<T, E> {
     const result = useAsync<T, E, Args>(cb, args)
-
 
     useEffect(() => {
         const runQuery = () => {

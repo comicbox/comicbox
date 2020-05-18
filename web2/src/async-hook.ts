@@ -37,7 +37,7 @@ export function useAsync<T, E, Args extends unknown[]>(cb: (...args: Args) => Pr
                     result: undefined
                 })
             })
-    }, [cb, ...args, ...inputs])
+    }, [...args, ...inputs])
 
     return result
 }

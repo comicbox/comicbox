@@ -24,9 +24,13 @@ export const BookCard: FunctionalComponent<{ book: Book | undefined }> = props =
         return <Card loading />
     }
     return <Card
-        image={`/api/v1/book/${props.book.id}/page/0.jpg?height=200`}
+        image={coverImage(props.book)}
         title={props.book.series}
         subtitle={`#${props.book.chapter} V${props.book.volume}`}
         link={`/v2/book/${props.book.id}`}
     />
+}
+
+export function coverImage(b: Book): string {
+    return `/api/v1/book/${b.id}/page/0.jpg?height=200`
 }

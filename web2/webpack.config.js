@@ -60,8 +60,15 @@ module.exports = (env, argv) => {
                     ],
                 },
                 {
-                    test: /\.svg/,
-                    exclude: /node_modules/,
+                    test: /\.css$/,
+                    include: /node_modules/,
+                    loader: [
+                        MiniCssExtractPlugin.loader,
+                        'css-loader',
+                    ],
+                },
+                {
+                    test: /\.(svg|eot|woff|woff2|ttf)/,
                     loader: 'file-loader',
                     options: {
                         name: devMode ? '[name].[ext]' : '[name].[hash].[ext]',
