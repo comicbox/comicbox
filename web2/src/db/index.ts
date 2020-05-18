@@ -41,7 +41,7 @@ export interface Book {
     pages: {
         type: 'FrontCover' | 'Story' | 'Deleted'
         file_number: number
-    }
+    }[]
 }
 
 export interface Series {

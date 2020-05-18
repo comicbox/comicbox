@@ -8,8 +8,6 @@ export const LazyImage: FunctionalComponent<h.JSX.HTMLAttributes<HTMLImageElemen
 
     useEffect(() => {
         if (onScreen) {
-            console.log(props.src);
-
             setSrc(props.src)
         } else {
             if (!imgRef.current?.complete) {

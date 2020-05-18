@@ -23,9 +23,9 @@ export const Layout: FunctionalComponent = props => {
 const SideBar: FunctionalComponent = props => {
     const items: MenuItem[] = [
         { title: 'Home', href: routes.home, icon: 'home' },
-        { title: 'Series', href: '/v2/list', icon: 'view_list' },
+        { title: 'List', href: routes.list, icon: 'view_list' },
         { title: 'Series', href: routes.series.index, icon: 'collections_bookmark' },
-        { title: 'Settings', href: '/v2/settings', icon: 'settings' },
+        { title: 'Settings', href: routes.settings, icon: 'settings' },
     ]
     return <nav class={styles.nav}>
         <ul>

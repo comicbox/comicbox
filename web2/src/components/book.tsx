@@ -3,6 +3,7 @@ import { useQuery, Book } from "db";
 import Dexie from "dexie";
 import { Card, CardList } from "./card";
 import { range } from "utils";
+import { routeURL, routes } from "app";
 
 export const BookList: FunctionalComponent<{ books?: Book[] }> = props => {
     if (props.books === undefined) {
@@ -23,14 +24,40 @@ export const BookCard: FunctionalComponent<{ book: Book | undefined }> = props =
     if (props.book === undefined) {
         return <Card loading />
     }
+
+    let subtitle = ''
+    if (props.book.chapter) {
+        subtitle += '#' + props.book.chapter
+    }
+    if (props.book.volume) {
+        if (subtitle !== '') {
+            subtitle += ' '
+        }
+        subtitle += 'V' + props.book.volume
+    }
+    if (props.book.title) {
+        if (subtitle !== '') {
+            subtitle += ' - '
+        }
+        subtitle += props.book.title
+    }
+
     return <Card
         image={coverImage(props.book)}
         title={props.book.series}
-        subtitle={`#${props.book.chapter} V${props.book.volume}`}
-        link={`/v2/book/${props.book.id}`}
+        subtitle={subtitle}
+        link={routeURL(routes.books.view, { id: props.book.id })}
     />
 }
 
 export function coverImage(b: Book): string {
-    return `/api/v1/book/${b.id}/page/0.jpg?height=200`
+    for (const page of b.pages) {
+        if (page.type !== 'Deleted') {
+            return pageImage(b, page.file_number)
+        }
+    }
+    return pageImage(b, 0)
+}
+export function pageImage(b: Book, number: number): string {
+    return `/api/v1/book/${b.id}/page/${number}.jpg`
 }

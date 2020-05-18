@@ -4,6 +4,7 @@ import Dexie from "dexie";
 import { BookCard, BookList, coverImage } from "./book";
 import { range } from "utils";
 import { CardList, Card } from "./card";
+import { routeURL, routes } from "app";
 
 export const NextInSeriesList: FunctionalComponent<{ list: Series['list'] }> = props => {
     const books = useQuery(
@@ -66,6 +67,6 @@ export const SeriesCard: FunctionalComponent<{ series: Series | undefined }> = p
     return <Card
         image={img ?? ''}
         title={props.series.name}
-        link={`/v2/series/${props.series.name}`}
+        link={routeURL(routes.series.view, { name: props.series.name })}
     />
 }
