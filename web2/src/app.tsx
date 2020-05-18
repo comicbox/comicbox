@@ -24,7 +24,7 @@ export const routes = {
 
 export function routeURL(url: string, args: { [P in string]: string }) {
     return url.replace(/:([^\/]*)/g, (match, key) => {
-        return args[key]
+        return encodeURIComponent(args[key])
     })
 }
 

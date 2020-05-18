@@ -1,7 +1,7 @@
 import { ittrQuery } from 'db/fetch'
-import Dexie from 'dexie'
+import Dexie, { Transaction } from 'dexie'
 import { prepare } from 'db/graphql'
-import { useState, useEffect } from 'preact/hooks'
+import { useState, useEffect, Inputs } from 'preact/hooks'
 import { EventEmitter } from 'events'
 import { useAsync, Result } from 'async-hook'
 
@@ -19,13 +19,20 @@ export class Database extends Dexie {
         super("database");
         this.version(1).stores({
             books: 'id,series,change,created_at,[series+sort],[series+read+sort]',
-            series: 'name,list,change',
+            series: 'name,list,change,*search',
             change: 'table,change',
         })
 
-        this.books = this.table("books");
-        this.series = this.table("series");
-        this.change = this.table("change");
+        this.books = this.table("books")
+        this.series = this.table("series")
+        this.change = this.table("change")
+
+        this.series.hook('creating', (pkey, series) => this.addSeriesSearch(series))
+        this.series.hook('updating', (changes, pkey, series) => this.addSeriesSearch(series))
+    }
+
+    private addSeriesSearch(series: Series) {
+        series.search = series.name.split(' ')
     }
 }
 
@@ -47,12 +54,14 @@ export interface Book {
 export interface Series {
     name: string
     change: number
-    list: 'READING' | 'PAUSED' | 'COMPLETED' | 'DROPPED' | 'PLANNING'
+    list: 'READING' | 'PAUSED' | 'COMPLETED' | 'DROPPED' | 'PLANNING' | 'NONE'
+    search: string[]
 }
 
 interface Change {
     table: string
     change: number
+    skip: number
 }
 
 export const db = new Database()
@@ -99,8 +108,8 @@ export async function nextChapter(series: string) {
         .first();
 }
 
-export function useQuery<T, E, Args extends unknown[]>(cb: (...args: Args) => Promise<T>, args: Args): Result<T, E> {
-    const result = useAsync<T, E, Args>(cb, args)
+export function useQuery<T, E, Args extends unknown[]>(cb: (...args: Args) => Promise<T>, args: Args, inputs: Inputs = []): Result<T, E> {
+    const result = useAsync<T, E, Args>(cb, args, inputs)
 
     useEffect(() => {
         const runQuery = () => {
@@ -109,6 +118,6 @@ export function useQuery<T, E, Args extends unknown[]>(cb: (...args: Args) => Pr
 
         dbChanges.on('change', runQuery)
         return () => dbChanges.off('change', runQuery)
-    }, [cb, ...args])
+    }, [cb, ...args, inputs])
     return result
 }

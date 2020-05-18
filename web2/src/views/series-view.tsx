@@ -18,7 +18,8 @@ export const SeriesView: FunctionalComponent<Props> = props => {
                 [props.matches.name, Dexie.maxKey],
                 true, true)
             .toArray(),
-        []
+        [],
+        [props.matches.name]
     )
 
     return <Layout>

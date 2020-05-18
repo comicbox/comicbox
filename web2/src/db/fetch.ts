@@ -25,15 +25,19 @@ export async function fetchQuery(query: string, variables: any): Promise<Respons
 }
 
 export async function* ittrQuery<Name extends KeyOfType<Database, Dexie.Table>>(name: Name, selects: Array<string | GraphQLQuery>): AsyncIterable<ExtractType<Database[Name]>[]> {
-    let skip = 0
-    let maxChange = (await db.change.get(name))?.change ?? 0
+    let maxChange = (await db.change.get(name)) ?? { table: name, change: 0, skip: 0 }
     const take = 1000
     let items: any[]
 
     do {
         const results = await fetchQuery(generate(
             prepare('query', {},
-                prepare(name, { take: take, skip: skip, change_after: maxChange - 1, sort: "change" },
+                prepare(name, {
+                    take: take,
+                    skip: maxChange.skip,
+                    change_after: maxChange.change,
+                    sort: "change"
+                },
                     prepare('results', {}, ...selects)
                 )
             )
@@ -42,18 +46,14 @@ export async function* ittrQuery<Name extends KeyOfType<Database, Dexie.Table>>(
         items = results.data[name].results
         for (const item of items) {
             if (maxChange < item.change) {
-                maxChange = item.change
-                skip = 1
+                maxChange.change = item.change
+                maxChange.skip = 0
             } else {
-                skip++
+                maxChange.skip++
             }
-            // maxChange = Math.max(maxChange, item.change)
         }
         yield items
     } while (items.length >= take)
 
-    db.change.put({
-        table: name,
-        change: maxChange,
-    })
+    db.change.put(maxChange)
 }

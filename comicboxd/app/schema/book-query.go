@@ -117,7 +117,7 @@ func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolv
 	}
 
 	if args.ChangeAfter != nil {
-		query = query.Where("change > ?", *args.ChangeAfter)
+		query = query.Where("change >= ?", *args.ChangeAfter)
 	}
 
 	query = scalar.Query(query, args)
