@@ -27,9 +27,11 @@
         font-weight: bold;
 
         &:empty {
-            transform: rotate(45deg) translate(0, -32px);
-            width: $unread-size * 1.5;
-            height: $unread-size * 1.5;
+            $sqrt2: 1.41421356237;
+            $new-unread-size: $unread-size * $sqrt2;
+            transform: translate(#{$new-unread-size / 2}, #{-$new-unread-size / 2}) rotate(45deg);
+            width: $new-unread-size;
+            height: $new-unread-size;
         }
     }
 

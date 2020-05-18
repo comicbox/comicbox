@@ -1,25 +1,30 @@
 import { FunctionalComponent, h } from "preact"
-import { NextInSeriesList } from "../components/series"
-import { useQuery, db } from "db"
+import { SeriesList } from "../components/series"
+import { useQuery, db, Series } from "db"
 import { BookList } from "components/book"
 import { Layout } from "components/layout"
 
 export const ListIndex: FunctionalComponent = () => {
-    const newBook = useQuery(
-        () => db.books.orderBy('created_at').limit(15).toArray(),
-        []
-    )
+    const reading = useList('READING')
+    const paused = useList('PAUSED')
+    const dropped = useList('DROPPED')
+    const planning = useList('PLANNING')
+    const completed = useList('COMPLETED')
 
     return <Layout>
         <h1>Reading</h1>
-        <NextInSeriesList list='READING' />
+        <SeriesList series={reading.result} />
         <h1>Paused</h1>
-        <NextInSeriesList list='PAUSED' />
+        <SeriesList series={paused.result} />
         <h1>Dropped</h1>
-        <NextInSeriesList list='DROPPED' />
+        <SeriesList series={dropped.result} />
         <h1>Planning</h1>
-        <NextInSeriesList list='PLANNING' />
+        <SeriesList series={planning.result} />
         <h1>Completed</h1>
-        <NextInSeriesList list='COMPLETED' />
+        <SeriesList series={completed.result} />
     </Layout>
+}
+
+function useList(list: Series['list']) {
+    return useQuery(() => db.series.where('list').equals(list).toArray(), [])
 }
