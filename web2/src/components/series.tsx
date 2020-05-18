@@ -68,5 +68,6 @@ export const SeriesCard: FunctionalComponent<{ series: Series | undefined }> = p
         image={img ?? ''}
         title={props.series.name}
         link={routeURL(routes.series.view, { name: props.series.name })}
+        unread={props.series.total - props.series.read || undefined}
     />
 }

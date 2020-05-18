@@ -2,6 +2,7 @@
 
 .card {
     $image-height: 250px;
+    $unread-size: 30px;
 
     width: 100%;
     height: $image-height + ($font-size * $line-height * 2);
@@ -10,6 +11,26 @@
 
     a {
         display: block;
+    }
+
+    .unread {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: $primary;
+        color: $on-primary;
+        min-width: $unread-size;
+        height: $unread-size;
+        line-height: $unread-size;
+        text-align: center;
+        padding: 0 6px;
+        font-weight: bold;
+
+        &:empty {
+            transform: rotate(45deg) translate(0, -32px);
+            width: $unread-size * 1.5;
+            height: $unread-size * 1.5;
+        }
     }
 
     .image {

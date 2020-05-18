@@ -29,7 +29,7 @@ export const SearchIndex: FunctionalComponent = props => {
 
     return <Layout>
         <h1>Search</h1>
-        <input class={styles.search} value={search} onInput={bindValue(setSearch)} />
+        <input class={styles.search} placeholder='Search' value={search} onInput={bindValue(setSearch)} />
         {results.length === 0 && <div class={styles.noResults}>No Results</div>}
         <SeriesList series={results} />
     </Layout>

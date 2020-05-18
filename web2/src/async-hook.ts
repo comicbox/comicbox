@@ -14,7 +14,7 @@ export type Result<T, E> = {
     result: undefined
 }
 
-export function useAsync<T, E, Args extends unknown[]>(cb: (...args: Args) => Promise<T>, args: Args, inputs: Inputs = []): Result<T, E> {
+export function useAsync<T, E = Error, Args extends unknown[] = []>(cb: (...args: Args) => Promise<T>, args: Args, inputs: Inputs = []): Result<T, E> {
     const [result, setResult] = useState<Result<T, E>>({
         loading: true,
         error: undefined,

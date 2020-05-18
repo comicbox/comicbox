@@ -45,6 +45,7 @@ export interface Book {
     volume: number
     chapter: number
     read: number
+    current_page: number
     pages: {
         type: 'FrontCover' | 'Story' | 'Deleted'
         file_number: number
@@ -56,6 +57,8 @@ export interface Series {
     change: number
     list: 'READING' | 'PAUSED' | 'COMPLETED' | 'DROPPED' | 'PLANNING' | 'NONE'
     search: string[]
+    read: number
+    total: number
 }
 
 interface Change {
@@ -66,7 +69,7 @@ interface Change {
 
 export const db = new Database()
 
-export async function init() {
+export async function updateDatabase() {
 
     const bookSelects = [
         'id',
@@ -78,6 +81,7 @@ export async function init() {
         'chapter',
         'sort',
         'read',
+        'current_page',
         prepare('pages', {}, 'type', 'file_number'),
     ]
     for await (const books of ittrQuery('books', bookSelects)) {
@@ -91,6 +95,8 @@ export async function init() {
         'name',
         'change',
         'list',
+        'read',
+        'total',
     ]
     for await (const series of ittrQuery('series', seriesSelects)) {
         await db.series.bulkPut(series)
@@ -108,7 +114,7 @@ export async function nextChapter(series: string) {
         .first();
 }
 
-export function useQuery<T, E, Args extends unknown[]>(cb: (...args: Args) => Promise<T>, args: Args, inputs: Inputs = []): Result<T, E> {
+export function useQuery<T, E = Error, Args extends unknown[] = []>(cb: (...args: Args) => Promise<T>, args: Args, inputs: Inputs = []): Result<T, E> {
     const result = useAsync<T, E, Args>(cb, args, inputs)
 
     useEffect(() => {

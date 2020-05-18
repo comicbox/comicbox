@@ -1,5 +1,5 @@
 import { render, h } from 'preact'
-import { init } from './db'
+import { updateDatabase } from './db'
 import { Home } from './views/home'
 import { Router, Route } from 'preact-router'
 import { SeriesIndex } from 'views/series-index'
@@ -7,8 +7,9 @@ import { SeriesView } from 'views/series-view'
 import { ListIndex } from 'views/list'
 import 'app.scss'
 import { SearchIndex } from 'views/search'
+import { BookRead } from 'views/read'
 
-init()
+updateDatabase()
 
 export const routes = {
     home: '/v2',
@@ -20,13 +21,13 @@ export const routes = {
         view: '/v2/series/:name',
     },
     books: {
-        view: '/v2/books/:id',
+        view: '/v2/books/:id/page/:page',
     },
 }
 
-export function routeURL(url: string, args: { [P in string]: string }) {
+export function routeURL(url: string, args: { [P in string]?: string | number }) {
     return url.replace(/:([^\/]*)/g, (match, key) => {
-        return encodeURIComponent(args[key])
+        return encodeURIComponent(args[key] ?? key)
     })
 }
 
@@ -36,4 +37,5 @@ render(<Router>
     <Route component={SeriesView} path={routes.series.view} />
     <Route component={ListIndex} path={routes.list} />
     <Route component={SearchIndex} path={routes.search} />
+    <Route component={BookRead} path={routes.books.view} />
 </Router>, document.getElementById('app')!)

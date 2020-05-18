@@ -1,4 +1,4 @@
-import { FunctionalComponent, h } from 'preact'
+import { FunctionalComponent, h, JSX } from 'preact'
 import styles from './card.module.scss'
 import { LazyImage } from './lazy-image'
 
@@ -7,6 +7,7 @@ type CardProps = {
     title: string
     subtitle?: string
     link: string
+    unread?: number | boolean
     loading?: false
 } | {
     loading: true
@@ -18,7 +19,19 @@ export const Card: FunctionalComponent<CardProps> = props => {
             <div class={styles.image} />
         </div>
     }
+
+    let unread: JSX.Element | undefined
+
+    if (typeof props.unread === 'number') {
+        unread = <div class={styles.unread}>{props.unread}</div>
+    }
+
+    if (typeof props.unread === 'boolean' && props.unread) {
+        unread = <div class={styles.unread}></div>
+    }
+
     return <div class={styles.card}>
+        {unread}
         <a href={props.link}>
             <LazyImage class={styles.image} src={props.image} />
             <div class={styles.titles}>

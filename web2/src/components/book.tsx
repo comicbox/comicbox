@@ -46,7 +46,8 @@ export const BookCard: FunctionalComponent<{ book: Book | undefined }> = props =
         image={coverImage(props.book)}
         title={props.book.series}
         subtitle={subtitle}
-        link={routeURL(routes.books.view, { id: props.book.id })}
+        link={routeURL(routes.books.view, { id: props.book.id, page: props.book.current_page })}
+        unread={!props.book.read}
     />
 }
 
