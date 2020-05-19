@@ -54,7 +54,10 @@ export const BookRead: FunctionalComponent<Props> = props => {
 
     return <Layout>
         <div class={classNames(styles.read, { [styles.menuOpen]: menuOpen })}>
-            <div class={styles.screen} onClick={screenClick}></div>
+            <div class={styles.hud}>
+                <input class={styles.page} type="range" max={book.result.pages.length} value={page} />
+            </div>
+            <div class={styles.screen} onClick={screenClick} />
             <img class={(styles.image)} onClick={click} src={pageImage(book.result, page)} alt="" />
         </div>
     </Layout>
