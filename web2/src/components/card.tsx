@@ -31,13 +31,13 @@ export const Card: FunctionalComponent<CardProps> = props => {
     }
 
     return <div class={styles.card}>
-        {unread}
         <a href={props.link}>
             <LazyImage class={styles.image} src={props.image} />
             <div class={styles.titles}>
                 <div class={styles.title}>{props.title}</div>
                 <div class={styles.subtitle}>{props.subtitle}</div>
             </div>
+            {unread}
         </a>
     </div>
 }

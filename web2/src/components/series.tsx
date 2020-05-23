@@ -6,23 +6,35 @@ import { range } from "utils";
 import { CardList, Card } from "./card";
 import { routeURL, routes } from "app";
 
-export const NextInSeriesList: FunctionalComponent<{ list: Series['list'] }> = props => {
-    const books = useQuery(
-        async () => {
-            const series = await db.series.where('list').equals(props.list).toArray()
-            const books = await Promise.all(
-                series.map(s => db.books.where(['series', 'read', 'sort'])
-                    .between(
-                        [s.name, 0, Dexie.minKey],
-                        [s.name, 0, Dexie.maxKey],
-                        true, true)
-                    .first())
-            )
-            return books.filter((b): b is Book => b !== undefined)
-        },
-        []
+// export const NextInSeriesList: FunctionalComponent<{ list: Series['list'] }> = props => {
+//     const books = useQuery(
+//         async () => {
+//             const series = await db.series.where('list').equals(props.list).toArray()
+//             const books = await Promise.all(
+//                 series.map(s => db.books.where(['series', 'read', 'sort'])
+//                     .between(
+//                         [s.name, 0, Dexie.minKey],
+//                         [s.name, 0, Dexie.maxKey],
+//                         true, true)
+//                     .first())
+//             )
+//             return books.filter((b): b is Book => b !== undefined)
+//         },
+//         []
+//     )
+//     return <BookList books={books.result} />
+// }
+
+export async function nextInSeries(series: Series[]): Promise<Book[]> {
+    const books = await Promise.all(
+        series.map(s => db.books.where(['series', 'read', 'sort'])
+            .between(
+                [s.name, 0, Dexie.minKey],
+                [s.name, 0, Dexie.maxKey],
+                true, true)
+            .first())
     )
-    return <BookList books={books.result} />
+    return books.filter((b): b is Book => b !== undefined)
 }
 
 export const SeriesList: FunctionalComponent<{ series?: Series[] }> = props => {

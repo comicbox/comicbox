@@ -94,16 +94,13 @@ func (b *book) Page(w http.ResponseWriter, r *http.Request) {
 		err = jpeg.Encode(w, img, &jpeg.Options{
 			Quality: int(quality),
 		})
-		errors.Check(err)
-		// w.Header().Set("Content-Type", "image/jpeg")
 	case "png":
 		err = png.Encode(w, img)
-		errors.Check(err)
-		// w.Header().Set("Content-Type", "image/png")
 	case "bmp":
 		err = bmp.Encode(w, img)
+	}
+	if r.Context().Err() != context.Canceled {
 		errors.Check(err)
-		// w.Header().Set("Content-Type", "image/bmp")
 	}
 }
 

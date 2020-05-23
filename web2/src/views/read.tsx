@@ -7,6 +7,7 @@ import { Link, route } from 'preact-router'
 import { routeURL, routes } from 'app'
 import { useCallback, useState } from 'preact/hooks'
 import classNames from 'classnames'
+import { Slider } from 'components/slider'
 
 interface Props {
     matches: {
@@ -55,7 +56,7 @@ export const BookRead: FunctionalComponent<Props> = props => {
     return <Layout>
         <div class={classNames(styles.read, { [styles.menuOpen]: menuOpen })}>
             <div class={styles.hud}>
-                <input class={styles.page} type="range" max={book.result.pages.length} value={page} />
+                <Slider value={page} max={book.result.pages.length} />
             </div>
             <div class={styles.screen} onClick={screenClick} />
             <img class={(styles.image)} onClick={click} src={pageImage(book.result, page)} alt="" />

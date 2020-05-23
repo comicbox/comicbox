@@ -1,69 +1,100 @@
 @import "../variables.scss";
 
-.card {
-    $image-height: 250px;
-    $unread-size: 30px;
-
-    width: 100%;
-    height: $image-height + ($font-size * $line-height * 2);
-    overflow: hidden;
-    position: relative;
-
-    a {
-        display: block;
-    }
-
-    .unread {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: $primary;
-        color: $on-primary;
-        min-width: $unread-size;
-        height: $unread-size;
-        line-height: $unread-size;
-        text-align: center;
-        padding: 0 6px;
-        font-weight: bold;
-
-        &:empty {
-            $sqrt2: 1.41421356237;
-            $new-unread-size: $unread-size * $sqrt2;
-            transform: translate(#{$new-unread-size / 2}, #{-$new-unread-size / 2}) rotate(45deg);
-            width: $new-unread-size;
-            height: $new-unread-size;
-        }
-    }
-
-    .image {
-        width: 100%;
-        height: $image-height;
-        object-fit: cover;
-        box-shadow: 0px 0px 9px -1px rgba(black, 0.5);
-        background-color: rgba(black, 0.5);
-    }
-
-
-    .titles {
-
-        .title,
-        .subtitle {
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        .subtitle {
-            color: rgba(white, 0.7);
-        }
-    }
-}
 
 .cardList {
+    $grid-gap: 20px;
     display: grid;
 
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    grid-gap: 20px;
+    grid-gap: $grid-gap;
+
+    .card {
+        $image-height: 250px;
+        $unread-size: 30px;
+        $card-height: $image-height + ($font-size * $line-height * 2);
+        width: 100%;
+        height: $card-height;
+        overflow: hidden;
+        position: relative;
+
+        a {
+            display: block;
+        }
+
+        .unread {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: $primary;
+            color: $on-primary;
+            min-width: $unread-size;
+            height: $unread-size;
+            line-height: $unread-size;
+            text-align: center;
+            padding: 0 6px;
+            font-weight: bold;
+
+            &:empty {
+                $sqrt2: 1.41421356237;
+                $new-unread-size: $unread-size * $sqrt2;
+                transform: translate(#{$new-unread-size / 2}, #{-$new-unread-size / 2}) rotate(45deg);
+                width: $new-unread-size;
+                height: $new-unread-size;
+            }
+        }
+
+        .image {
+            width: 100%;
+            height: $image-height;
+            object-fit: cover;
+            box-shadow: 0px 0px 9px -1px rgba(black, 0.5);
+            background-color: rgba(black, 0.5);
+        }
+
+
+        .titles {
+
+            .title,
+            .subtitle {
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+
+            .subtitle {
+                color: rgba(white, 0.7);
+            }
+        }
+
+        &:first-child {
+            $column-span: 3;
+            $padding: 10px;
+            grid-column: 1 / -1;
+
+            background: #444;
+            padding: $padding 120px;
+            margin: 0 -120px;
+            box-sizing: content-box;
+            height: $card-height + $padding;
+
+            box-shadow: 0px 0px 9px -1px rgba(black, 0.5) inset;
+
+            .image {
+                width: calc(#{100% / $column-span * ($column-span - 1)} - #{$grid-gap / $column-span});
+                max-width: $card-height * 1.5;
+                float: left;
+                margin-right: $grid-gap;
+                height: $card-height;
+                box-shadow: none;
+            }
+
+            .titles {
+                .title {
+                    font-size: 2em;
+                }
+            }
+        }
+    }
 
     &.netflix {
         @media screen and (max-width: 500px) {

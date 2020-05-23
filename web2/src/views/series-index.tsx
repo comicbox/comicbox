@@ -1,5 +1,5 @@
 import { FunctionalComponent, h } from "preact"
-import { NextInSeriesList, SeriesList } from "../components/series"
+import { nextInSeries, SeriesList } from "../components/series"
 import { useQuery, db } from "db"
 import { BookList } from "components/book"
 import { Layout } from "components/layout"
