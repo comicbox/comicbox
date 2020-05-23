@@ -9,7 +9,7 @@ export const Home: FunctionalComponent = () => {
         async () => {
             const newBooks = await db.books.orderBy('created_at').limit(15).toArray()
             const series = await db.series.where('list').equals('READING').toArray()
-            const readingBooks = (await nextInSeries(series)).sort((a, b) => a.change - b.change)
+            const readingBooks = (await nextInSeries(series)).sort((a, b) => b.change - a.change)
             console.log(readingBooks.map(b => b.change));
 
             return [newBooks, readingBooks] as const

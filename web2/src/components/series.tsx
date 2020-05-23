@@ -6,24 +6,9 @@ import { range } from "utils";
 import { CardList, Card } from "./card";
 import { routeURL, routes } from "app";
 
-// export const NextInSeriesList: FunctionalComponent<{ list: Series['list'] }> = props => {
-//     const books = useQuery(
-//         async () => {
-//             const series = await db.series.where('list').equals(props.list).toArray()
-//             const books = await Promise.all(
-//                 series.map(s => db.books.where(['series', 'read', 'sort'])
-//                     .between(
-//                         [s.name, 0, Dexie.minKey],
-//                         [s.name, 0, Dexie.maxKey],
-//                         true, true)
-//                     .first())
-//             )
-//             return books.filter((b): b is Book => b !== undefined)
-//         },
-//         []
-//     )
-//     return <BookList books={books.result} />
-// }
+export type SeriesWithBook = Series & {
+    book: Book | undefined
+}
 
 export async function nextInSeries(series: Series[]): Promise<Book[]> {
     const books = await Promise.all(
@@ -37,43 +22,54 @@ export async function nextInSeries(series: Series[]): Promise<Book[]> {
     return books.filter((b): b is Book => b !== undefined)
 }
 
+export async function loadFirstBook(series: Series[]): Promise<Array<SeriesWithBook>> {
+    const books = await Promise.all(
+        series.map(s => {
+            return db.books.where(['series', 'sort'])
+                .between(
+                    [s.name, Dexie.minKey],
+                    [s.name, Dexie.maxKey],
+                    true, true)
+                .first()
+        })
+    )
+
+
+    return series.map((s, i) => {
+        return { ...s, book: books[i] }
+    })
+}
+
 export const SeriesList: FunctionalComponent<{ series?: Series[] }> = props => {
-    if (props.series === undefined) {
+    const seriesWithBooks = useQuery(async () => {
+        if (props.series === undefined) {
+            return undefined
+        }
+        return loadFirstBook(props.series)
+    }, [], [props.series])
+
+    if (seriesWithBooks.result === undefined) {
         return <CardList>
             {range(2).map(i => <SeriesCard key={i} series={undefined} />)}
         </CardList>
     }
 
     return <CardList>
-        {props.series.map(s => (
+        {seriesWithBooks.result.map(s => (
             <SeriesCard key={s.name} series={s} />
         ))}
     </CardList>
 }
 
-export const SeriesCard: FunctionalComponent<{ series: Series | undefined }> = props => {
-    const firstBook = useQuery(
-        async (name) => {
-            if (name === undefined) {
-                return null
-            }
-            return db.books.where(['series', 'sort'])
-                .between(
-                    [name, Dexie.minKey],
-                    [name, Dexie.maxKey],
-                    true, true)
-                .first()
-        },
-        [props.series?.name]
-    )
+export const SeriesCard: FunctionalComponent<{ series: SeriesWithBook | undefined }> = props => {
     if (props.series === undefined) {
         return <Card loading />
     }
 
     let img: string | undefined
 
-    if (firstBook.result) {
-        img = coverImage(firstBook.result)
+    if (props.series.book) {
+        img = coverImage(props.series.book)
     }
 
     return <Card
