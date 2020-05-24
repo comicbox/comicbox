@@ -1,13 +1,14 @@
 import { FunctionalComponent, h, JSX } from 'preact'
 import styles from './card.module.scss'
 import { LazyImage } from './lazy-image'
+import * as classNames from 'classnames'
 
 type CardProps = {
     image: string
     title: string
     subtitle?: string
     link: string
-    unread?: number | boolean
+    unread: number | boolean
     loading?: false
 } | {
     loading: true
@@ -22,7 +23,7 @@ export const Card: FunctionalComponent<CardProps> = props => {
 
     let unread: JSX.Element | undefined
 
-    if (typeof props.unread === 'number') {
+    if (typeof props.unread === 'number' && props.unread > 0) {
         unread = <div class={styles.unread}>{props.unread}</div>
     }
 
@@ -32,12 +33,12 @@ export const Card: FunctionalComponent<CardProps> = props => {
 
     return <div class={styles.card}>
         <a href={props.link}>
+            {unread}
             <LazyImage class={styles.image} src={props.image} />
             <div class={styles.titles}>
                 <div class={styles.title}>{props.title}</div>
                 <div class={styles.subtitle}>{props.subtitle}</div>
             </div>
-            {unread}
         </a>
     </div>
 }

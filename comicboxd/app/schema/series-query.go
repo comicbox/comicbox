@@ -76,7 +76,7 @@ func (q *RootQuery) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryRe
 	query = scalar.Query(query, args)
 
 	if args.ChangeAfter != nil {
-		query = query.Where("change >= ?", *args.ChangeAfter)
+		query = query.Where("change > ?", *args.ChangeAfter)
 	}
 
 	return &SeriesQueryResolver{

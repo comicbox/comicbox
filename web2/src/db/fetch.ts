@@ -34,7 +34,7 @@ export async function* ittrQuery<Name extends KeyOfType<Database, Dexie.Table>>(
             prepare('query', {},
                 prepare(name, {
                     take: take,
-                    change_after: maxChange.change + 1,
+                    change_after: maxChange.change,
                     sort: "change"
                 },
                     prepare('results', {}, ...selects)
