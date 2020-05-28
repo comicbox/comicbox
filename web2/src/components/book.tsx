@@ -5,14 +5,14 @@ import { Card, CardList } from "./card";
 import { range } from "utils";
 import { routeURL, routes } from "app";
 
-export const BookList: FunctionalComponent<{ books?: Book[] }> = props => {
+export const BookList: FunctionalComponent<{ books?: Book[], large?: boolean }> = props => {
     if (props.books === undefined) {
-        return <CardList>
+        return <CardList large={props.large}>
             {range(2).map(i => <BookCard key={i} book={undefined} />)}
         </CardList>
     }
 
-    return <CardList>
+    return <CardList large={props.large}>
         {props.books.map(b => (
             <BookCard key={b.id} book={b} />
         ))}

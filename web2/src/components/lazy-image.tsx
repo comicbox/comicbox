@@ -45,3 +45,36 @@ function useOnScreen(ref: PropRef<Element>, rootMargin: string = '0px') {
 
     return isIntersecting;
 }
+
+// function useOnScreenEffect(ref: PropRef<Element>, cb: (abortController: AbortController) => void, rootMargin: string = '0px') {
+//     // State and setter for storing whether element is visible
+//     const abortRef = useRef<AbortController>()
+
+//     useEffect(() => {
+//         const observer = new IntersectionObserver(
+//             ([entry]) => {
+//                 if (entry.isIntersecting) {
+//                     if (abortRef.current === undefined) {
+//                         abortRef.current = new AbortController()
+//                     }
+//                     cb(abortRef.current)
+//                 } else {
+//                     if (abortRef.current !== undefined) {
+//                         abortRef.current.abort()
+//                     }
+//                 }
+//             },
+//             {
+//                 rootMargin
+//             }
+//         );
+//         if (ref.current) {
+//             observer.observe(ref.current);
+//         }
+//         return () => {
+//             if (ref.current) {
+//                 observer.unobserve(ref.current);
+//             }
+//         };
+//     }, []); // Empty array ensures that effect is only run on mount and unmount
+// }

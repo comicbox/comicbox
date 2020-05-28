@@ -3,15 +3,17 @@
 
 .cardList {
     $grid-gap: 20px;
+
+    $image-height: 250px;
+    $unread-size: 30px;
+    $card-height: $image-height + ($font-size * $line-height * 2);
+
     display: grid;
 
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     grid-gap: $grid-gap;
 
     .card {
-        $image-height: 250px;
-        $unread-size: 30px;
-        $card-height: $image-height + ($font-size * $line-height * 2);
         width: 100%;
         height: $card-height;
         overflow: hidden;
@@ -35,10 +37,7 @@
             font-weight: bold;
 
             &:empty {
-                $new-unread-size: $unread-size * $sqrt2;
-                transform: translate(#{$new-unread-size / 2}, #{-$new-unread-size / 2}) rotate(45deg);
-                width: $new-unread-size;
-                height: $new-unread-size;
+                transform: skewY(45deg) translateY(-50%);
             }
         }
 
@@ -65,26 +64,28 @@
             }
         }
 
-        &:first-child {
+    }
+
+    &.large {
+        .card:first-child {
+            $padding: 120px;
             $column-span: 3;
             grid-column: 1 / -1;
 
             background: #444;
-            padding: 20px 120px;
-            margin: 0 -120px;
+            padding: 20px $padding;
+            margin: 0 -#{$padding};
             box-sizing: content-box;
             height: $card-height;
 
             box-shadow: 0px 0px 9px -1px rgba(black, 0.5) inset;
 
             .unread {
-                top: initial;
-                right: initial;
-                // left: $card-height * 1.5;
+                right: $padding;
 
                 &:empty {
                     $new-unread-size: $unread-size * $sqrt2;
-                    transform: translate(#{$new-unread-size / -2}, #{-$new-unread-size / 2}) rotate(45deg);
+                    transform: unset;
                 }
             }
 

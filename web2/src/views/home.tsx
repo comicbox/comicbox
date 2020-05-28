@@ -21,7 +21,7 @@ export const Home: FunctionalComponent = () => {
 
     return <Layout>
         <h1>Reading</h1>
-        <BookList books={readingBooks} />
+        <BookList books={readingBooks} large />
         <h1>New Books</h1>
         <BookList books={newBooks} />
     </Layout>

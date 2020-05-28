@@ -43,8 +43,8 @@ export const Card: FunctionalComponent<CardProps> = props => {
     </div>
 }
 
-export const CardList: FunctionalComponent = props => {
-    return <div class={styles.cardList}>
+export const CardList: FunctionalComponent<{ large?: boolean }> = props => {
+    return <div class={classNames(styles.cardList, { [styles.large]: props.large })}>
         {props.children}
     </div>
 }
