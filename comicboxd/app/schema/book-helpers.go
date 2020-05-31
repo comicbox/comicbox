@@ -14,10 +14,10 @@ import (
 	"github.com/imdario/mergo"
 
 	"github.com/Masterminds/squirrel"
-	graphql "github.com/graph-gophers/graphql-go"
-	"github.com/jmoiron/sqlx"
 	"github.com/comicbox/comicbox/comicboxd/app/schema/comicrack"
 	"github.com/comicbox/comicbox/comicboxd/cbz"
+	graphql "github.com/graph-gophers/graphql-go"
+	"github.com/jmoiron/sqlx"
 )
 
 func updateBook(tx *sqlx.Tx, id graphql.ID, book BookInput) error {
@@ -34,8 +34,11 @@ func updateBook(tx *sqlx.Tx, id graphql.ID, book BookInput) error {
 		m["page_count"] = len(*book.Pages)
 	}
 
-	query := squirrel.Update("book").Where(squirrel.Eq{"id": id})
+	query := squirrel.
+		Update("book").
+		Where(squirrel.Eq{"id": id})
 	query = update(m, query)
+	// spew.Dump(query.ToSql())
 	_, err = query.RunWith(tx).Exec()
 	if err != nil {
 		return fmt.Errorf("updateBook exec: %v", err)
@@ -61,7 +64,9 @@ func updateUserBook(tx *sqlx.Tx, bookID, userID graphql.ID, book UserBookInput) 
 	query := squirrel.Update("user_book").
 		Where(squirrel.Eq{"book_id": bookID}).
 		Where(squirrel.Eq{"user_id": userID})
+
 	query = update(m, query)
+	// spew.Dump(query.ToSql())
 	_, err = query.RunWith(tx).Exec()
 	if err != nil {
 		return fmt.Errorf("updateUserBook exec: %v", err)

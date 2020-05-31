@@ -54,6 +54,8 @@ type SeriesArgs struct {
 	Tags  *scalar.Regex       `db:"tags"`
 	Total *scalar.NumberRange `db:"total"`
 	Read  *scalar.NumberRange `db:"read"`
+
+	ChangeAfter *int32 `db:"-"`
 }
 
 func (q *RootQuery) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryResolver, error) {
@@ -63,8 +65,8 @@ func (q *RootQuery) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryRe
 		skip = *args.Skip
 	}
 	take := args.Take
-	if 0 > take || take > 100 {
-		return nil, fmt.Errorf("you must take between 0 and 100 items")
+	if 0 > take || take > 1000 {
+		return nil, fmt.Errorf("you must take between 0 and 1000 items")
 	}
 
 	query := squirrel.Select().
@@ -72,6 +74,10 @@ func (q *RootQuery) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryRe
 		Where(squirrel.Eq{"user_id": c.User.ID})
 
 	query = scalar.Query(query, args)
+
+	if args.ChangeAfter != nil {
+		query = query.Where("change > ?", *args.ChangeAfter)
+	}
 
 	return &SeriesQueryResolver{
 		query: query,
@@ -115,6 +121,10 @@ func (r SeriesResolver) Tags() []string {
 	}
 	return tags
 }
+func (r SeriesResolver) Change() int32 {
+	return int32(r.s.Change)
+}
+
 func (r SeriesResolver) Total() int32 {
 	return r.s.Total
 }

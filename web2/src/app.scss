@@ -1,0 +1,33 @@
+@import '~material-icons/iconfont/material-icons.css';
+@import 'variables.scss';
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    margin: 0;
+
+    color: white;
+    background-color: #555;
+
+    font-size: $font-size;
+    line-height: $line-height;
+
+    font-family: sans-serif;
+    overflow-x: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}

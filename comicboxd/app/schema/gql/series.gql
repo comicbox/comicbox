@@ -37,6 +37,8 @@ type Series {
     read: Int!
     tags: [String!]!
     total: Int!
+
+    change: Int!
 }
 
 input SeriesInput {

@@ -65,6 +65,10 @@ export default class TopBar extends Component<Props & JSX.HTMLAttributes, State>
                         <Icon class={s.arrow}>chevron_right</Icon>
                         {crumb.name}
                     </Link>)}
+
+                    <a href='/v2' {...{ native: true }}>
+                        <Icon>exposure_plus_1</Icon>
+                    </a>
                 </div>
             </section>
             <section class={s.right}>

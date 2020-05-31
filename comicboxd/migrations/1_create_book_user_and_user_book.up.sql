@@ -45,7 +45,7 @@ create trigger book_update
     on book
     for each row
 begin
-    update book set updated_at = current_timestamp where id = old.id;
+    update book set updated_at = current_timestamp where new.id = old.id;
 end;
 
 create trigger user_update

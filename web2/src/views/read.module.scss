@@ -1,0 +1,55 @@
+.read {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    background-color: black;
+
+    .hud,
+    .screen {
+        display: none;
+    }
+
+    .pages {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+
+        .page {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
+    }
+
+    &.menuOpen {
+        z-index: -1;
+
+        .screen,
+        .hud {
+            display: block;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .hud {
+            z-index: 1;
+            pointer-events: none;
+
+            >* {
+                pointer-events: initial;
+            }
+        }
+
+        .screen {
+            background-color: rgba(black, 0.5);
+        }
+    }
+}

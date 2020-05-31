@@ -9,5 +9,7 @@ comicboxd/.cache/*
 web/dist/*
 web/data/bindata.go
 
+web2/dist/*
+
 **/node_modules/*
 web/res/icons/icon.png

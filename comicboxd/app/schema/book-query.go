@@ -32,7 +32,7 @@ func (q *RootQuery) Book(ctx context.Context, args BookArgs) (*BookResolver, err
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read reccord: %v", err)
 	}
 	return &BookResolver{b: book}, nil
 }
@@ -70,6 +70,8 @@ type BooksArgs struct {
 	Chapter         *scalar.NumberRange `db:"chapter"`
 	Rating          *scalar.NumberRange `db:"rating"`
 	Volume          *scalar.NumberRange `db:"volume"`
+
+	ChangeAfter *int32
 }
 
 func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
@@ -79,8 +81,8 @@ func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolv
 		skip = *args.Skip
 	}
 	take := args.Take
-	if 0 > take || take > 100 {
-		return nil, fmt.Errorf("you must take between 0 and 100 items")
+	if 0 > take || take > 1000 {
+		return nil, fmt.Errorf("you must take between 0 and 1000 items")
 	}
 
 	query := squirrel.Select().
@@ -113,6 +115,11 @@ func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolv
 	if args.Sort == nil && !sorted {
 		query = query.OrderBy("sort")
 	}
+
+	if args.ChangeAfter != nil {
+		query = query.Where("change > ?", *args.ChangeAfter)
+	}
+
 	query = scalar.Query(query, args)
 
 	return &BookQueryResolver{
@@ -246,6 +253,12 @@ func (r *BookResolver) Volume() *int32 {
 }
 func (r *BookResolver) Web() string {
 	return r.b.Web
+}
+func (r *BookResolver) Change() int32 {
+	return int32(r.b.Change)
+}
+func (r *BookResolver) Sort() string {
+	return r.b.Sort
 }
 
 type PageResolver struct {

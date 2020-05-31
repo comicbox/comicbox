@@ -5,6 +5,7 @@ type Book {
     chapter: Float
     community_rating: Float
     cover: Page
+    change: Int!
 
     # the date a book was created
     created_at: Time!
@@ -27,6 +28,7 @@ type Book {
     updated_at: Time!
     volume: Int
     web: String!
+    sort: String!
 }
 
 input BookInput {
