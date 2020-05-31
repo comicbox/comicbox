@@ -41,12 +41,12 @@ export async function loadFirstBook(series: Series[]): Promise<Array<SeriesWithB
 }
 
 export const SeriesList: FunctionalComponent<{ series?: Series[] }> = props => {
-    const seriesWithBooks = useQuery(async () => {
-        if (props.series === undefined) {
+    const seriesWithBooks = useQuery(async series => {
+        if (series === undefined) {
             return undefined
         }
-        return loadFirstBook(props.series)
-    }, [], [props.series])
+        return loadFirstBook(series)
+    }, [props.series])
 
     if (seriesWithBooks.result === undefined) {
         return <CardList>

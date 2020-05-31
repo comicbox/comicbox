@@ -1,5 +1,5 @@
 import { FunctionalComponent, h } from "preact";
-import { useQuery, Book } from "db";
+import { useQuery, Book, db } from "db";
 import Dexie from "dexie";
 import { Card, CardList } from "./card";
 import { range } from "utils";
@@ -61,4 +61,24 @@ export function coverImage(b: Book): string {
 }
 export function pageImage(b: Book, number: number): string {
     return `/api/v1/book/${b.id}/page/${number}.jpg`
+}
+
+export async function previousBook(b: Book): Promise<Book | undefined> {
+    const pBook = await db.books.where(['series', 'sort'])
+        .below([b.series, b.sort])
+        .last()
+    if (pBook?.series !== b.series) {
+        return undefined
+    }
+    return pBook
+}
+
+export async function nextBook(b: Book): Promise<Book | undefined> {
+    const nBook = await db.books.where(['series', 'sort'])
+        .above([b.series, b.sort])
+        .first()
+    if (nBook?.series !== b.series) {
+        return undefined
+    }
+    return nBook
 }

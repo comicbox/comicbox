@@ -4,6 +4,7 @@
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 100;
 
     background-color: black;
 
@@ -12,11 +13,17 @@
         display: none;
     }
 
-    .image {
-        display: block;
+    .pages {
+        display: inline-block;
         width: 100%;
         height: 100%;
-        object-fit: contain;
+        text-align: center;
+
+        .page {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
     }
 
     &.menuOpen {

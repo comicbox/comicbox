@@ -12,13 +12,12 @@ interface Props {
 
 export const SeriesView: FunctionalComponent<Props> = props => {
     const books = useQuery(
-        () => db.books.where(['series', 'sort'])
+        (name) => db.books.where(['series', 'sort'])
             .between(
-                [props.matches.name, Dexie.minKey],
-                [props.matches.name, Dexie.maxKey],
+                [name, Dexie.minKey],
+                [name, Dexie.maxKey],
                 true, true)
             .toArray(),
-        [],
         [props.matches.name]
     )
 

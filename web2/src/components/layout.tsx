@@ -40,6 +40,14 @@ const SideBar: FunctionalComponent = props => {
                     </Link>
                 </li>
             ))}
+            <li>
+                <a href="/" title="v1">
+                    <Icon class={styles.icon} name='exposure_neg_1' />
+                    <div class={styles.title}>
+                        V1
+                    </div>
+                </a>
+            </li>
         </ul>
     </nav>
 }

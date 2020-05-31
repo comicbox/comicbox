@@ -49,6 +49,7 @@ export interface Book {
         type: 'FrontCover' | 'Story' | 'Deleted'
         file_number: number
     }[]
+    sort: string
 }
 
 export interface Series {
@@ -112,7 +113,7 @@ export async function nextChapter(series: string) {
         .first();
 }
 
-export function useQuery<T, E = Error, Args extends unknown[] = []>(cb: (...args: Args) => Promise<T>, args: Args, inputs: Inputs = []): Result<T, E> {
+export function useQuery<T, E = Error, Args extends unknown[] = []>(cb: (...args: Args) => Promise<T>, args: Args): Result<T, E> {
     const [change, setChange] = useState(0)
     useEffect(() => {
         console.log('query');
@@ -121,6 +122,6 @@ export function useQuery<T, E = Error, Args extends unknown[] = []>(cb: (...args
         dbChanges.on('change', incrementChange)
         return () => dbChanges.off('change', incrementChange)
     }, [setChange])
-    const result = useAsync<T, E, Args>(cb, args, [...inputs, change])
+    const result = useAsync<T, E, Args>(cb, args, [change])
     return result
 }

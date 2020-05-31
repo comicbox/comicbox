@@ -22,8 +22,12 @@ export function useAsync<T, E = Error, Args extends unknown[] = []>(cb: (...args
     })
 
     useEffect(() => {
+        // const timeKey = Math.random().toString().slice(2, 6)
+        const timeKey = cb.toString()
+        console.time(timeKey)
         cb(...args)
             .then(ret => {
+                console.timeEnd(timeKey)
                 setResult({
                     loading: false,
                     error: undefined,
