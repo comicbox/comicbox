@@ -71,3 +71,6 @@ from
         FROM 
             "book_user_book" group by series, user_id
     ) as s left join user_series on name=series and user_series.user_id=s.user_id;
+
+update book as a set "change" = (select count(*) from book b  where a.id >= b.id);
+update user as a set "change" = (select count(*) from user b  where a.id >= b.id);
