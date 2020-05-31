@@ -7,6 +7,9 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+}
 
 body {
     position: absolute;
@@ -21,6 +24,7 @@ body {
     line-height: $line-height;
 
     font-family: sans-serif;
+    overflow-x: hidden;
 }
 
 a {
