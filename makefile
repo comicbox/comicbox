@@ -10,10 +10,13 @@ comicboxd: bindata tidy
 npm:
 	cd web; npm run build-prod
 
+npm-web2:
+	cd web2; npm run build
+
 run: bindata-debug
 	go run comicboxd/main.go $(ARGS)
 
-bindata: npm
+bindata: npm npm-web2
 	go-bindata $(bindata)
 
 bindata-debug:
