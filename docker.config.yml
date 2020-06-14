@@ -1,0 +1,4 @@
+
+http-port: 80
+dir: /comics
+db: /db.sqlite

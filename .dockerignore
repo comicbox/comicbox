@@ -12,5 +12,6 @@ comicboxd/data/bindata.go
 comicboxd/.cache/*
 
 web/dist/*
+web2/dist/*
 
 **/node_modules/*
