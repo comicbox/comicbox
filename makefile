@@ -24,7 +24,7 @@ bindata-debug:
 	go-bindata -debug $(bindata)
 
 get: bindata-debug
-	go get github.com/zwzn/go-bindata/...
+	go get -u github.com/go-bindata/go-bindata/...
 	cd web; npm install
 	go get ./...
 
@@ -37,4 +37,13 @@ test:
 migration:
 	touch comicboxd/migrations/$$(date +%s)_.up.sql
 	touch comicboxd/migrations/$$(date +%s)_.down.sql
-	
+
+docker-build: has-version
+	docker build . -t abibby/comicbox -t abibby/comicbox:$(VERSION)
+
+docker-push: has-version
+	docker push abibby/comicbox
+	docker push abibby/comicbox:$(VERSION)
+
+has-version:
+	@test -n '$(VERSION)' || (printf "\nMissing argument VERSION\n\n" && exit 1)
