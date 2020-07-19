@@ -56,6 +56,7 @@ type SeriesArgs struct {
 	Read  *scalar.NumberRange `db:"read"`
 
 	ChangeAfter *int32 `db:"-"`
+	WithDeleted *bool  `db:"-"`
 }
 
 func (q *RootQuery) Series(ctx context.Context, args SeriesArgs) (*SeriesQueryResolver, error) {

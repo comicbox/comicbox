@@ -3,6 +3,7 @@ package schema
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 
@@ -142,19 +143,29 @@ func (q *RootQuery) DeleteBook(ctx context.Context, args DeleteBookArgs) (*BookR
 	}
 
 	err = database.Tx(ctx, func(tx *sqlx.Tx) error {
-		_, err := squirrel.Delete("book").
+		_, err := squirrel.Update("book").
 			Where("id = ?", book.ID()).
-			RunWith(tx).Exec()
+			Set("deleted_at", time.Now().Format(SQLTimeFormat)).
+			RunWith(tx).
+			ExecContext(ctx)
 		if err != nil {
 			return err
 		}
-		_, err = squirrel.Delete("user_book").
-			Where("book_id = ?", book.ID()).
-			Where("user_id = ?", c.User.ID).
-			RunWith(tx).Exec()
-		if err != nil {
-			return err
-		}
+		// _, err := squirrel.Delete("book").
+		// 	Where("id = ?", book.ID()).
+		// 	RunWith(tx).
+		// 	ExecContext(ctx)
+		// if err != nil {
+		// 	return err
+		// }
+		// _, err = squirrel.Delete("user_book").
+		// 	Where("book_id = ?", book.ID()).
+		// 	Where("user_id = ?", c.User.ID).
+		// 	RunWith(tx).
+		// 	ExecContext(ctx)
+		// if err != nil {
+		// 	return err
+		// }
 		return nil
 	})
 	if err != nil {
