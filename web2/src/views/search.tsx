@@ -25,7 +25,7 @@ export const SearchIndex: FunctionalComponent = props => {
             .distinct()
             .toArray()
             .then(series => setResults(series))
-    }, [search])
+    }, [search, setResults])
 
     return <Layout>
         <h1>Search</h1>

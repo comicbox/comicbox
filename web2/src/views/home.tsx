@@ -7,7 +7,7 @@ import { Layout } from "components/layout"
 export const Home: FunctionalComponent = () => {
     const result = useQuery(
         async () => {
-            const newBooks = await db.books.orderBy('created_at').limit(15).toArray()
+            const newBooks = await db.books.orderBy('created_at').reverse().limit(15).toArray()
             const series = await db.series.where('list').equals('READING').toArray()
             const readingBooks = (await nextInSeries(series)).sort((a, b) => b.change - a.change)
             console.log(readingBooks.map(b => b.change));
@@ -21,7 +21,7 @@ export const Home: FunctionalComponent = () => {
 
     return <Layout>
         <h1>Reading</h1>
-        <BookList books={readingBooks} large />
+        <BookList books={readingBooks} />
         <h1>New Books</h1>
         <BookList books={newBooks} />
     </Layout>

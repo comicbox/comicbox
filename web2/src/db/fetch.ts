@@ -1,7 +1,10 @@
 import { Database, db, Book, ExtractType } from "."
 import { prepare, GraphQLQuery, run } from "./graphql"
 
-export async function* ittrQuery<Name extends KeyOfType<Database, Dexie.Table>>(name: Name, selects: Array<string | GraphQLQuery>): AsyncIterable<ExtractType<Database[Name]>[]> {
+export async function* ittrQuery<Name extends KeyOfType<Database, Dexie.Table>>(
+    name: Name,
+    selects: Array<string | GraphQLQuery>
+): AsyncIterable<ExtractType<Database[Name]>[]> {
     let maxChange = (await db.change.get(name)) ?? { table: name, change: -1 }
     const take = 1000
     let items: any[]
@@ -12,7 +15,8 @@ export async function* ittrQuery<Name extends KeyOfType<Database, Dexie.Table>>(
                 prepare(name, {
                     take: take,
                     change_after: maxChange.change,
-                    sort: "change"
+                    sort: "change",
+                    with_deleted: true,
                 },
                     prepare('results', {}, ...selects)
                 )

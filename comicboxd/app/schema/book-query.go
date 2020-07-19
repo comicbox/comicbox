@@ -24,6 +24,7 @@ func (q *RootQuery) Book(ctx context.Context, args BookArgs) (*BookResolver, err
 	book := model.BookUserBook{}
 	qSQL, qArgs := squirrel.Select("*").
 		From("book_user_book").
+		// Where(squirrel.Eq{"deleted_at": nil}).
 		Where(squirrel.Eq{"id": args.ID}).
 		Where(squirrel.Eq{"user_id": c.User.ID}).
 		MustSql()
@@ -72,6 +73,7 @@ type BooksArgs struct {
 	Volume          *scalar.NumberRange `db:"volume"`
 
 	ChangeAfter *int32
+	WithDeleted *bool
 }
 
 func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolver, error) {
@@ -88,6 +90,10 @@ func (q *RootQuery) Books(ctx context.Context, args BooksArgs) (*BookQueryResolv
 	query := squirrel.Select().
 		From("book_user_book").
 		Where(squirrel.Eq{"user_id": c.User.ID})
+
+	if args.WithDeleted == nil || *args.WithDeleted == false {
+		query = query.Where(squirrel.Eq{"deleted_at": nil})
+	}
 
 	sorted := false
 	if args.After != nil {
@@ -169,6 +175,13 @@ func (r *BookResolver) Cover() *PageResolver {
 
 func (r *BookResolver) CreatedAt() graphql.Time {
 	return graphql.Time{Time: r.b.CreatedAt}
+}
+
+func (r *BookResolver) DeletedAt() *graphql.Time {
+	if r.b.DeletedAt == nil {
+		return nil
+	}
+	return &graphql.Time{Time: *r.b.DeletedAt}
 }
 
 func (r *BookResolver) CurrentPage() int32 {

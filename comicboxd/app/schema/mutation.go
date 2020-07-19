@@ -11,6 +11,8 @@ import (
 	"github.com/comicbox/comicbox/comicboxd/j"
 )
 
+const SQLTimeFormat = "2006-01-02 15:04:05"
+
 var (
 	// ErrorUnauthenticated will be returned on endpoints that you cant view unless you are authenticated
 	ErrorUnauthenticated = fmt.Errorf("unauthenticated users may not complete this action")

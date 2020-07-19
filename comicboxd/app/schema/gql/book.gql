@@ -26,6 +26,7 @@ type Book {
     summary: String!
     title: String!
     updated_at: Time!
+    deleted_at: Time
     volume: Int
     web: String!
     sort: String!

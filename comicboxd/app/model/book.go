@@ -30,6 +30,7 @@ type Book struct {
 	PagesJSON        []byte     `json:"-"                 db:"pages"`
 	PageCount        int        `json:"page_count"        db:"page_count"`
 	Pages            []*Page    `json:"pages"             db:"-"`
+	DeletedAt        *time.Time `json:"deleted_at"        db:"deleted_at"`
 }
 
 type UserBook struct {

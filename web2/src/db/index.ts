@@ -39,6 +39,7 @@ export interface Book {
     id: string
     change: number
     created_at: string
+    deleted_at: string
     series: string
     title: string
     volume: number
@@ -74,6 +75,7 @@ export async function updateDatabase() {
         'id',
         'change',
         'created_at',
+        'deleted_at',
         'series',
         'title',
         'volume',
@@ -84,10 +86,17 @@ export async function updateDatabase() {
         prepare('pages', {}, 'type', 'file_number'),
     ]
     for await (const books of ittrQuery('books', bookSelects)) {
-        await db.books.bulkPut(books.map(b => ({
-            ...b,
-            read: b.read ? 1 : 0,
-        })))
+        await db.books.bulkPut(books
+            .filter(b => b.deleted_at === null)
+            .map(b => ({
+                ...b,
+                read: b.read ? 1 : 0,
+            })))
+        await Promise.all(
+            books
+                .filter(b => b.deleted_at !== null)
+                .map(b => db.books.where('id').equals(b.id).delete())
+        )
     }
 
     const seriesSelects = [
