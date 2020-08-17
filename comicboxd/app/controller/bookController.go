@@ -147,7 +147,12 @@ func scan(r *http.Request) {
 	Push.Message("Starting book scan")
 	dbFiles := []string{}
 
-	sql, args, err := sq.Select("file").From("book").OrderBy("file").ToSql()
+	sql, args, err := sq.Select("file").
+		From("book").
+		Where(sq.Eq{"deleted_at": nil}).
+		OrderBy("file").
+		ToSql()
+
 	errors.Check(err)
 
 	err = database.Select(&dbFiles, sql, args...)
