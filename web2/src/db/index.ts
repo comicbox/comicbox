@@ -35,6 +35,11 @@ export class Database extends Dexie {
     }
 }
 
+export interface Page {
+    type: 'FrontCover' | 'Story' | 'Deleted'
+    file_number: number
+}
+
 export interface Book {
     id: string
     change: number
@@ -46,10 +51,7 @@ export interface Book {
     chapter: number
     read: number
     current_page: number
-    pages: {
-        type: 'FrontCover' | 'Story' | 'Deleted'
-        file_number: number
-    }[]
+    pages: Page[]
     sort: string
 }
 

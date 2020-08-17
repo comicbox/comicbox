@@ -51,14 +51,24 @@ export const BookCard: FunctionalComponent<{ book: Book | undefined }> = props =
     />
 }
 
-export function coverImage(b: Book): string {
+function pageNumber(b: Book, number: number): number {
+    let currentPage = 0
     for (const page of b.pages) {
-        if (page.type !== 'Deleted') {
-            return pageImage(b, page.file_number)
+        if (page.type === 'Deleted') {
+            continue
         }
+        if (currentPage === number) {
+            return page.file_number
+        }
+        currentPage++
     }
+    return number
+}
+
+export function coverImage(b: Book): string {
     return pageImage(b, 0)
 }
+
 export function pageImage(b: Book, number: number): string {
     return `/api/v1/book/${b.id}/page/${number}.jpg`
 }

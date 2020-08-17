@@ -1,5 +1,5 @@
 import { FunctionalComponent, h, JSX } from 'preact'
-import { db, useQuery, Book, updateDatabase } from 'db'
+import { db, useQuery, Book, updateDatabase, Page } from 'db'
 import { pageImage, previousBook, nextBook } from 'components/book'
 import { Layout } from 'components/layout'
 import styles from './read.module.scss'
@@ -34,13 +34,13 @@ export const BookRead: FunctionalComponent<Props> = props => {
         const section = Math.floor(e.x / window.innerWidth * 3)
         switch (section) {
             case 0:
-                changePage(book.result, page - 1)
+                changePage(book.result, page, -1)
                 return
             case 1:
                 setMenuOpen(true)
                 return
             case 2:
-                changePage(book.result, page + 1)
+                changePage(book.result, page, 1)
                 return
         }
     }, [props.matches.id, page, book.result])
@@ -72,10 +72,11 @@ export const BookRead: FunctionalComponent<Props> = props => {
     </Layout>
 }
 
-async function changePage(book: Book | undefined, page: number) {
+async function changePage(book: Book | undefined, page: number, offset: number) {
     if (book === undefined) {
         return
     }
+    page += offset
     if (page < 0) {
         const pBook = await previousBook(book)
         if (pBook !== undefined) {
@@ -96,6 +97,20 @@ async function changePage(book: Book | undefined, page: number) {
     }
     route(routeURL(routes.books.view, { id: book.id, page: page }))
     await saveProgress(book, page)
+}
+
+function nextPage(b: Book, number: number): number {
+    let currentPage = 0
+    for (const page of b.pages) {
+        if (page.type === 'Deleted') {
+            continue
+        }
+        if (currentPage === number) {
+            return page.file_number
+        }
+        currentPage++
+    }
+    return number
 }
 
 async function saveProgress(book: Book, page: number) {
