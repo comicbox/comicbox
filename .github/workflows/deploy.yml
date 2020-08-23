@@ -31,4 +31,4 @@ jobs:
       uses: actions/setup-go@v2.1.2
 
     - name: Run make
-      run: make
+      run: make get && make
