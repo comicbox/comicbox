@@ -23,10 +23,11 @@ bindata-debug:
 	mkdir -p web/dist
 	go-bindata -debug $(bindata)
 
-get:
+get: bindata-debug
 	go get -u github.com/go-bindata/go-bindata/...
 	cd web; npm install
 	cd web2; npm install
+	go get ./...
 
 tidy: 
 	go mod tidy
