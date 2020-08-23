@@ -26,6 +26,7 @@ bindata-debug:
 get: bindata-debug
 	go get -u github.com/go-bindata/go-bindata/...
 	cd web; npm install
+	cd web2; npm install
 	go get ./...
 
 tidy: 
