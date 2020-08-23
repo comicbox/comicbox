@@ -28,5 +28,5 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: abibby/comicbox
           tags: latest
-          tag_with_ref: refs/tags/{git-tag}
+          tag_with_ref: true
           push: false
