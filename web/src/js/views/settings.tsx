@@ -27,7 +27,7 @@ import { Link } from 'preact-router'
  *   - book folder
  */
 
-const Row: FunctionalComponent<{ title: string }> = (props) => (
+const Row: FunctionalComponent<{ title: string }> = props => (
     <div class={s.row}>
         <div class={s.title}>{props.title}</div>
         <div class={s.action}>{props.children}</div>
@@ -41,7 +41,7 @@ interface State {
 export default class Settings extends Component<{}, State> {
     constructor(props: {}) {
         super(props)
-        auth.user().then((me) => this.setState({ me: me }))
+        auth.user().then(me => this.setState({ me: me }))
     }
 
     public render() {
@@ -68,17 +68,17 @@ export default class Settings extends Component<{}, State> {
                     <h2>General</h2>
                 </Container>
                 <Container background>
-                    <Row title="Scan">
+                    <Row title='Scan'>
                         <Button onClick={this.btnScan}>Run</Button>
                     </Row>
-                    <Row title="User">
+                    <Row title='User'>
                         <Button onClick={this.btnUpdateUser}>Update</Button>
                         <Button onClick={this.btnLogout}>Logout</Button>
                     </Row>
-                    <Row title="Password">
+                    <Row title='Password'>
                         <Button onClick={this.btnUpdatePassword}>Update</Button>
                     </Row>
-                    <Row title="Anilist">
+                    <Row title='Anilist'>
                         <Button onClick={this.btnAnilistLogin}>Login</Button>
                     </Row>
                 </Container>
@@ -86,11 +86,11 @@ export default class Settings extends Component<{}, State> {
                     <h2>Admin</h2>
                 </Container>
                 <Container background>
-                    <Row title="Users">
+                    <Row title='Users'>
                         <Button onClick={this.btnAddUser}>Add</Button>
                         <Button onClick={this.btnDeleteUser}>Delete</Button>
                     </Row>
-                    <Row title="Groups">
+                    <Row title='Groups'>
                         <Button onClick={this.btnManageGroups}>Manage</Button>
                     </Row>
                 </Container>
@@ -108,11 +108,11 @@ export default class Settings extends Component<{}, State> {
         const data: Response | undefined = await OpenForm(
             { title: 'Update User' },
             <div class={s.popup}>
-                <TextField label="Name" value={me.name} name="name" />
+                <TextField label='Name' value={me.name} name='name' />
                 <TextField
-                    label="Username"
+                    label='Username'
                     value={me.username}
-                    name="username"
+                    name='username'
                 />
             </div>,
         )
@@ -160,24 +160,24 @@ export default class Settings extends Component<{}, State> {
             },
             <div class={s.popup}>
                 <TextField
-                    label="Current Password"
-                    type="password"
-                    name="current_pass"
-                    value=""
+                    label='Current Password'
+                    type='password'
+                    name='current_pass'
+                    value=''
                     required
                 />
                 <TextField
-                    label="New Password"
-                    type="password"
-                    name="new_pass_1"
-                    value=""
+                    label='New Password'
+                    type='password'
+                    name='new_pass_1'
+                    value=''
                     required
                 />
                 <TextField
-                    label="Repeat New Password"
-                    type="password"
-                    name="new_pass_2"
-                    value=""
+                    label='Repeat New Password'
+                    type='password'
+                    name='new_pass_2'
+                    value=''
                     required
                 />
             </div>,
@@ -208,10 +208,10 @@ export default class Settings extends Component<{}, State> {
             },
             <div class={s.popup}>
                 <TextField
-                    label="Token"
-                    type="text"
-                    name="token"
-                    value=""
+                    label='Token'
+                    type='text'
+                    name='token'
+                    value=''
                     required
                 />
             </div>,
@@ -249,9 +249,9 @@ export default class Settings extends Component<{}, State> {
         const data: Response | undefined = await OpenForm(
             { title: 'New User' },
             <div class={s.popup}>
-                <TextField label="Name" name="name" />
-                <TextField label="Username" name="username" />
-                <TextField label="Password" type="password" name="password" />
+                <TextField label='Name' name='name' />
+                <TextField label='Username' name='username' />
+                <TextField label='Password' type='password' name='password' />
             </div>,
         )
 
