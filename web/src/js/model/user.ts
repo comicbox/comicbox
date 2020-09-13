@@ -4,17 +4,19 @@ import route from 'js/routes'
 
 @table('users', 'update_user', 'UserInput!')
 export default class User extends Model {
-
     public static searchTypes = {
         me: { type: 'Boolean' },
     }
 
     public static async me(): Promise<User> {
-        return new User(await gql(`me {
+        return new User(
+            await gql(`me {
             id
             name
             username
-        }`), true)
+        }`),
+            true,
+        )
     }
 
     @prop('String')
@@ -25,6 +27,9 @@ export default class User extends Model {
 
     @prop('String')
     public username: string
+
+    @prop('String')
+    public anilist_token: string
 
     @prop('String', { writeOnly: true })
     public password: string

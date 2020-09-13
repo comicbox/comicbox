@@ -37,6 +37,9 @@ func (r *UserResolver) Username() string {
 func (r *UserResolver) Change() int32 {
 	return int32(r.u.Change)
 }
+func (r *UserResolver) AnilistToken() *string {
+	return r.u.AnilistToken
+}
 
 func (q *RootQuery) Me(ctx context.Context) (*UserResolver, error) {
 	c := q.ctx(ctx)
@@ -73,9 +76,10 @@ func (q *RootQuery) User(ctx context.Context, args UserArgs) (*UserResolver, err
 }
 
 type UserInput struct {
-	Name     *string `db:"name"`
-	Username *string `db:"username"`
-	Password *string `db:"password"`
+	Name         *string `db:"name"`
+	Username     *string `db:"username"`
+	Password     *string `db:"password"`
+	AnilistToken *string `db:"anilist_token"`
 }
 
 type UpdateUserArgs struct {
