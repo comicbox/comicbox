@@ -2,18 +2,22 @@ package schema
 
 import (
 	"archive/zip"
+	"context"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/imdario/mergo"
+	"github.com/pkg/errors"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/comicbox/comicbox/comicboxd/anilist"
 	"github.com/comicbox/comicbox/comicboxd/app/schema/comicrack"
 	"github.com/comicbox/comicbox/comicboxd/cbz"
 	graphql "github.com/graph-gophers/graphql-go"
@@ -294,4 +298,40 @@ func parseComicInfoXML(f *zip.File) (BookUserBookInput, error) {
 	}
 
 	return book, nil
+}
+
+func (q *RootQuery) updateAnilist(ctx context.Context, book *BookResolver) error {
+	c := q.ctx(ctx)
+
+	if c.User.AnilistToken == nil {
+		return nil
+	}
+	token := *c.User.AnilistToken
+
+	s, err := q.Serie(ctx, SerieArgs{Name: book.Series()})
+	if err != nil {
+		return err
+	}
+	strAnilistID := ""
+	for _, tag := range s.Tags() {
+		if strings.HasPrefix(tag, "al:") {
+			strAnilistID = tag[3:]
+		}
+	}
+	if strAnilistID == "" {
+		return nil
+	}
+	anilistID, err := strconv.Atoi(strAnilistID)
+	if err != nil {
+		return errors.Wrap(err, "Invalid anilist tag")
+	}
+	authHeader := func(req *http.Request) {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	}
+	client := anilist.NewClient(&http.Client{}, "https://graphql.anilist.co", authHeader)
+	_, err = client.UpdateProgress(ctx, anilistID, book.Chapter(), book.Volume())
+	if err != nil {
+		return errors.Wrap(err, "failed to save anilist entry")
+	}
+	return nil
 }

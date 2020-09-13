@@ -1,0 +1,17 @@
+model:
+  package: anilist
+  filename: ./models_gen.go
+client:
+  package: anilist
+  filename: ./client.go
+models:
+  # Int:
+  #   model: github.com/99designs/gqlgen/graphql.Int64
+  Date:
+    model: github.com/99designs/gqlgen/graphql.Time
+endpoint:
+  url: https://graphql.anilist.co/
+  # headers:
+  #   Authorization: "Bearer ${ANNICT_KEY}"
+query:
+  - ./*.gql

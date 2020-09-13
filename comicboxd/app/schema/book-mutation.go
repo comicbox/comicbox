@@ -108,8 +108,23 @@ func (q *RootQuery) UpdateBook(ctx context.Context, args UpdateBookArgs) (*BookR
 	if c.Guest() {
 		return nil, ErrorUnauthenticated
 	}
+
+	lastCurrentPage := int32(0)
+
 	err := database.Tx(ctx, func(tx *sqlx.Tx) error {
-		err := updateBook(tx, args.ID, args.Data.BookInput)
+		dest := []int32{}
+		err := tx.SelectContext(
+			ctx,
+			&dest,
+			`select "current_page" from "book_user_book" where id=? and user_id=?`,
+			args.ID,
+			c.User.ID.String(),
+		)
+		if err == nil {
+			lastCurrentPage = dest[0]
+		}
+
+		err = updateBook(tx, args.ID, args.Data.BookInput)
 		if err != nil {
 			return err
 		}
@@ -122,7 +137,19 @@ func (q *RootQuery) UpdateBook(ctx context.Context, args UpdateBookArgs) (*BookR
 	if err != nil {
 		return nil, err
 	}
-	return q.Book(ctx, BookArgs{ID: args.ID})
+	book, err := q.Book(ctx, BookArgs{ID: args.ID})
+	if err != nil {
+		return nil, err
+	}
+
+	// Chapter finished
+	if args.Data.CurrentPage != nil &&
+		lastCurrentPage != *args.Data.CurrentPage &&
+		*args.Data.CurrentPage >= (book.PageCount()-1) {
+
+		q.updateAnilist(ctx, book)
+	}
+	return book, nil
 }
 
 type DeleteBookArgs struct {

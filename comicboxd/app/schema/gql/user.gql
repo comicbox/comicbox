@@ -1,4 +1,3 @@
-
 type User {
     # the date a book was created
     created_at: Time!
@@ -8,6 +7,7 @@ type User {
     name: String!
     updated_at: Time!
     username: String!
+    anilist_token: String
 
     change: Int!
 }
@@ -16,6 +16,7 @@ input UserInput {
     name: String
     username: String
     password: String
+    anilist_token: String
 }
 
 type UserQuery {
