@@ -8,6 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	"github.com/comicbox/comicbox/comicboxd/app/database"
+	"github.com/comicbox/comicbox/comicboxd/j"
 	"github.com/google/uuid"
 
 	"github.com/Masterminds/squirrel"
@@ -147,7 +148,10 @@ func (q *RootQuery) UpdateBook(ctx context.Context, args UpdateBookArgs) (*BookR
 		lastCurrentPage != *args.Data.CurrentPage &&
 		*args.Data.CurrentPage >= (book.PageCount()-1) {
 
-		q.updateAnilist(ctx, book)
+		err := q.updateAnilist(ctx, book)
+		if err != nil {
+			j.Error("failed to update anilist", err)
+		}
 	}
 	return book, nil
 }
