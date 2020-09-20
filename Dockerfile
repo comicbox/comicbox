@@ -30,9 +30,10 @@ RUN go-bindata -o comicboxd/data/bindata.go -pkg data comicboxd/migrations/... w
     && cd comicboxd; go build -o ../bin/comicboxd
 
 # Now copy it into our base image.
-FROM ubuntu
+FROM ubuntu:20.04
 
-RUN apt-get install -y ca-certificates && update-ca-certificates
+RUN apt-get update && apt-get install -y ca-certificates
+RUN update-ca-certificates
 
 COPY --from=go-build /go/src/github.com/comicbox/comicbox/bin/comicboxd /usr/bin/comicboxd
 COPY docker.config.yml /config.yml
