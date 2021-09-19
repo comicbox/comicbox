@@ -64,6 +64,22 @@
             }
         }
 
+        @media screen and (max-width: 375px) {
+            .nav {
+                ul {
+                    li {    
+                        .icon {
+                            font-size: 1.5em;
+                        }
+    
+                        .title {
+                            display: none;
+                        }
+                    }
+                }
+            }
+        }
+
         .content {
             padding: 10px;
             margin: 0;

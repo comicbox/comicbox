@@ -1,4 +1,5 @@
 import 'app.scss'
+import { ModalHost } from 'components/modal'
 import { h, render } from 'preact'
 import { Route, Router } from 'preact-router'
 import { ListIndex } from 'views/list'
@@ -36,14 +37,17 @@ export function routeURL(
 }
 
 render(
-    <Router>
-        <Route component={Home} path={routes.home} />
-        <Route component={SeriesIndex} path={routes.series.index} />
-        <Route component={SeriesView} path={routes.series.view} />
-        <Route component={ListIndex} path={routes.list} />
-        <Route component={SearchIndex} path={routes.search} />
-        <Route component={BookRead} path={routes.books.view} />
-        <Route component={Settings} path={routes.settings} />
-    </Router>,
+    <div>
+        <Router>
+            <Route component={Home} path={routes.home} />
+            <Route component={SeriesIndex} path={routes.series.index} />
+            <Route component={SeriesView} path={routes.series.view} />
+            <Route component={ListIndex} path={routes.list} />
+            <Route component={SearchIndex} path={routes.search} />
+            <Route component={BookRead} path={routes.books.view} />
+            <Route component={Settings} path={routes.settings} />
+        </Router>
+        <ModalHost />
+    </div>,
     document.getElementById('app')!,
 )

@@ -1,5 +1,5 @@
+@use "sass:math";
 @import "../variables.scss";
-
 
 .cardList {
     $grid-gap: 20px;
@@ -90,7 +90,7 @@
             }
 
             .image {
-                width: calc(#{100% / $column-span * ($column-span - 1)} - #{$grid-gap / $column-span});
+                width: calc(#{math.div(100%, $column-span) * ($column-span - 1)} - #{math.div($grid-gap, $column-span)});
                 max-width: $card-height * 1.5;
                 float: left;
                 margin-right: $grid-gap;

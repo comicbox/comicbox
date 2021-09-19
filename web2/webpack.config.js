@@ -10,25 +10,25 @@ const paths = {
     dist: resolve(__dirname, 'dist'),
 }
 /**
- * 
- * @param {string | Record<string, boolean | number | string>} env 
- * @param {import('webpack').CliConfigOptions} argv 
- * 
+ *
+ * @param {string | Record<string, boolean | number | string>} env
+ * @param {import('webpack').Configuration} argv
+ *
  * @returns {import('webpack').Configuration | Promise<import('webpack').Configuration>}
  */
 module.exports = (env, argv) => {
     const devMode = argv.mode !== 'production'
 
     return {
-        "entry": join(paths.src, 'app.tsx'),
-        "mode": devMode ? 'development' : 'production',
-        "devtool": devMode ? 'source-map' : false,
-        "module": {
+        entry: join(paths.src, 'app.tsx'),
+        mode: devMode ? 'development' : 'production',
+        devtool: devMode ? 'source-map' : false,
+        module: {
             rules: [
                 {
                     test: /\.tsx?$/,
                     exclude: /node_modules/,
-                    loader: [
+                    use: [
                         'ts-loader',
                         // 'eslint-loader',
                     ],
@@ -36,16 +36,17 @@ module.exports = (env, argv) => {
                 {
                     test: /\.module\.scss$/,
                     exclude: /node_modules/,
-                    loader: [
+                    use: [
                         MiniCssExtractPlugin.loader,
                         {
                             loader: 'css-loader',
                             options: {
                                 importLoaders: 1,
                                 modules: {
-                                    localIdentName: '[name]__[local]--[hash:base64:5]',
+                                    localIdentName:
+                                        '[name]__[local]--[hash:base64:5]',
                                 },
-                            }
+                            },
                         },
                         'sass-loader',
                     ],
@@ -53,7 +54,7 @@ module.exports = (env, argv) => {
                 {
                     test: /(?<!\.module)\.scss$/,
                     exclude: /node_modules/,
-                    loader: [
+                    use: [
                         MiniCssExtractPlugin.loader,
                         'css-loader',
                         'sass-loader',
@@ -62,34 +63,28 @@ module.exports = (env, argv) => {
                 {
                     test: /\.css$/,
                     include: /node_modules/,
-                    loader: [
-                        MiniCssExtractPlugin.loader,
-                        'css-loader',
-                    ],
+                    use: [MiniCssExtractPlugin.loader, 'css-loader'],
                 },
                 {
                     test: /\.(svg|eot|woff|woff2|ttf)/,
                     loader: 'file-loader',
                     options: {
                         name: devMode ? '[name].[ext]' : '[name].[hash].[ext]',
-                    }
+                    },
                 },
             ],
         },
-        "output": {
+        output: {
             path: paths.dist,
-            filename: (devMode ? '[name].js' : '[name].[hash].js'),
-            chunkFilename: (devMode ? '[id].js' : '[id].[hash].js'),
+            filename: devMode ? '[name].js' : '[name].[hash].js',
+            chunkFilename: devMode ? '[id].js' : '[id].[hash].js',
             publicPath: '/v2/',
         },
-        "resolve": {
+        resolve: {
             extensions: ['.tsx', '.ts', '.js', '.scss', '.css'],
-            modules: [
-                'node_modules',
-                paths.src,
-            ],
+            modules: ['node_modules', paths.src],
         },
-        "plugins": [
+        plugins: [
             // new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: join(paths.src, 'index.html'),
