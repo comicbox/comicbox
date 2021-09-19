@@ -1,9 +1,9 @@
+import { Result, useAsync } from 'async-hook'
 import { ittrQuery } from 'db/fetch'
-import Dexie, { Transaction } from 'dexie'
 import { prepare } from 'db/graphql'
-import { useState, useEffect, Inputs } from 'preact/hooks'
+import Dexie from 'dexie'
 import { EventEmitter } from 'events'
-import { useAsync, Result } from 'async-hook'
+import { useEffect, useState } from 'preact/hooks'
 
 const dbChanges = new EventEmitter()
 
@@ -15,19 +15,23 @@ export class Database extends Dexie {
     change: Dexie.Table<Change, string>
 
     constructor() {
-        super("database");
+        super('database')
         this.version(1).stores({
             books: 'id,series,change,created_at,[series+sort],[series+read+sort]',
             series: 'name,list,change,*search',
             change: 'table,change',
         })
 
-        this.books = this.table("books")
-        this.series = this.table("series")
-        this.change = this.table("change")
+        this.books = this.table('books')
+        this.series = this.table('series')
+        this.change = this.table('change')
 
-        this.series.hook('creating', (pkey, series) => this.addSeriesSearch(series))
-        this.series.hook('updating', (changes, pkey, series) => this.addSeriesSearch(series))
+        this.series.hook('creating', (pkey, series) =>
+            this.addSeriesSearch(series),
+        )
+        this.series.hook('updating', (changes, pkey, series) =>
+            this.addSeriesSearch(series),
+        )
     }
 
     private addSeriesSearch(series: Series) {
@@ -67,10 +71,9 @@ interface Change {
     change: number
 }
 
-export const db = new Database()
+export let db = new Database()
 
 export async function updateDatabase() {
-
     const bookSelects = [
         'id',
         'change',
@@ -86,26 +89,22 @@ export async function updateDatabase() {
         prepare('pages', {}, 'type', 'file_number'),
     ]
     for await (const books of ittrQuery('books', bookSelects)) {
-        await db.books.bulkPut(books
-            .filter(b => b.deleted_at === null)
-            .map(b => ({
-                ...b,
-                read: b.read ? 1 : 0,
-            })))
+        await db.books.bulkPut(
+            books
+                .filter(b => b.deleted_at === null)
+                .map(b => ({
+                    ...b,
+                    read: b.read ? 1 : 0,
+                })),
+        )
         await Promise.all(
             books
                 .filter(b => b.deleted_at !== null)
-                .map(b => db.books.where('id').equals(b.id).delete())
+                .map(b => db.books.where('id').equals(b.id).delete()),
         )
     }
 
-    const seriesSelects = [
-        'name',
-        'change',
-        'list',
-        'read',
-        'total',
-    ]
+    const seriesSelects = ['name', 'change', 'list', 'read', 'total']
     for await (const series of ittrQuery('series', seriesSelects)) {
         await db.series.bulkPut(series)
     }
@@ -113,19 +112,32 @@ export async function updateDatabase() {
     dbChanges.emit('change')
 }
 
-export async function nextChapter(series: string) {
-    return await db.books.where(['series', 'read', 'sort'])
+export async function refreshDatabase(): Promise<void> {
+    db.close()
+    await db.delete()
+    db = new Database()
+    await updateDatabase()
+}
+
+export async function nextChapter(series: string): Promise<Book | undefined> {
+    return await db.books
+        .where(['series', 'read', 'sort'])
         .between(
             [series, 0, Dexie.minKey],
             [series, 0, Dexie.maxKey],
-            true, true)
-        .first();
+            true,
+            true,
+        )
+        .first()
 }
 
-export function useQuery<T, E = Error, Args extends unknown[] = []>(cb: (...args: Args) => Promise<T>, args: Args): Result<T, E> {
+export function useQuery<T, E = Error, Args extends unknown[] = []>(
+    cb: (...args: Args) => Promise<T>,
+    args: Args,
+): Result<T, E> {
     const [change, setChange] = useState(0)
     useEffect(() => {
-        console.log('query');
+        console.log('query')
 
         const incrementChange = () => setChange(c => c + 1)
         dbChanges.on('change', incrementChange)

@@ -20,7 +20,7 @@ interface Props {
 export const BookRead: FunctionalComponent<Props> = props => {
     const page = Number(props.matches.page)
 
-    const [menuOpen, setMenuOpen] = useState(true)
+    const [menuOpen, setMenuOpen] = useState(false)
 
     const book = useQuery(
         id => db.books.where('id').equals(id).first(),
