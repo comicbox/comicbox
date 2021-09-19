@@ -1,35 +1,44 @@
+@import '../variables.scss';
+
 .slider {
     position: absolute;
     width: 100%;
     left: 0;
     bottom: 0;
+    display: flex;
 
-    -webkit-appearance: none;
-    appearance: none;
-    width: calc(100% - 20px);
-    background: #d3d3d3;
-    outline: none;
-    transition: opacity .2s;
-
-    height: 10px;
-    margin: 10px;
-    border-radius: 5px;
-
-    &::-webkit-slider-thumb {
+    .input {
         -webkit-appearance: none;
         appearance: none;
-        width: 25px;
-        height: 25px;
-        background: #4CAF50;
-        cursor: pointer;
-        border-radius: 50%;
+        width: calc(100% - 20px);
+        background: #d3d3d3;
+        outline: none;
+        transition: opacity 0.2s;
+
+        height: 10px;
+        margin: 10px;
+        border-radius: 5px;
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: $primary;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        &::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: $primary;
+            cursor: pointer;
+            border-radius: 50%;
+        }
     }
 
-    &::-moz-range-thumb {
-        width: 25px;
-        height: 25px;
-        background: #4CAF50;
-        cursor: pointer;
-        border-radius: 50%;
+    .value {
+        margin: 0 10px;
     }
 }
