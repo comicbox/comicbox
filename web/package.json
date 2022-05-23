@@ -21,7 +21,7 @@
         "@material/shape": "^0.41.0",
         "@material/theme": "^0.40.1",
         "autobind-decorator": "^2.4.0",
-        "dexie": "^2.0.4",
+        "dexie": "^3.2.2",
         "event-target-shim": "^5.0.1",
         "history": "^4.10.1",
         "idb": "^2.1.3",
